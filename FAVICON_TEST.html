@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favicon Test - Rudy's Store</title>
+    
+    <!-- Standard favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Android Chrome -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    
+    <!-- Safari Pinned Tab -->
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Windows Tile -->
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#000000">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 { color: #000; }
+        .test-item {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        img {
+            vertical-align: middle;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            background: white;
+        }
+        .checklist {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .checklist li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Favicon Test Page - Rudy's Store</h1>
+    
+    <div class="checklist">
+        <h2>✅ Browser Testing Checklist</h2>
+        <ul>
+            <li>☐ <strong>Chrome:</strong> Check tab icon (should show favicon)</li>
+            <li>☐ <strong>Firefox:</strong> Check tab icon (should show favicon)</li>
+            <li>☐ <strong>Safari:</strong> Check tab icon (should show favicon)</li>
+            <li>☐ <strong>Edge:</strong> Check tab icon (should show favicon)</li>
+            <li>☐ <strong>Safari (iOS):</strong> Add to home screen, check icon</li>
+            <li>☐ <strong>Chrome (Android):</strong> Add to home screen, check icon</li>
+            <li>☐ <strong>Safari Pinned Tab:</strong> Pin this tab, check icon</li>
+        </ul>
+    </div>
+
+    <h2>Favicon Files Preview</h2>
+    
+    <div class="test-item">
+        <h3>16x16 (Browser Tab - Small)</h3>
+        <img src="/favicon-16x16.png" alt="16x16" width="16" height="16">
+        <img src="/favicon-16x16.png" alt="16x16" width="32" height="32" style="image-rendering: pixelated;">
+        <span class="info">Used in browser tabs</span>
+    </div>
+
+    <div class="test-item">
+        <h3>32x32 (Browser Tab - Standard)</h3>
+        <img src="/favicon-32x32.png" alt="32x32" width="32" height="32">
+        <img src="/favicon-32x32.png" alt="32x32" width="64" height="64">
+        <span class="info">Used in browser tabs and bookmarks</span>
+    </div>
+
+    <div class="test-item">
+        <h3>180x180 (Apple Touch Icon)</h3>
+        <img src="/apple-touch-icon.png" alt="180x180" width="60" height="60">
+        <img src="/apple-touch-icon.png" alt="180x180" width="120" height="120">
+        <span class="info">Used on iOS home screen</span>
+    </div>
+
+    <div class="test-item">
+        <h3>192x192 (Android Chrome)</h3>
+        <img src="/android-chrome-192x192.png" alt="192x192" width="64" height="64">
+        <img src="/android-chrome-192x192.png" alt="192x192" width="128" height="128">
+        <span class="info">Used on Android home screen</span>
+    </div>
+
+    <div class="test-item">
+        <h3>512x512 (Android Chrome - High Res)</h3>
+        <img src="/android-chrome-512x512.png" alt="512x512" width="64" height="64">
+        <img src="/android-chrome-512x512.png" alt="512x512" width="128" height="128">
+        <span class="info">Used for splash screens and high-res displays</span>
+    </div>
+
+    <div class="test-item">
+        <h3>150x150 (Windows Tile)</h3>
+        <img src="/mstile-150x150.png" alt="150x150" width="75" height="75">
+        <img src="/mstile-150x150.png" alt="150x150" width="150" height="150">
+        <span class="info">Used for Windows Start Menu tiles</span>
+    </div>
+
+    <h2>File Verification</h2>
+    <div class="test-item">
+        <p><strong>Check these URLs return files (not 404):</strong></p>
+        <ul>
+            <li><a href="/favicon.ico" target="_blank">/favicon.ico</a></li>
+            <li><a href="/favicon-16x16.png" target="_blank">/favicon-16x16.png</a></li>
+            <li><a href="/favicon-32x32.png" target="_blank">/favicon-32x32.png</a></li>
+            <li><a href="/apple-touch-icon.png" target="_blank">/apple-touch-icon.png</a></li>
+            <li><a href="/android-chrome-192x192.png" target="_blank">/android-chrome-192x192.png</a></li>
+            <li><a href="/android-chrome-512x512.png" target="_blank">/android-chrome-512x512.png</a></li>
+            <li><a href="/mstile-150x150.png" target="_blank">/mstile-150x150.png</a></li>
+            <li><a href="/safari-pinned-tab.svg" target="_blank">/safari-pinned-tab.svg</a></li>
+            <li><a href="/site.webmanifest" target="_blank">/site.webmanifest</a></li>
+            <li><a href="/browserconfig.xml" target="_blank">/browserconfig.xml</a></li>
+        </ul>
+    </div>
+
+    <h2>Testing Instructions</h2>
+    <div class="test-item">
+        <h3>Desktop Browsers</h3>
+        <ol>
+            <li>Open this page in Chrome, Firefox, Safari, and Edge</li>
+            <li>Check the browser tab - you should see the favicon</li>
+            <li>Bookmark this page - check the bookmark icon</li>
+            <li>Clear cache if favicon doesn't appear (Ctrl+Shift+Delete)</li>
+            <li>Try hard refresh (Ctrl+F5 or Cmd+Shift+R)</li>
+        </ol>
+    </div>
+
+    <div class="test-item">
+        <h3>Safari Pinned Tab (macOS)</h3>
+        <ol>
+            <li>Right-click the tab</li>
+            <li>Select "Pin Tab"</li>
+            <li>The pinned tab should show a monochrome version of the icon</li>
+        </ol>
+    </div>
+
+    <div class="test-item">
+        <h3>iOS (Safari)</h3>
+        <ol>
+            <li>Open this page in Safari on iPhone/iPad</li>
+            <li>Tap the Share button</li>
+            <li>Select "Add to Home Screen"</li>
+            <li>Check the icon on your home screen</li>
+        </ol>
+    </div>
+
+    <div class="test-item">
+        <h3>Android (Chrome)</h3>
+        <ol>
+            <li>Open this page in Chrome on Android</li>
+            <li>Tap the menu (three dots)</li>
+            <li>Select "Add to Home screen"</li>
+            <li>Check the icon on your home screen</li>
+        </ol>
+    </div>
+
+    <h2>Troubleshooting</h2>
+    <div class="test-item">
+        <h3>Favicon Not Showing?</h3>
+        <ul>
+            <li><strong>Clear Cache:</strong> Ctrl+Shift+Delete (Windows) or Cmd+Shift+Delete (Mac)</li>
+            <li><strong>Hard Refresh:</strong> Ctrl+F5 (Windows) or Cmd+Shift+R (Mac)</li>
+            <li><strong>Incognito Mode:</strong> Test in private/incognito window</li>
+            <li><strong>Check Console:</strong> Open DevTools (F12) and check for 404 errors</li>
+            <li><strong>Wait:</strong> Sometimes browsers cache favicons for a while</li>
+        </ul>
+    </div>
+
+    <div class="test-item">
+        <p class="success"><strong>✅ If you can see all the images above, your favicons are working!</strong></p>
+        <p class="info">Now test in different browsers and devices to ensure cross-browser compatibility.</p>
+    </div>
+
+    <hr>
+    <p style="text-align: center; color: #666;">
+        <small>Rudy's Store - Favicon Test Page | Generated: December 2024</small>
+    </p>
+
+    <script>
+        // Check if all images loaded successfully
+        window.addEventListener('load', function() {
+            const images = document.querySelectorAll('img');
+            let allLoaded = true;
+            
+            images.forEach(img => {
+                if (!img.complete || img.naturalHeight === 0) {
+                    allLoaded = false;
+                    console.error('Failed to load:', img.src);
+                }
+            });
+            
+            if (allLoaded) {
+                console.log('✅ All favicon images loaded successfully!');
+            } else {
+                console.error('❌ Some favicon images failed to load. Check the console for details.');
+            }
+        });
+    </script>
+</body>
+</html>
