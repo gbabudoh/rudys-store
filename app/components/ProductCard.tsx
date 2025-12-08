@@ -34,7 +34,7 @@ interface Product {
   name: string;
   price: number;
   originalPrice?: number;
-  image: string;
+  images: string[];
   rating: number;
   reviews: number;
   isNew?: boolean;
@@ -86,7 +86,7 @@ export default function ProductCard({
           <div className="relative w-full sm:w-48 h-48 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden">
             <Link href={`/product/${product.id}`} className="block w-full h-full">
               <Image
-                src={product.image}
+                src={product.images[0]}
                 alt={product.name}
                 fill
                 className="object-cover"
@@ -207,7 +207,7 @@ export default function ProductCard({
       <div className="relative aspect-square overflow-hidden">
         <Link href={`/product/${product.id}`} className="block w-full h-full">
           <Image
-            src={product.image}
+            src={product.images[0]}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
