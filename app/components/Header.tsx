@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import SearchBar from '@/components/SearchBar';
 // Simple icon components to replace lucide-react
 const ShoppingBag = ({ className }: { className?: string }) => (
   <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,17 +78,7 @@ export default function Header() {
 
           {/* Search Bar */}
           <div className="hidden lg:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:border-transparent"
-                style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-                onFocus={(e) => e.currentTarget.style.borderColor = '#cfa224'}
-                onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
-              />
-            </div>
+            <SearchBar />
           </div>
 
           {/* Right side icons */}
@@ -151,17 +142,7 @@ export default function Header() {
               
               {/* Mobile Search */}
               <div className="pt-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = '#cfa224'}
-                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
-                  />
-                </div>
+                <SearchBar isMobile />
               </div>
             </nav>
           </div>
