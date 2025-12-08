@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firefox Favicon Test - Rudy's Store</title>
+    
+    <!-- Multiple favicon formats for Firefox -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+        .box {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border-left: 4px solid #000;
+        }
+        button {
+            background: #000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #333;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🦊 Firefox Favicon Diagnostic Test</h1>
+    
+    <div class="box">
+        <h2>Quick Check</h2>
+        <p><strong>Look at your browser tab right now.</strong></p>
+        <p>Do you see a favicon (icon) next to the page title?</p>
+        <p class="success">✅ YES = Favicon is working!</p>
+        <p class="error">❌ NO = Follow the fixes below</p>
+    </div>
+
+    <div class="box">
+        <h2>🔧 Quick Fixes for Firefox</h2>
+        <ol>
+            <li><strong>Hard Refresh:</strong> Press <code>Ctrl + F5</code> (Windows) or <code>Cmd + Shift + R</code> (Mac)</li>
+            <li><strong>Clear Cache:</strong> Press <code>Ctrl + Shift + Delete</code>, select "Everything", check "Cache", click "Clear Now"</li>
+            <li><strong>Private Window:</strong> Open this page in a Private Window (<code>Ctrl + Shift + P</code>)</li>
+            <li><strong>Direct Access:</strong> Visit <a href="/favicon.ico" target="_blank">/favicon.ico</a> directly, then refresh this page</li>
+        </ol>
+    </div>
+
+    <div class="box">
+        <h2>🧪 Automated Tests</h2>
+        <button onclick="runTests()">Run Diagnostic Tests</button>
+        <button onclick="forceReload()">Force Reload Favicon</button>
+        <button onclick="clearAndReload()">Clear Cache & Reload</button>
+        <div id="results"></div>
+    </div>
+
+    <div class="box">
+        <h2>📋 Manual Verification</h2>
+        <p>Click these links to verify files exist:</p>
+        <ul>
+            <li><a href="/favicon.ico" target="_blank">favicon.ico</a> (should show image)</li>
+            <li><a href="/favicon-16x16.png" target="_blank">favicon-16x16.png</a> (should show image)</li>
+            <li><a href="/favicon-32x32.png" target="_blank">favicon-32x32.png</a> (should show image)</li>
+            <li><a href="/apple-touch-icon.png" target="_blank">apple-touch-icon.png</a> (should show image)</li>
+        </ul>
+    </div>
+
+    <div class="box">
+        <h2>🔍 Current Favicon Links</h2>
+        <div id="favicon-links"></div>
+    </div>
+
+    <div class="box">
+        <h2>💡 Nuclear Option (If Nothing Works)</h2>
+        <ol>
+            <li>Close Firefox completely</li>
+            <li>Open File Explorer (Windows) or Finder (Mac)</li>
+            <li>Navigate to:
+                <ul>
+                    <li><strong>Windows:</strong> <code>%APPDATA%\Mozilla\Firefox\Profiles\</code></li>
+                    <li><strong>Mac:</strong> <code>~/Library/Application Support/Firefox/Profiles/</code></li>
+                </ul>
+            </li>
+            <li>Find your profile folder (ends with .default or .default-release)</li>
+            <li>Delete the file: <code>favicons.sqlite</code></li>
+            <li>Restart Firefox</li>
+            <li>Visit this page again</li>
+        </ol>
+    </div>
+
+    <script>
+        // Display current favicon links
+        function displayFaviconLinks() {
+            const links = document.querySelectorAll('link[rel*="icon"]');
+            const container = document.getElementById('favicon-links');
+            
+            if (links.length === 0) {
+                container.innerHTML = '<p class="error">❌ No favicon links found!</p>';
+                return;
+            }
+            
+            let html = '<p class="success">✅ Found ' + links.length + ' favicon link(s):</p><ul>';
+            links.forEach(link => {
+                html += '<li><code>' + link.outerHTML + '</code></li>';
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        }
+
+        // Run diagnostic tests
+        async function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Running tests...</p>';
+            
+            const tests = [
+                { name: 'favicon.ico', url: '/favicon.ico' },
+                { name: 'favicon-16x16.png', url: '/favicon-16x16.png' },
+                { name: 'favicon-32x32.png', url: '/favicon-32x32.png' },
+                { name: 'apple-touch-icon.png', url: '/apple-touch-icon.png' },
+            ];
+            
+            let html = '<h3>Test Results:</h3>';
+            
+            for (const test of tests) {
+                try {
+                    const response = await fetch(test.url);
+                    const status = response.status;
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (status === 200) {
+                        html += '<div class="test-item test-pass">✅ ' + test.name + ' - OK (Status: ' + status + ', Type: ' + contentType + ')</div>';
+                    } else {
+                        html += '<div class="test-item test-fail">❌ ' + test.name + ' - Failed (Status: ' + status + ')</div>';
+                    }
+                } catch (error) {
+                    html += '<div class="test-item test-fail">❌ ' + test.name + ' - Error: ' + error.message + '</div>';
+                }
+            }
+            
+            // Check if favicon links exist in DOM
+            const links = document.querySelectorAll('link[rel*="icon"]');
+            if (links.length > 0) {
+                html += '<div class="test-item test-pass">✅ Found ' + links.length + ' favicon link(s) in HTML</div>';
+            } else {
+                html += '<div class="test-item test-fail">❌ No favicon links found in HTML</div>';
+            }
+            
+            results.innerHTML = html;
+        }
+
+        // Force reload favicon
+        function forceReload() {
+            const links = document.querySelectorAll('link[rel*="icon"]');
+            links.forEach(link => {
+                const href = link.href;
+                link.href = '';
+                setTimeout(() => {
+                    link.href = href + '?v=' + Date.now();
+                }, 100);
+            });
+            alert('Favicon reload triggered! Check your browser tab.');
+        }
+
+        // Clear cache and reload
+        function clearAndReload() {
+            if (confirm('This will reload the page. Continue?')) {
+                // Try to clear cache
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                    });
+                }
+                // Reload with cache bypass
+                window.location.reload(true);
+            }
+        }
+
+        // Run on page load
+        window.addEventListener('load', () => {
+            displayFaviconLinks();
+            
+            // Auto-run tests after 1 second
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+</html>
