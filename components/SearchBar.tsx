@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllProducts, Product } from '@/lib/products';
@@ -22,6 +23,7 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ isMobile = false }: SearchBarProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -80,6 +82,19 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
     setSearchQuery('');
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowResults(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <div ref={searchRef} className={`relative ${isMobile ? 'w-full' : 'flex-1 max-w-md'}`}>
       {/* Search Input */}
@@ -89,8 +104,9 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Search products..."
-          className="w-full pl-10 pr-10 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+          className="w-full pl-10 pr-24 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:border-transparent transition-all"
           style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
           onFocus={(e) => {
             e.currentTarget.style.borderColor = '#cfa224';
@@ -98,14 +114,25 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
           }}
           onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
         />
-        {searchQuery && (
+        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+          {searchQuery && (
+            <button
+              onClick={handleClearSearch}
+              className="text-gray-400 hover:text-gray-600 p-1"
+              title="Clear search"
+            >
+              <XIcon className="w-4 h-4" />
+            </button>
+          )}
           <button
-            onClick={handleClearSearch}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            onClick={handleSearch}
+            disabled={!searchQuery.trim()}
+            className="bg-black text-white px-3 py-1 rounded-full hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+            title="Search"
           >
-            <XIcon className="w-4 h-4" />
+            Find
           </button>
-        )}
+        </div>
       </div>
 
       {/* Search Results Dropdown */}
