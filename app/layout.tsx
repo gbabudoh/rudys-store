@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalLayout from "./components/ConditionalLayout";
 import GoogleAnalytics from "./components/GoogleAnalytics";
+import Chatbot from "@/components/Chatbot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         <GoogleAnalytics />
         <ConditionalLayout>{children}</ConditionalLayout>
+        <Chatbot />
       </body>
     </html>
   );
