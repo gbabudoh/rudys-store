@@ -8,12 +8,16 @@
  * - Have a source favicon image (PNG, at least 512x512px recommended)
  * 
  * Usage:
- * node scripts/generate-favicons.js
+ * npx tsx scripts/generate-favicons.ts
  */
 
-const sharp = require('sharp');
-const fs = require('fs');
-const path = require('path');
+import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Source image - update this path to your source favicon
 const SOURCE_IMAGE = path.join(__dirname, '../public/favicon.png');
@@ -72,7 +76,8 @@ async function generateFavicons() {
     console.log('   3. Test in different browsers');
 
   } catch (error) {
-    console.error('❌ Error generating favicons:', error.message);
+    const err = error as Error;
+    console.error('❌ Error generating favicons:', err.message);
     console.log('\n💡 Make sure you have installed sharp:');
     console.log('   npm install sharp --save-dev');
   }

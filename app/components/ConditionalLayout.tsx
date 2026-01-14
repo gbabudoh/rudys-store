@@ -4,6 +4,11 @@ import { usePathname } from 'next/navigation';
 import Header from './Header';
 import Footer from './Footer';
 import CookieBanner from './CookieBanner';
+import { CartProvider } from '@/context/CartContext';
+import { WishlistProvider } from '@/context/WishlistContext';
+import { QuickViewProvider } from '@/context/QuickViewContext';
+import { AuthProvider } from '@/context/AuthContext';
+import CartSidebar from './CartSidebar';
 
 export default function ConditionalLayout({
   children,
@@ -22,11 +27,18 @@ export default function ConditionalLayout({
 
   // Regular layout with header and footer
   return (
-    <>
-      <Header />
-      <main>{children}</main>
-      <Footer />
-      <CookieBanner />
-    </>
+    <AuthProvider>
+      <WishlistProvider>
+        <CartProvider>
+          <QuickViewProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <CartSidebar />
+            <CookieBanner />
+          </QuickViewProvider>
+        </CartProvider>
+      </WishlistProvider>
+    </AuthProvider>
   );
 }

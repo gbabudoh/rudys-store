@@ -13,7 +13,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 
-interface BannerSlide {
+export interface BannerSlide {
   id: string;
   title: string;
   subtitle: string;
@@ -106,7 +106,7 @@ export default function BannerSlider({
                     </p>
                     <Link
                       href={slide.link}
-                      className="inline-block bg-white text-gray-900 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 hover:scale-105 animate-fade-in-delay-2"
+                      className="inline-block bg-white text-gray-900 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 hover:scale-105 animate-fade-in-delay-2 cursor-pointer"
                     >
                       {slide.buttonText}
                     </Link>

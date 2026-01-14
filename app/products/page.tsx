@@ -2,14 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
-import { getAllProducts } from '@/lib/products';
+import { getAllProducts, type Product } from '@/lib/products';
 
 // Simple icon components
-const Filter = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-  </svg>
-);
 
 const Grid = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +35,7 @@ export default function AllProductsPage() {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState('featured');
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [productsPerPage] = useState(12);
   const [displayedCount, setDisplayedCount] = useState(12);
@@ -62,22 +57,11 @@ export default function AllProductsPage() {
     }
 
     return {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      originalPrice: product.originalPrice,
-      image: product.images[0],
-      rating: product.rating,
-      reviews: product.reviews,
-      isNew: product.isNew,
-      isOnSale: product.isOnSale,
-      discount: product.discount,
-      category: product.category,
+      ...product,
       collection: collection,
-      gender: (product as any).gender || 'Unisex',
-      brand: (product as any).brand || 'Rudy Store',
-      sizes: product.sizes || [],
-      subcategory: (product as any).subcategory || product.category,
+      gender: product.gender || 'Unisex',
+      brand: product.brand || 'Rudy Store',
+      subcategory: product.subcategory || product.category,
     };
   });
 
@@ -125,18 +109,23 @@ export default function AllProductsPage() {
 
   // Reset displayed count when filters change
   useEffect(() => {
-    setDisplayedCount(productsPerPage);
-  }, [selectedCollection, selectedGender, selectedBrands, selectedSizes, selectedSubcategories, priceRange, sortBy, productsPerPage]);
+    if (displayedCount !== productsPerPage) {
+      const timer = setTimeout(() => {
+        setDisplayedCount(productsPerPage);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedCollection, selectedGender, selectedBrands, selectedSizes, selectedSubcategories, priceRange, sortBy, productsPerPage, displayedCount]);
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: Product) => {
     console.log('Added to cart:', product);
   };
 
-  const handleAddToWishlist = (product: any) => {
+  const handleAddToWishlist = (product: Product) => {
     console.log('Added to wishlist:', product);
   };
 
-  const handleQuickView = (product: any) => {
+  const handleQuickView = (product: Product) => {
     console.log('Quick view:', product);
   };
 

@@ -3,20 +3,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const Cookie = ({ className }: { className?: string }) => (
-  <svg className={className || "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Cookie = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-5 h-5"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
   </svg>
 );
 
-const X = ({ className }: { className?: string }) => (
-  <svg className={className || "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const X = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-5 h-5"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
   </svg>
 );
 
-const Settings = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Settings = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
   </svg>
@@ -31,28 +31,31 @@ interface CookiePreferences {
 export default function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
-  const [preferences, setPreferences] = useState<CookiePreferences>({
-    essential: true, // Always true, cannot be disabled
-    analytics: false,
-    marketing: false,
+  const [preferences, setPreferences] = useState<CookiePreferences>(() => {
+    if (typeof window !== 'undefined') {
+      const cookieConsent = localStorage.getItem('cookieConsent');
+      if (cookieConsent) {
+        try {
+          return JSON.parse(cookieConsent);
+        } catch (error) {
+          console.error('Error parsing cookie preferences:', error);
+        }
+      }
+    }
+    return {
+      essential: true,
+      analytics: false,
+      marketing: false,
+    };
   });
 
   useEffect(() => {
     // Check if user has already made a choice
-    const cookieConsent = localStorage.getItem('cookieConsent');
-    if (!cookieConsent) {
+    if (typeof window !== 'undefined' && !localStorage.getItem('cookieConsent')) {
       // Show banner after a short delay for better UX
       setTimeout(() => {
         setShowBanner(true);
       }, 1000);
-    } else {
-      // Load saved preferences
-      try {
-        const savedPreferences = JSON.parse(cookieConsent);
-        setPreferences(savedPreferences);
-      } catch (error) {
-        console.error('Error loading cookie preferences:', error);
-      }
     }
   }, []);
 
@@ -128,7 +131,7 @@ export default function CookieBanner() {
                     </h3>
                     <p className="text-sm text-gray-600 mb-4 leading-relaxed">
                       We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. 
-                      By clicking "Accept All", you consent to our use of cookies. You can also choose to customize 
+                      By clicking &quot;Accept All&quot;, you consent to our use of cookies. You can also choose to customize 
                       your preferences or reject non-essential cookies.
                     </p>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
@@ -152,20 +155,20 @@ export default function CookieBanner() {
                   <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
                     <button
                       onClick={() => setShowPreferences(true)}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Settings className="w-4 h-4" />
                       Customize
                     </button>
                     <button
                       onClick={handleRejectAll}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                     >
                       Reject All
                     </button>
                     <button
                       onClick={handleAcceptAll}
-                      className="px-6 py-2 text-sm font-semibold text-white rounded-lg transition-all hover:opacity-90 shadow-md"
+                      className="px-6 py-2 text-sm font-semibold text-white rounded-lg transition-all hover:opacity-90 shadow-md cursor-pointer"
                       style={{ backgroundColor: '#cfa224' }}
                     >
                       Accept All

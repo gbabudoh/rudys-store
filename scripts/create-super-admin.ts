@@ -1,9 +1,20 @@
-require('dotenv').config({ path: '.env.local' });
-const mysql = require('mysql2/promise');
-const bcrypt = require('bcryptjs');
+import mysql, { RowDataPacket } from 'mysql2/promise';
+import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
+
+interface AdminUser extends RowDataPacket {
+  id: number;
+}
 
 async function createSuperAdmin() {
-  let connection;
+  let connection: mysql.Connection | undefined;
 
   try {
     // Create connection
@@ -18,7 +29,7 @@ async function createSuperAdmin() {
     console.log('Connected to database');
 
     // Check if super admin already exists
-    const [existing] = await connection.execute(
+    const [existing] = await connection.execute<AdminUser[]>(
       'SELECT id FROM admin_users WHERE email = ?',
       ['admin@rudystore.com']
     );
@@ -72,7 +83,7 @@ async function createSuperAdmin() {
     }
 
     // Also create a basic admin for testing
-    const [existingAdmin] = await connection.execute(
+    const [existingAdmin] = await connection.execute<AdminUser[]>(
       'SELECT id FROM admin_users WHERE email = ?',
       ['staff@rudystore.com']
     );
@@ -82,7 +93,7 @@ async function createSuperAdmin() {
       const adminPasswordHash = await bcrypt.hash(adminPassword, 10);
 
       // Get super admin ID for created_by
-      const [superAdmin] = await connection.execute(
+      const [superAdmin] = await connection.execute<AdminUser[]>(
         'SELECT id FROM admin_users WHERE email = ?',
         ['admin@rudystore.com']
       );
@@ -109,7 +120,8 @@ async function createSuperAdmin() {
 
     console.log('\n✅ Setup complete!');
   } catch (error) {
-    console.error('Error creating super admin:', error);
+    const err = error as Error;
+    console.error('Error creating super admin:', err.message);
     process.exit(1);
   } finally {
     if (connection) {
@@ -119,4 +131,3 @@ async function createSuperAdmin() {
 }
 
 createSuperAdmin();
-

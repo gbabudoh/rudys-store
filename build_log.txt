@@ -1,0 +1,31 @@
+
+> rudy-store@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Ôû▓ Next.js 16.0.0 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ Ô£ô Compiled successfully in 34.0s
+   Running TypeScript ...
+Failed to compile.
+
+.next/dev/types/validator.ts:468:31
+Type error: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/customers/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/customers/[id]">'.
+  Types of property 'PATCH' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ success: boolean; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+
+  466 |   type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/customers/[id]">> = Specific
+  467 |   const handler = {} as typeof import("../../../app/api/admin/customers/[id]/route.js")
+> 468 |   type __Check = __IsExpected<typeof handler>
+      |                               ^
+  469 |   // @ts-ignore
+  470 |   type __Unused = __Check
+  471 | }
+Next.js build worker exited with code: 1 and signal: null

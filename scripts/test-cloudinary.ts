@@ -2,11 +2,18 @@
  * Test Cloudinary Connection
  * 
  * This script tests the Cloudinary connection using environment variables
- * Run with: node scripts/test-cloudinary.js
+ * Run with: npx tsx scripts/test-cloudinary.ts
  */
 
-require('dotenv').config({ path: '.env.local' });
-const { v2 as cloudinary } = require('cloudinary');
+import dotenv from 'dotenv';
+import { v2 as cloudinary } from 'cloudinary';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
 async function main() {
   console.log('🔍 Testing Cloudinary connection...\n');
@@ -38,7 +45,7 @@ async function main() {
 
   console.log('✅ Environment variables found');
   console.log(`   Cloud Name: ${process.env.CLOUDINARY_CLOUD_NAME}`);
-  console.log(`   API Key: ${process.env.CLOUDINARY_API_KEY.substring(0, 10)}...`);
+  console.log(`   API Key: ${process.env.CLOUDINARY_API_KEY?.substring(0, 10)}...`);
   console.log(`   API Secret: ${process.env.CLOUDINARY_API_SECRET ? '***' : 'Not set'}\n`);
 
   // Test connection
@@ -55,14 +62,14 @@ async function main() {
       process.exit(1);
     }
   } catch (error) {
+    const err = error as { message: string, http_code?: number };
     console.error('❌ Error testing Cloudinary connection:');
-    console.error(`   ${error.message}\n`);
-    if (error.http_code) {
-      console.error(`   HTTP Code: ${error.http_code}`);
+    console.error(`   ${err.message}\n`);
+    if (err.http_code) {
+      console.error(`   HTTP Code: ${err.http_code}`);
     }
     process.exit(1);
   }
 }
 
 main();
-

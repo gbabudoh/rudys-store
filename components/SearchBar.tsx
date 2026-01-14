@@ -44,23 +44,26 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
 
   // Search products
   useEffect(() => {
-    if (searchQuery.trim().length < 2) {
-      setSearchResults([]);
-      setShowResults(false);
+    const query = searchQuery.trim();
+    if (query.length < 2) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (searchResults.length > 0) setSearchResults([]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (showResults) setShowResults(false);
       return;
     }
 
     setIsSearching(true);
     const timer = setTimeout(() => {
       const products = getAllProducts();
-      const query = searchQuery.toLowerCase();
+      const lowerQuery = query.toLowerCase();
       
       const results = products.filter(product => 
-        product.name.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query) ||
-        product.category.toLowerCase().includes(query) ||
-        product.colors.some(color => color.toLowerCase().includes(query)) ||
-        product.features.some(feature => feature.toLowerCase().includes(query))
+        product.name.toLowerCase().includes(lowerQuery) ||
+        product.description.toLowerCase().includes(lowerQuery) ||
+        product.category.toLowerCase().includes(lowerQuery) ||
+        product.colors.some(color => color.toLowerCase().includes(lowerQuery)) ||
+        product.features.some(feature => feature.toLowerCase().includes(lowerQuery))
       );
 
       setSearchResults(results);
@@ -69,7 +72,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
     }, 300); // Debounce search
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, searchResults.length, showResults]);
 
   const handleClearSearch = () => {
     setSearchQuery('');
@@ -118,7 +121,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
           {searchQuery && (
             <button
               onClick={handleClearSearch}
-              className="text-gray-400 hover:text-gray-600 p-1"
+              className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
               title="Clear search"
             >
               <XIcon className="w-4 h-4" />
@@ -127,7 +130,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
           <button
             onClick={handleSearch}
             disabled={!searchQuery.trim()}
-            className="bg-black text-white px-3 py-1 rounded-full hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+            className="bg-black text-white px-3 py-1 rounded-full hover:bg-gray-800 disabled:bg-gray-300 cursor-pointer disabled:cursor-not-allowed transition-colors text-sm font-medium"
             title="Search"
           >
             Find
@@ -154,9 +157,9 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
                 {searchResults.map((product) => (
                   <Link
                     key={product.id}
-                    href={`/product/${product.id}`}
+                    href={`/product/${product.slug}`}
                     onClick={handleResultClick}
-                    className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     {/* Product Image */}
                     <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
@@ -218,7 +221,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
                   <Link
                     href={`/products?search=${encodeURIComponent(searchQuery)}`}
                     onClick={handleResultClick}
-                    className="block text-center text-sm font-semibold hover:underline"
+                    className="block text-center text-sm font-semibold hover:underline cursor-pointer"
                     style={{ color: '#cfa224' }}
                   >
                     View all {searchResults.length} results →

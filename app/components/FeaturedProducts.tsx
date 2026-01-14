@@ -3,19 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
+import { type Product } from '@/lib/products';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  isNew?: boolean;
-  isOnSale?: boolean;
-  discount?: number;
-}
+// Local interface removed
 
 interface FeaturedProductsProps {
   title: string;
@@ -86,7 +76,7 @@ export default function FeaturedProducts({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+                className={`px-6 py-2 rounded-md font-medium transition-all duration-200 cursor-pointer ${
                   activeTab === tab.id
                     ? 'bg-white text-purple-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
@@ -126,7 +116,7 @@ export default function FeaturedProducts({
         <div className="text-center mt-12">
           <Link 
             href="/products"
-            className="inline-block text-white px-8 py-3 rounded-lg font-medium transition-all shadow-md hover:shadow-lg"
+            className="inline-block text-white px-8 py-3 rounded-lg font-medium transition-all shadow-md hover:shadow-lg cursor-pointer"
             style={{ backgroundColor: '#cfa224' }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#b8901f';

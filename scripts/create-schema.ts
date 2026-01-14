@@ -1,8 +1,13 @@
-// Database schema creation script
-require('dotenv').config({ path: '.env.local' });
-const mysql = require('mysql2/promise');
-const fs = require('fs');
-const path = require('path');
+import mysql, { RowDataPacket } from 'mysql2/promise';
+import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
 async function createSchema() {
   const config = {
@@ -35,7 +40,7 @@ async function createSchema() {
     console.log('');
 
     // Verify tables were created
-    const [tables] = await connection.execute('SHOW TABLES');
+    const [tables] = await connection.execute<RowDataPacket[]>('SHOW TABLES');
     console.log(`📋 Created ${tables.length} tables:`);
     tables.forEach((table, index) => {
       const tableName = Object.values(table)[0];
@@ -47,13 +52,13 @@ async function createSchema() {
     console.log('✨ Database schema setup completed!');
     process.exit(0);
   } catch (error) {
+    const err = error as Error;
     console.error('');
     console.error('❌ Schema creation failed!');
-    console.error('Error:', error.message);
+    console.error('Error:', err.message);
     console.error('');
     process.exit(1);
   }
 }
 
 createSchema();
-

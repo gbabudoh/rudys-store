@@ -1,5 +1,6 @@
 export interface Product {
   id: string;
+  slug: string;
   name: string;
   price: number;
   originalPrice?: number;
@@ -20,12 +21,16 @@ export interface Product {
   features: string[];
   fullDescription: string;
   additionalInfo: Record<string, string>;
+  gender?: string;
+  brand?: string;
+  subcategory?: string;
 }
 
 export const products: Product[] = [
   // T-Shirts
   {
     id: '1',
+    slug: 'premium-cotton-t-shirt',
     name: 'Premium Cotton T-Shirt',
     price: 29.99,
     originalPrice: 39.99,
@@ -75,6 +80,7 @@ Care Instructions:
   // Shirts
   {
     id: '2',
+    slug: 'classic-oxford-shirt',
     name: 'Classic Oxford Shirt',
     price: 59.99,
     originalPrice: 79.99,
@@ -124,6 +130,7 @@ Perfect for:
   // Trousers
   {
     id: '3',
+    slug: 'slim-fit-chino-trousers',
     name: 'Slim Fit Chino Trousers',
     price: 69.99,
     description: 'Modern slim fit chinos with stretch comfort. Versatile and stylish.',
@@ -171,6 +178,7 @@ Features:
   // Crocs/Footwear
   {
     id: '4',
+    slug: 'classic-crocs-clogs',
     name: 'Classic Crocs Clogs',
     price: 49.99,
     originalPrice: 59.99,
@@ -228,6 +236,7 @@ Care Instructions:
   // Dresses
   {
     id: '5',
+    slug: 'elegant-summer-dress',
     name: 'Elegant Summer Dress',
     price: 89.99,
     originalPrice: 119.99,
@@ -283,6 +292,7 @@ Care Instructions:
   // Bags
   {
     id: '6',
+    slug: 'leather-crossbody-bag',
     name: 'Leather Crossbody Bag',
     price: 129.99,
     originalPrice: 179.99,
@@ -339,6 +349,7 @@ Care Instructions:
   // Sunglasses
   {
     id: '7',
+    slug: 'designer-aviator-sunglasses',
     name: 'Designer Aviator Sunglasses',
     price: 149.99,
     originalPrice: 199.99,
@@ -397,6 +408,7 @@ Care Instructions:
   // Sneakers
   {
     id: '8',
+    slug: 'premium-leather-sneakers',
     name: 'Premium Leather Sneakers',
     price: 129.99,
     description: 'Classic leather sneakers with cushioned sole. Style meets comfort.',
@@ -446,6 +458,10 @@ Perfect for:
 
 export function getProductById(id: string): Product | undefined {
   return products.find(p => p.id === id);
+}
+
+export function getProductBySlug(slug: string): Product | undefined {
+  return products.find(p => p.slug === slug);
 }
 
 export function getProductsByCategory(category: string): Product[] {

@@ -1,5 +1,5 @@
 // Test the database API endpoint
-const http = require('http');
+import http from 'http';
 
 const port = process.env.PORT || 3000;
 const url = `http://localhost:${port}/api/db/test`;
@@ -31,7 +31,8 @@ const req = http.get(url, (res) => {
         process.exit(1);
       }
     } catch (error) {
-      console.error('❌ Failed to parse response:', error.message);
+      const err = error as Error;
+      console.error('❌ Failed to parse response:', err.message);
       console.log('Raw response:', data);
       process.exit(1);
     }
@@ -39,9 +40,10 @@ const req = http.get(url, (res) => {
 });
 
 req.on('error', (error) => {
+  const err = error as Error;
   console.error('');
   console.error('❌ Failed to connect to API endpoint!');
-  console.error('Error:', error.message);
+  console.error('Error:', err.message);
   console.error('');
   console.error('💡 Make sure the Next.js dev server is running:');
   console.error('   npm run dev');
@@ -55,4 +57,3 @@ req.setTimeout(5000, () => {
   console.error('💡 Make sure the Next.js dev server is running');
   process.exit(1);
 });
-

@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
+import { useQuickView } from '@/context/QuickViewContext';
+import { type Product } from '@/lib/products';
 // Simple icon components to replace lucide-react
 const Heart = ({ className }: { className?: string }) => (
   <svg className={className || "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,19 +33,7 @@ const Eye = ({ className }: { className?: string }) => (
   </svg>
 );
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  images?: string[];
-  image?: string;
-  rating: number;
-  reviews: number;
-  isNew?: boolean;
-  isOnSale?: boolean;
-  discount?: number;
-}
+// Local interface removed in favor of shared type
 
 interface ProductCardProps {
   product: Product;
@@ -59,18 +51,36 @@ export default function ProductCard({
   viewMode = 'grid'
 }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const { openQuickView } = useQuickView();
+
+  const isWishlisted = isInWishlist(product.id);
 
   const handleWishlistToggle = () => {
-    setIsWishlisted(!isWishlisted);
+    toggleWishlist({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || '/placeholder.png',
+      slug: product.slug || product.id
+    });
     onAddToWishlist?.(product);
   };
 
   const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || '/placeholder.png',
+      quantity: 1
+    });
     onAddToCart?.(product);
   };
 
   const handleQuickView = () => {
+    openQuickView(product);
     onQuickView?.(product);
   };
 
@@ -85,9 +95,9 @@ export default function ProductCard({
         <div className="flex flex-col sm:flex-row gap-4 p-4">
           {/* Image Section */}
           <div className="relative w-full sm:w-48 h-48 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden">
-            <Link href={`/product/${product.id}`} className="block w-full h-full">
+            <Link href={`/product/${product.slug || product.id}`} className="block w-full h-full">
               <Image
-                src={product.images?.[0] || product.image || '/placeholder.png'}
+                src={product.images?.[0] || '/placeholder.png'}
                 alt={product.name}
                 fill
                 className="object-cover"
@@ -112,7 +122,7 @@ export default function ProductCard({
             {/* Wishlist Button */}
             <button
               onClick={handleWishlistToggle}
-              className={`absolute top-2 right-2 p-2 rounded-full transition-colors ${
+              className={`absolute top-2 right-2 p-2 rounded-full transition-colors cursor-pointer ${
                 isWishlisted 
                   ? 'bg-red-500 text-white' 
                   : 'bg-white/90 text-gray-600 hover:bg-red-500 hover:text-white'
@@ -178,7 +188,7 @@ export default function ProductCard({
               {/* Add to Cart Button */}
               <button
                 onClick={handleAddToCart}
-                className="text-white px-6 py-2.5 rounded-lg font-medium transition-all hover:opacity-90 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg"
+                className="text-white px-6 py-2.5 rounded-lg font-medium transition-all hover:opacity-90 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg cursor-pointer"
                 style={{ backgroundColor: '#cfa224' }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#b8901f';
@@ -206,9 +216,9 @@ export default function ProductCard({
     >
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden">
-        <Link href={`/product/${product.id}`} className="block w-full h-full">
+        <Link href={`/product/${product.slug || product.id}`} className="block w-full h-full">
           <Image
-            src={product.images?.[0] || product.image || '/placeholder.png'}
+            src={product.images?.[0] || '/placeholder.png'}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -237,11 +247,11 @@ export default function ProductCard({
 
         {/* Action Buttons */}
         <div className={`absolute top-3 right-3 flex flex-col space-y-2 transition-opacity duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
+          isHovered || isWishlisted ? 'opacity-100' : 'opacity-0'
         }`}>
           <button
             onClick={handleWishlistToggle}
-            className={`p-2 rounded-full transition-colors ${
+            className={`p-2 rounded-full transition-colors cursor-pointer ${
               isWishlisted 
                 ? 'bg-red-500 text-white' 
                 : 'bg-white text-gray-600 hover:bg-red-500 hover:text-white'
@@ -251,7 +261,7 @@ export default function ProductCard({
           </button>
           <button
             onClick={handleQuickView}
-            className="p-2 bg-white text-gray-600 rounded-full hover:bg-purple-500 hover:text-white transition-colors"
+            className="p-2 bg-white text-gray-600 rounded-full hover:bg-purple-500 hover:text-white transition-colors cursor-pointer"
           >
             <Eye className="w-4 h-4" />
           </button>
@@ -263,7 +273,7 @@ export default function ProductCard({
         }`}>
           <button
             onClick={handleAddToCart}
-            className="w-full text-white py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center space-x-2 shadow-md hover:shadow-lg"
+            className="w-full text-white py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center space-x-2 shadow-md hover:shadow-lg cursor-pointer"
             style={{ backgroundColor: '#cfa224' }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#b8901f';
@@ -279,7 +289,7 @@ export default function ProductCard({
       </div>
 
       {/* Product Info */}
-      <Link href={`/product/${product.id}`}>
+      <Link href={`/product/${product.slug || product.id}`}>
         <div className="p-4 cursor-pointer">
           {/* Rating */}
           <div className="flex items-center space-x-1 mb-2">

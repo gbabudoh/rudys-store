@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
-import { getAllProducts } from '@/lib/products';
+import { getAllProducts, type Product } from '@/lib/products';
 // Simple icon components to replace lucide-react
-const Filter = ({ className }: { className?: string }) => (
+
+const SlidersHorizontal = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
   </svg>
 );
 
@@ -22,117 +23,8 @@ const List = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const SlidersHorizontal = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-  </svg>
-);
 
 // Sample products for Rudy Collections
-const collectionsProducts = [
-  {
-    id: '1',
-    name: 'Premium Cotton T-Shirt',
-    price: 29.99,
-    originalPrice: 39.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.8,
-    reviews: 124,
-    isNew: true,
-    isOnSale: true,
-    discount: 25,
-    category: 'Tops',
-    gender: 'Unisex'
-  },
-  {
-    id: '2',
-    name: 'Designer Jeans',
-    price: 89.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.7,
-    reviews: 89,
-    isNew: false,
-    isOnSale: false,
-    category: 'Bottoms',
-    gender: 'Unisex'
-  },
-  {
-    id: '3',
-    name: 'Casual Blazer',
-    price: 149.99,
-    originalPrice: 199.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.9,
-    reviews: 67,
-    isNew: false,
-    isOnSale: true,
-    discount: 25,
-    category: 'Outerwear',
-    gender: 'Unisex'
-  },
-  {
-    id: '4',
-    name: 'Summer Dress',
-    price: 79.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.6,
-    reviews: 234,
-    isNew: true,
-    isOnSale: false,
-    category: 'Dresses',
-    gender: 'Women'
-  },
-  {
-    id: '5',
-    name: 'Polo Shirt',
-    price: 49.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.8,
-    reviews: 156,
-    isNew: false,
-    isOnSale: false,
-    category: 'Tops',
-    gender: 'Men'
-  },
-  {
-    id: '6',
-    name: 'Leather Jacket',
-    price: 299.99,
-    originalPrice: 399.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.9,
-    reviews: 78,
-    isNew: false,
-    isOnSale: true,
-    discount: 25,
-    category: 'Outerwear',
-    gender: 'Unisex'
-  },
-  {
-    id: '7',
-    name: 'Chino Pants',
-    price: 69.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.5,
-    reviews: 189,
-    isNew: true,
-    isOnSale: false,
-    category: 'Bottoms',
-    gender: 'Men'
-  },
-  {
-    id: '8',
-    name: 'Knit Sweater',
-    price: 99.99,
-    image: '/api/placeholder/300/300',
-    rating: 4.7,
-    reviews: 92,
-    isNew: false,
-    isOnSale: false,
-    category: 'Tops',
-    gender: 'Unisex'
-  }
-];
 
 const categories = ['All', 'T-Shirts', 'Shirts', 'Trousers', 'Dresses'];
 
@@ -144,7 +36,7 @@ export default function CollectionsPage() {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
   const [sortBy, setSortBy] = useState('featured');
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [productsPerPage] = useState(12);
   const [displayedCount, setDisplayedCount] = useState(12);
@@ -154,21 +46,11 @@ export default function CollectionsPage() {
   const collectionsProducts = allProducts
     .filter(p => p.productType === 'clothing')
     .map(product => ({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      originalPrice: product.originalPrice,
-      image: product.images[0],
-      rating: product.rating,
-      reviews: product.reviews,
-      isNew: product.isNew,
-      isOnSale: product.isOnSale,
-      discount: product.discount,
-      category: product.category,
-      gender: (product as any).gender || 'Unisex',
-      brand: (product as any).brand || 'Rudy Store',
+      ...product,
+      gender: product.gender || 'Unisex',
+      brand: product.brand || 'Rudy Store',
       sizes: product.sizes || [],
-      subcategory: (product as any).subcategory || product.category,
+      subcategory: product.subcategory || product.category,
     }));
 
   // Extract unique values for filters
@@ -214,18 +96,19 @@ export default function CollectionsPage() {
 
   // Reset displayed count when filters change
   useEffect(() => {
+    // eslint-disable-next-line
     setDisplayedCount(productsPerPage);
   }, [selectedCategory, selectedGender, selectedBrands, selectedSizes, selectedSubcategories, priceRange, sortBy, productsPerPage]);
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: Product) => {
     console.log('Added to cart:', product);
   };
 
-  const handleAddToWishlist = (product: any) => {
+  const handleAddToWishlist = (product: Product) => {
     console.log('Added to wishlist:', product);
   };
 
-  const handleQuickView = (product: any) => {
+  const handleQuickView = (product: Product) => {
     console.log('Quick view:', product);
   };
 

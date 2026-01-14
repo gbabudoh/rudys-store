@@ -8,15 +8,18 @@ import { getAllProducts } from '@/lib/products';
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      text: "Hi! 👋 Welcome to Rudy Store. I'm your shopping assistant. How can I help you today?",
-      sender: 'bot',
-      timestamp: new Date(),
-      quickReplies: ['Show me products', 'Size guide', 'Shipping info', 'Track my order']
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    // Lazy initialization to keep it pure during render
+    return [
+      {
+        id: '1',
+        text: "Hi! 👋 Welcome to Rudy Store. I'm your shopping assistant. How can I help you today?",
+        sender: 'bot',
+        timestamp: new Date(),
+        quickReplies: ['Show me products', 'Size guide', 'Shipping info', 'Track my order']
+      }
+    ];
+  });
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,8 +37,9 @@ export default function Chatbot() {
     if (!text.trim()) return;
 
     // Add user message
+    const timestamp = new Date();
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: timestamp.getTime().toString(),
       text: text.trim(),
       sender: 'user',
       timestamp: new Date(),
@@ -50,8 +54,9 @@ export default function Chatbot() {
       const products = getAllProducts();
       const response = await chatbotEngine.current.processMessage(text, products);
 
+      const botTimestamp = new Date();
       const botMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: botTimestamp.getTime().toString(),
         text: response.message,
         sender: 'bot',
         timestamp: new Date(),
@@ -78,7 +83,7 @@ export default function Chatbot() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-all z-50 flex items-center gap-2 border-4 border-yellow-500"
+        className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-all z-50 flex items-center gap-2 border-4 border-yellow-500 cursor-pointer"
         aria-label="Open chat"
       >
         <MessageCircle className="w-6 h-6" />
@@ -105,14 +110,14 @@ export default function Chatbot() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsMinimized(!isMinimized)}
-            className="hover:bg-gray-800 p-1 rounded"
+            className="hover:bg-gray-800 p-1 rounded cursor-pointer"
             aria-label={isMinimized ? 'Maximize' : 'Minimize'}
           >
             <Minimize2 className="w-4 h-4" />
           </button>
           <button
             onClick={() => setIsOpen(false)}
-            className="hover:bg-gray-800 p-1 rounded"
+            className="hover:bg-gray-800 p-1 rounded cursor-pointer"
             aria-label="Close chat"
           >
             <X className="w-4 h-4" />
@@ -155,7 +160,7 @@ export default function Chatbot() {
                       <button
                         key={index}
                         onClick={() => handleQuickReply(reply)}
-                        className="text-xs bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-50 transition-colors"
+                        className="text-xs bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-50 transition-colors cursor-pointer"
                       >
                         {reply}
                       </button>
@@ -195,7 +200,7 @@ export default function Chatbot() {
               <button
                 onClick={() => handleSendMessage(inputValue)}
                 disabled={!inputValue.trim() || isTyping}
-                className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 aria-label="Send message"
               >
                 <Send className="w-5 h-5" />

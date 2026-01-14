@@ -35,11 +35,7 @@ const Eye = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const Filter = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-  </svg>
-);
+
 
 interface Product {
   id: string;
@@ -123,7 +119,7 @@ export default function ProductManagement({
         </div>
         <button
           onClick={onAddProduct}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all"
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all cursor-pointer"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add Product
@@ -151,7 +147,7 @@ export default function ProductManagement({
           <div className="relative">
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
+              onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'inactive' | 'draft')}
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 rounded-lg sm:text-sm"
             >
               <option value="all">All Status</option>
@@ -165,7 +161,7 @@ export default function ProductManagement({
           <div className="relative">
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'name' | 'price' | 'stock' | 'created')}
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 rounded-lg sm:text-sm"
             >
               <option value="created">Newest First</option>
@@ -207,7 +203,7 @@ export default function ProductManagement({
               {filteredProducts.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
-                    No products found. Click "Add Product" to create your first product.
+                    No products found. Click &quot;Add Product&quot; to create your first product.
                   </td>
                 </tr>
               ) : (
@@ -259,7 +255,7 @@ export default function ProductManagement({
                         {onViewProduct && (
                           <button
                             onClick={() => onViewProduct(product)}
-                            className="text-purple-600 hover:text-purple-900 p-1 rounded hover:bg-purple-50 transition-colors"
+                            className="text-purple-600 hover:text-purple-900 p-1 rounded hover:bg-purple-50 transition-colors cursor-pointer"
                             title="View"
                           >
                             <Eye className="w-4 h-4" />
@@ -268,7 +264,7 @@ export default function ProductManagement({
                         {onEditProduct && (
                           <button
                             onClick={() => onEditProduct(product)}
-                            className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50 transition-colors"
+                            className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50 transition-colors cursor-pointer"
                             title="Edit"
                           >
                             <Edit className="w-4 h-4" />
@@ -277,7 +273,7 @@ export default function ProductManagement({
                         {onDeleteProduct && (
                           <button
                             onClick={() => onDeleteProduct(product.id)}
-                            className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                            className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors cursor-pointer"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -300,10 +296,10 @@ export default function ProductManagement({
               <span className="font-medium">{filteredProducts.length}</span> products
             </div>
             <div className="flex space-x-2">
-              <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled>
                 Previous
               </button>
-              <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled>
                 Next
               </button>
             </div>

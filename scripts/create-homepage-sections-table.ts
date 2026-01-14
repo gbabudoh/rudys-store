@@ -1,5 +1,12 @@
-const mysql = require('mysql2/promise');
-require('dotenv').config({ path: '.env.local' });
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
 async function createHomepageSectionsTable() {
   let connection;
@@ -107,7 +114,8 @@ async function createHomepageSectionsTable() {
     console.log('\nHomepage sections table setup complete!');
 
   } catch (error) {
-    console.error('Error:', error.message);
+    const err = error as Error;
+    console.error('Error:', err.message);
     process.exit(1);
   } finally {
     if (connection) {

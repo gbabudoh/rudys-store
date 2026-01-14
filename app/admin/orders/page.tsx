@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 // Simple icon components to replace lucide-react
 const Search = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -8,11 +8,6 @@ const Search = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const Filter = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-  </svg>
-);
 
 const Eye = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,23 +22,6 @@ const Package = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const DollarSign = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-  </svg>
-);
-
-const Calendar = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-  </svg>
-);
-
-const User = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-  </svg>
-);
 
 const CheckCircle = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,85 +73,86 @@ const statusIcons = {
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>([
+    {
+      id: '1',
+      orderNumber: 'RUDY-001',
+      customerName: 'John Smith',
+      customerEmail: 'john@example.com',
+      status: 'delivered',
+      total: 299.99,
+      items: 3,
+      date: '2024-01-15',
+      shippingAddress: '123 Main St, New York, NY 10001',
+      paymentMethod: 'Credit Card',
+      trackingNumber: 'TRK123456789'
+    },
+    {
+      id: '2',
+      orderNumber: 'RUDY-002',
+      customerName: 'Sarah Johnson',
+      customerEmail: 'sarah@example.com',
+      status: 'shipped',
+      total: 149.99,
+      items: 2,
+      date: '2024-01-16',
+      shippingAddress: '456 Oak Ave, Los Angeles, CA 90210',
+      paymentMethod: 'PayPal',
+      trackingNumber: 'TRK987654321'
+    },
+    {
+      id: '3',
+      orderNumber: 'RUDY-003',
+      customerName: 'Mike Davis',
+      customerEmail: 'mike@example.com',
+      status: 'processing',
+      total: 89.99,
+      items: 1,
+      date: '2024-01-17',
+      shippingAddress: '789 Pine St, Chicago, IL 60601',
+      paymentMethod: 'Credit Card'
+    },
+    {
+      id: '4',
+      orderNumber: 'RUDY-004',
+      customerName: 'Emily Brown',
+      customerEmail: 'emily@example.com',
+      status: 'pending',
+      total: 199.99,
+      items: 2,
+      date: '2024-01-18',
+      shippingAddress: '321 Elm St, Houston, TX 77001',
+      paymentMethod: 'Debit Card'
+    },
+    {
+      id: '5',
+      orderNumber: 'RUDY-005',
+      customerName: 'David Wilson',
+      customerEmail: 'david@example.com',
+      status: 'cancelled',
+      total: 79.99,
+      items: 1,
+      date: '2024-01-19',
+      shippingAddress: '654 Maple Dr, Phoenix, AZ 85001',
+      paymentMethod: 'Credit Card'
+    }
+  ]);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    // Sample orders data
-    const sampleOrders: Order[] = [
-      {
-        id: '1',
-        orderNumber: 'RUDY-001',
-        customerName: 'John Smith',
-        customerEmail: 'john@example.com',
-        status: 'delivered',
-        total: 299.99,
-        items: 3,
-        date: '2024-01-15',
-        shippingAddress: '123 Main St, New York, NY 10001',
-        paymentMethod: 'Credit Card',
-        trackingNumber: 'TRK123456789'
-      },
-      {
-        id: '2',
-        orderNumber: 'RUDY-002',
-        customerName: 'Sarah Johnson',
-        customerEmail: 'sarah@example.com',
-        status: 'shipped',
-        total: 149.99,
-        items: 2,
-        date: '2024-01-16',
-        shippingAddress: '456 Oak Ave, Los Angeles, CA 90210',
-        paymentMethod: 'PayPal',
-        trackingNumber: 'TRK987654321'
-      },
-      {
-        id: '3',
-        orderNumber: 'RUDY-003',
-        customerName: 'Mike Davis',
-        customerEmail: 'mike@example.com',
-        status: 'processing',
-        total: 89.99,
-        items: 1,
-        date: '2024-01-17',
-        shippingAddress: '789 Pine St, Chicago, IL 60601',
-        paymentMethod: 'Credit Card'
-      },
-      {
-        id: '4',
-        orderNumber: 'RUDY-004',
-        customerName: 'Emily Brown',
-        customerEmail: 'emily@example.com',
-        status: 'pending',
-        total: 199.99,
-        items: 2,
-        date: '2024-01-18',
-        shippingAddress: '321 Elm St, Houston, TX 77001',
-        paymentMethod: 'Debit Card'
-      },
-      {
-        id: '5',
-        orderNumber: 'RUDY-005',
-        customerName: 'David Wilson',
-        customerEmail: 'david@example.com',
-        status: 'cancelled',
-        total: 79.99,
-        items: 1,
-        date: '2024-01-19',
-        shippingAddress: '654 Maple Dr, Phoenix, AZ 85001',
-        paymentMethod: 'Credit Card'
-      }
-    ];
-    setOrders(sampleOrders);
-  }, []);
-
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchLower = searchTerm.toLowerCase();
+    const orderNum = order.orderNumber?.toLowerCase() || '';
+    const custName = order.customerName?.toLowerCase() || '';
+    const custEmail = order.customerEmail?.toLowerCase() || '';
+    
+    const matchesSearch = orderNum.includes(searchLower) ||
+                         custName.includes(searchLower) ||
+                         custEmail.includes(searchLower);
+                         
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -221,7 +200,7 @@ export default function OrdersPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm cursor-pointer"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -291,7 +270,7 @@ export default function OrdersPage() {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => handleViewOrder(order)}
-                          className="text-purple-600 hover:text-purple-900 p-1"
+                          className="text-purple-600 hover:text-purple-900 p-1 cursor-pointer"
                           title="View Order Details"
                         >
                           <Eye className="w-4 h-4" />
@@ -299,7 +278,7 @@ export default function OrdersPage() {
                         <select
                           value={order.status}
                           onChange={(e) => handleUpdateStatus(order.id, e.target.value as Order['status'])}
-                          className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-purple-500 focus:border-transparent"
+                          className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-purple-500 focus:border-transparent cursor-pointer"
                         >
                           <option value="pending">Pending</option>
                           <option value="processing">Processing</option>
@@ -324,7 +303,7 @@ export default function OrdersPage() {
                 <h3 className="text-lg font-medium text-gray-900">Order Details</h3>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 cursor-pointer"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

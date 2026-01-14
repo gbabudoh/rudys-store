@@ -1,8 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env.local') });
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import mysql, { RowDataPacket } from 'mysql2/promise';
 
-const mysql = require('mysql2/promise');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
 async function createHomepageSections() {
   let connection;
@@ -14,7 +19,7 @@ async function createHomepageSections() {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      port: process.env.DB_PORT || 3306,
+      port: parseInt(process.env.DB_PORT || '3306'),
     });
 
     console.log('Connected to database');
@@ -39,14 +44,16 @@ async function createHomepageSections() {
     console.log('✅ Homepage sections table created successfully!');
     
     // Verify the sections were created
-    const [sections] = await connection.execute('SELECT * FROM homepage_sections');
+    const [sections] = await connection.execute<RowDataPacket[]>('SELECT * FROM homepage_sections');
     console.log('\n📋 Created sections:');
-    sections.forEach(section => {
-      console.log(`  - ${section.section_key}: ${section.title}`);
+    sections.forEach((section) => {
+      const s = section as { section_key: string, title: string };
+      console.log(`  - ${s.section_key}: ${s.title}`);
     });
 
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    const err = error as Error;
+    console.error('❌ Error:', err.message);
     process.exit(1);
   } finally {
     if (connection) {
@@ -56,4 +63,3 @@ async function createHomepageSections() {
 }
 
 createHomepageSections();
-
