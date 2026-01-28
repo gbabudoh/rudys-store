@@ -175,7 +175,13 @@ function ProductContent({ product }: { product: Product }) {
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-8 font-medium">
           <Link href="/" className="hover:text-[#cfa224]">Home</Link>
           <span>/</span>
-          <Link href="/collections" className="hover:text-[#cfa224]">Collections</Link>
+          {product.brand === 'Rudy Luxury' ? (
+            <Link href="/luxury" className="hover:text-[#cfa224]">Luxury</Link>
+          ) : product.brand === 'Slide & Sole' ? (
+            <Link href="/crocs" className="hover:text-[#cfa224]">Slide & Sole</Link>
+          ) : (
+            <Link href="/collections" className="hover:text-[#cfa224]">Collections</Link>
+          )}
           <span>/</span>
           <span className="text-gray-900">{product.name}</span>
         </nav>

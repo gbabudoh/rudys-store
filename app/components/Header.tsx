@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
+import { getProductBySlug } from '@/lib/products';
 // Simple icon components to replace lucide-react
 const ShoppingBag = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-6 h-6"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,6 +108,39 @@ export default function Header() {
   const pathname = usePathname();
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  const handleBackClick = () => {
+    // Logic for dynamic back button
+    if (pathname.includes('/product/')) {
+      const slug = pathname.split('/').pop();
+      if (slug) {
+        const product = getProductBySlug(slug);
+        
+        if (product) {
+          if (product.brand === 'Rudy Luxury') {
+            router.push('/luxury');
+            return;
+          }
+          if (product.brand === 'Slide & Sole') {
+            router.push('/crocs');
+            return;
+          }
+        }
+      }
+      // Default for products is collections
+      router.push('/collections');
+      return;
+    }
+
+    // From product list pages back to home
+    if (pathname === '/collections' || pathname === '/luxury' || pathname === '/crocs' || pathname === '/products') {
+      router.push('/');
+      return;
+    }
+
+    // Default catch-all
+    router.push('/');
+  };
+
   useEffect(() => {
     const frame = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(frame);
@@ -144,7 +178,7 @@ export default function Header() {
             <div className="flex items-center h-14 px-4">
               {/* Back Button */}
               <button 
-                onClick={() => router.push('/')}
+                onClick={handleBackClick}
                 className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200"
               >
                 <span className="text-2xl font-bold text-[#201d1e] -ml-1">&lt;</span>
