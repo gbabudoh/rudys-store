@@ -123,7 +123,7 @@ export default function PWAInstallPrompt() {
           ) : (
             <button
               onClick={handleInstallClick}
-              className="w-full py-4 bg-[#201d1e] text-white font-black rounded-2xl shadow-xl shadow-black/10 active:scale-95 transition-transform flex items-center justify-center gap-2 group/btn"
+              className="w-full py-4 bg-[#201d1e] text-white font-black rounded-2xl shadow-xl shadow-black/10 active:scale-95 transition-transform flex items-center justify-center gap-2 group/btn cursor-pointer"
             >
               <Download className="w-5 h-5 group-hover/btn:animate-bounce" />
               Download & Install App
