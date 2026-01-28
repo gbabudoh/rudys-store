@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryOne } from '@/lib/db';
-import { hashPassword, getAdminById, canManageAdmin, verifyToken } from '@/lib/auth';
+import { hashPassword, getAdminById, canManageAdmin, verifyToken, AdminUser } from '@/lib/auth';
+
+interface AdminUserWithCreator extends AdminUser {
+  created_at: string;
+  created_by: number | null;
+  created_by_email: string | null;
+}
 
 // Middleware to verify admin authentication
 async function verifyAdminAuth(request: NextRequest) {
@@ -29,16 +35,17 @@ async function verifyAdminAuth(request: NextRequest) {
 // GET - Get a specific admin user
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await verifyAdminAuth(request);
     if (auth.error) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const currentUser = auth.user!;
-    const userId = parseInt(params.id);
+    const userId = parseInt(id);
 
     if (isNaN(userId)) {
       return NextResponse.json(
@@ -55,7 +62,7 @@ export async function GET(
       );
     }
 
-    const user = await queryOne<any>(
+    const user = await queryOne<AdminUserWithCreator>(
       `SELECT 
         au.id,
         au.email,
@@ -96,7 +103,7 @@ export async function GET(
         createdBy: user.created_by_email || 'System',
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Get user error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -108,16 +115,17 @@ export async function GET(
 // PUT - Update an admin user
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await verifyAdminAuth(request);
     if (auth.error) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const currentUser = auth.user!;
-    const userId = parseInt(params.id);
+    const userId = parseInt(id);
 
     if (isNaN(userId)) {
       return NextResponse.json(
@@ -146,7 +154,7 @@ export async function PUT(
 
     // Build update query dynamically
     const updates: string[] = [];
-    const values: any[] = [];
+    const values: (string | number | boolean | null | undefined)[] = [];
 
     if (email !== undefined) {
       // Check if email is already taken by another user
@@ -258,10 +266,17 @@ export async function PUT(
       values
     );
 
-    const updatedUser = await queryOne<any>(
+    const updatedUser = await queryOne<AdminUser & { created_at: string }>(
       'SELECT id, email, first_name, last_name, role, permissions, is_active, last_login, created_at FROM admin_users WHERE id = ?',
       [userId]
     );
+
+    if (!updatedUser) {
+      return NextResponse.json(
+        { error: 'Failed to fetch updated user' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -277,7 +292,7 @@ export async function PUT(
         createdAt: updatedUser.created_at,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Update user error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -289,16 +304,17 @@ export async function PUT(
 // DELETE - Delete an admin user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await verifyAdminAuth(request);
     if (auth.error) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const currentUser = auth.user!;
-    const userId = parseInt(params.id);
+    const userId = parseInt(id);
 
     if (isNaN(userId)) {
       return NextResponse.json(
@@ -341,7 +357,7 @@ export async function DELETE(
       success: true,
       message: 'User deactivated successfully',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Delete user error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },

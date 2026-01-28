@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/auth';
 
+interface BannerRow {
+  id: number;
+  title: string;
+  subtitle: string | null;
+  image_url: string;
+  link_url: string | null;
+  button_text: string | null;
+  is_active: boolean;
+  display_order: number;
+  start_date: string | null;
+  end_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // GET - Get a single banner
 export async function GET(
   request: NextRequest,
@@ -16,7 +31,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const banner = await queryOne(
+    const banner = await queryOne<BannerRow>(
       `SELECT * FROM banners WHERE id = ?`,
       [id]
     );
@@ -26,10 +41,11 @@ export async function GET(
     }
 
     return NextResponse.json({ banner });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error fetching banner:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch banner', details: error.message },
+      { error: 'Failed to fetch banner', details: errorMessage },
       { status: 500 }
     );
   }
@@ -62,7 +78,7 @@ export async function PUT(
     } = body;
 
     // Check if banner exists
-    const existingBanner = await queryOne(
+    const existingBanner = await queryOne<BannerRow>(
       `SELECT * FROM banners WHERE id = ?`,
       [id]
     );
@@ -98,16 +114,17 @@ export async function PUT(
       ]
     );
 
-    const updatedBanner = await queryOne(
+    const updatedBanner = await queryOne<BannerRow>(
       `SELECT * FROM banners WHERE id = ?`,
       [id]
     );
 
     return NextResponse.json({ banner: updatedBanner });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error updating banner:', error);
     return NextResponse.json(
-      { error: 'Failed to update banner', details: error.message },
+      { error: 'Failed to update banner', details: errorMessage },
       { status: 500 }
     );
   }
@@ -140,10 +157,11 @@ export async function DELETE(
     await query(`DELETE FROM banners WHERE id = ?`, [id]);
 
     return NextResponse.json({ message: 'Banner deleted successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error deleting banner:', error);
     return NextResponse.json(
-      { error: 'Failed to delete banner', details: error.message },
+      { error: 'Failed to delete banner', details: errorMessage },
       { status: 500 }
     );
   }

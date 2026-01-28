@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/auth';
 
+interface BannerRow {
+  id: number;
+  title: string;
+  subtitle: string | null;
+  image_url: string;
+  link_url: string | null;
+  button_text: string | null;
+  is_active: boolean;
+  display_order: number;
+  start_date: string | null;
+  end_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // GET - List all banners
 export async function GET(request: NextRequest) {
   try {
@@ -13,13 +28,14 @@ export async function GET(request: NextRequest) {
 
     const banners = await query(
       `SELECT * FROM banners ORDER BY display_order ASC, created_at DESC`
-    ) as any[];
+    ) as BannerRow[];
 
     return NextResponse.json({ banners: banners || [] });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error fetching banners:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch banners', details: error.message },
+      { error: 'Failed to fetch banners', details: errorMessage },
       { status: 500 }
     );
   }
@@ -54,7 +70,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result: any = await query(
+    const result = await query(
       `INSERT INTO banners (
         title, subtitle, image_url, link_url, button_text, 
         is_active, display_order, start_date, end_date
@@ -70,23 +86,24 @@ export async function POST(request: NextRequest) {
         start_date || null,
         end_date || null,
       ]
-    );
+    ) as { insertId: number };
 
-    const insertId = result?.insertId || result?.[0]?.insertId;
+    const insertId = result.insertId;
     if (!insertId) {
       throw new Error('Failed to get insert ID from database');
     }
 
-    const banner = await queryOne(
+    const banner = await queryOne<BannerRow>(
       `SELECT * FROM banners WHERE id = ?`,
       [insertId]
     );
 
     return NextResponse.json({ banner }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error creating banner:', error);
     return NextResponse.json(
-      { error: 'Failed to create banner', details: error.message },
+      { error: 'Failed to create banner', details: errorMessage },
       { status: 500 }
     );
   }

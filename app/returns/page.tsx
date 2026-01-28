@@ -2,38 +2,32 @@
 
 import Link from 'next/link';
 
-const RefreshCw = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const RefreshCw = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
   </svg>
 );
 
-const Calendar = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-  </svg>
-);
-
-const Package = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Package = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
   </svg>
 );
 
-const CheckCircle = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const CheckCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
-const XCircle = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const XCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
-const AlertCircle = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const AlertCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
@@ -62,13 +56,13 @@ export default function ReturnsPage() {
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Return Policy</h2>
               <div className="prose prose-lg max-w-none">
                 <p className="text-gray-700 mb-4">
-                  At Rudy's Store, we want you to be completely satisfied with your purchase. 
-                  If you're not happy with your order, we offer hassle-free returns and exchanges 
+                  At Rudy&apos;s Store, we want you to be completely satisfied with your purchase. 
+                  If you&apos;re not happy with your order, we offer hassle-free returns and exchanges 
                   within 30 days of delivery.
                 </p>
                 <p className="text-gray-700">
                   All items must be unworn, unwashed, and in their original packaging with tags attached. 
-                  We'll process your refund or exchange as soon as we receive your returned items.
+                  We&apos;ll process your refund or exchange as soon as we receive your returned items.
                 </p>
               </div>
             </div>
@@ -85,7 +79,7 @@ export default function ReturnsPage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Request a Return</h3>
                     <p className="text-gray-600">
                       Log into your account or contact our customer service team to initiate a return. 
-                      You'll need your order number and the items you'd like to return.
+                      You&apos;ll need your order number and the items you&apos;d like to return.
                     </p>
                   </div>
                 </div>
@@ -98,7 +92,7 @@ export default function ReturnsPage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Package Your Items</h3>
                     <p className="text-gray-600">
                       Place the items in their original packaging with tags attached. Include the 
-                      return authorization form we'll provide. Use the original shipping box if possible.
+                      return authorization form we&apos;ll provide. Use the original shipping box if possible.
                     </p>
                   </div>
                 </div>
@@ -123,8 +117,8 @@ export default function ReturnsPage() {
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Receive Your Refund</h3>
                     <p className="text-gray-600">
-                      Once we receive and inspect your return, we'll process your refund within 5-7 
-                      business days. You'll receive an email confirmation when it's complete.
+                      Once we receive and inspect your return, we&apos;ll process your refund within 5-7 
+                      business days. You&apos;ll receive an email confirmation when it&apos;s complete.
                     </p>
                   </div>
                 </div>
@@ -193,12 +187,12 @@ export default function ReturnsPage() {
               <div className="prose prose-lg max-w-none">
                 <p className="text-gray-700 mb-4">
                   Need a different size or color? We offer free exchanges within 30 days of delivery. 
-                  Simply follow the return process and specify that you'd like an exchange instead of a refund.
+                  Simply follow the return process and specify that you&apos;d like an exchange instead of a refund.
                 </p>
                 <p className="text-gray-700">
                   Exchanges are subject to item availability. If your desired size or color is out of stock, 
-                  we'll process a refund instead. You can also exchange for a different item of equal or 
-                  greater value (you'll pay the difference).
+                  we&apos;ll process a refund instead. You can also exchange for a different item of equal or 
+                  greater value (you&apos;ll pay the difference).
                 </p>
               </div>
             </div>
@@ -237,7 +231,7 @@ export default function ReturnsPage() {
                     <li>• Sale items are eligible for exchange or store credit only</li>
                     <li>• Final sale items cannot be returned or exchanged</li>
                     <li>• We recommend using a trackable shipping method for returns</li>
-                    <li>• Rudy's Store is not responsible for return shipments until we receive them</li>
+                    <li>• Rudy&apos;s Store is not responsible for return shipments until we receive them</li>
                     <li>• Refunds may take 1-2 billing cycles to appear on your statement</li>
                   </ul>
                 </div>

@@ -4,6 +4,7 @@ import "./globals.css";
 import ConditionalLayout from "./components/ConditionalLayout";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import Chatbot from "@/components/Chatbot";
+import SWRegistration from "./components/SWRegistration";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* PWA primary color */}
+        <meta name="theme-color" content="#201d1e" />
+        {/* iOS PWA support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Rudy Store" />
+        
         {/* Explicit favicon links for better Firefox support */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -52,6 +60,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <SWRegistration />
         <GoogleAnalytics />
         <ConditionalLayout>{children}</ConditionalLayout>
         <Chatbot />

@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { params: string[] } }
+  { params }: { params: Promise<{ params: string[] }> }
 ) {
   try {
-    const [width, height] = params.params;
+    const { params: routeParams } = await params;
+    const [width, height] = routeParams;
     const w = parseInt(width) || 300;
     const h = parseInt(height) || 300;
     

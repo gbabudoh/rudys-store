@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-const Ruler = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Ruler = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
   </svg>
 );
 
-const User = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const User = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
   </svg>
 );
@@ -122,7 +122,7 @@ export default function SizeGuidePage() {
                 <div className="bg-white rounded-lg shadow-lg p-8">
                   <div className="flex items-center space-x-3 mb-6">
                     <User className="w-8 h-8" style={{ color: '#cfa224' }} />
-                    <h2 className="text-2xl font-bold text-gray-900">Women's Clothing Sizes</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">Women&apos;s Clothing Sizes</h2>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -156,7 +156,7 @@ export default function SizeGuidePage() {
                 <div className="bg-white rounded-lg shadow-lg p-8">
                   <div className="flex items-center space-x-3 mb-6">
                     <User className="w-8 h-8" style={{ color: '#cfa224' }} />
-                    <h2 className="text-2xl font-bold text-gray-900">Men's Clothing Sizes</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">Men&apos;s Clothing Sizes</h2>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -193,7 +193,7 @@ export default function SizeGuidePage() {
                 <div className="bg-white rounded-lg shadow-lg p-8">
                   <div className="flex items-center space-x-3 mb-6">
                     <Ruler className="w-8 h-8" style={{ color: '#cfa224' }} />
-                    <h2 className="text-2xl font-bold text-gray-900">Women's Shoe Sizes</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">Women&apos;s Shoe Sizes</h2>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -223,7 +223,7 @@ export default function SizeGuidePage() {
                 <div className="bg-white rounded-lg shadow-lg p-8">
                   <div className="flex items-center space-x-3 mb-6">
                     <Ruler className="w-8 h-8" style={{ color: '#cfa224' }} />
-                    <h2 className="text-2xl font-bold text-gray-900">Men's Shoe Sizes</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">Men&apos;s Shoe Sizes</h2>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -260,16 +260,16 @@ export default function SizeGuidePage() {
                 </div>
                 <div className="prose prose-lg max-w-none">
                   <p className="text-gray-700 mb-6">
-                    Our accessories come in various sizes to fit your style. Here's a guide to help you choose the right size:
+                    Our accessories come in various sizes to fit your style. Here&apos;s a guide to help you choose the right size:
                   </p>
                   
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Bags & Handbags</h3>
                       <ul className="space-y-2 text-gray-600">
-                        <li><strong>Small:</strong> 10" x 8" x 4" - Perfect for essentials</li>
-                        <li><strong>Medium:</strong> 13" x 10" x 5" - Ideal for everyday use</li>
-                        <li><strong>Large:</strong> 16" x 12" x 6" - Great for work or travel</li>
+                        <li><strong>Small:</strong> 10&quot; x 8&quot; x 4&quot; - Perfect for essentials</li>
+                        <li><strong>Medium:</strong> 13&quot; x 10&quot; x 5&quot; - Ideal for everyday use</li>
+                        <li><strong>Large:</strong> 16&quot; x 12&quot; x 6&quot; - Great for work or travel</li>
                       </ul>
                     </div>
 
@@ -288,8 +288,8 @@ export default function SizeGuidePage() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Jewelry</h3>
                       <ul className="space-y-2 text-gray-600">
                         <li><strong>Rings:</strong> Available in sizes 4-12 (US sizing)</li>
-                        <li><strong>Bracelets:</strong> Small (6-6.5"), Medium (7-7.5"), Large (8-8.5")</li>
-                        <li><strong>Necklaces:</strong> 16", 18", 20", 24" chain lengths</li>
+                        <li><strong>Bracelets:</strong> Small (6-6.5&quot;), Medium (7-7.5&quot;), Large (8-8.5&quot;)</li>
+                        <li><strong>Necklaces:</strong> 16&quot;, 18&quot;, 20&quot;, 24&quot; chain lengths</li>
                       </ul>
                     </div>
                   </div>
@@ -334,7 +334,7 @@ export default function SizeGuidePage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Still Unsure About Your Size?</h3>
                   <p className="text-gray-600 mb-4">
                     Our customer service team is here to help you find the perfect fit. 
-                    Contact us with your measurements and we'll recommend the best size for you.
+                    Contact us with your measurements and we&apos;ll recommend the best size for you.
                   </p>
                   <Link
                     href="/contact"

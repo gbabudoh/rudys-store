@@ -139,7 +139,7 @@ export interface VerifyTransactionResponse {
     };
     paidAt: string | null;
     metadata: Record<string, unknown>;
-  } | Record<string, unknown>;
+  };
   error?: string;
 }
 

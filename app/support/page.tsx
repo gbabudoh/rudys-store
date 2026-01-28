@@ -2,57 +2,57 @@
 
 import Link from 'next/link';
 
-const HelpCircle = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const HelpCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
-const Mail = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Mail = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
   </svg>
 );
 
-const Phone = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Phone = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
   </svg>
 );
 
-const Clock = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Clock = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
-const MessageSquare = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const MessageSquare = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
   </svg>
 );
 
-const FileText = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const FileText = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
   </svg>
 );
 
-const Truck = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Truck = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0 2 2 0 00-4 0z" />
   </svg>
 );
 
-const CreditCard = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const CreditCard = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
   </svg>
 );
 
-const RefreshCw = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const RefreshCw = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
   </svg>
 );
@@ -66,7 +66,7 @@ export default function SupportPage() {
           <div className="max-w-3xl mx-auto text-center text-white">
             <h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#cfa224' }}>Customer Support</h1>
             <p className="text-xl md:text-2xl" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              We're here to help you every step of the way
+              We&apos;re here to help you every step of the way
             </p>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function SupportPage() {
                   <Mail className="w-6 h-6" style={{ color: '#cfa224' }} />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#cfa224] transition-colors">Contact Us</h3>
-                <p className="text-gray-600 text-sm">Send us a message and we'll get back to you</p>
+                <p className="text-gray-600 text-sm">Send us a message and we&apos;ll get back to you</p>
               </Link>
 
               <Link

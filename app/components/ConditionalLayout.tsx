@@ -10,6 +10,7 @@ import { QuickViewProvider } from '@/context/QuickViewContext';
 import { AuthProvider } from '@/context/AuthContext';
 import CartSidebar from './CartSidebar';
 import BottomNav from './BottomNav';
+import PWAInstallPrompt from './PWAInstallPrompt';
 import { App } from 'konsta/react';
 
 export default function ConditionalLayout({
@@ -41,6 +42,7 @@ export default function ConditionalLayout({
               </main>
               {!isAuthRoute && <Footer />}
               <BottomNav />
+              <PWAInstallPrompt />
               <CartSidebar />
               <CookieBanner />
             </App>

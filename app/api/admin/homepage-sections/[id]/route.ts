@@ -2,21 +2,38 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/auth';
 
+interface HomepageSectionRow {
+  id: number;
+  section_key: string;
+  title: string;
+  subtitle: string | null;
+  description: string | null;
+  image_url: string | null;
+  link_url: string | null;
+  product_count: number;
+  is_active: boolean;
+  display_order: number;
+  gradient_color: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // GET - Get a single homepage section
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Verify admin authentication
     const authResult = await verifyAdminAuth(request);
     if (!authResult.success) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const section = await queryOne(
+    const section = await queryOne<HomepageSectionRow>(
       `SELECT * FROM homepage_sections WHERE id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!section) {
@@ -24,10 +41,11 @@ export async function GET(
     }
 
     return NextResponse.json({ section });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error fetching homepage section:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch homepage section', details: error.message },
+      { error: 'Failed to fetch homepage section', details: errorMessage },
       { status: 500 }
     );
   }
@@ -36,9 +54,10 @@ export async function GET(
 // PUT - Update a homepage section
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Verify admin authentication
     const authResult = await verifyAdminAuth(request);
     if (!authResult.success) {
@@ -60,9 +79,9 @@ export async function PUT(
     } = body;
 
     // Check if section exists
-    const existingSection = await queryOne(
+    const existingSection = await queryOne<HomepageSectionRow>(
       `SELECT * FROM homepage_sections WHERE id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!existingSection) {
@@ -94,20 +113,21 @@ export async function PUT(
         is_active !== undefined ? is_active : existingSection.is_active,
         display_order !== undefined ? display_order : existingSection.display_order,
         gradient_color !== undefined ? gradient_color : existingSection.gradient_color,
-        params.id,
+        id,
       ]
     );
 
-    const updatedSection = await queryOne(
+    const updatedSection = await queryOne<HomepageSectionRow>(
       `SELECT * FROM homepage_sections WHERE id = ?`,
-      [params.id]
+      [id]
     );
 
     return NextResponse.json({ section: updatedSection });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error updating homepage section:', error);
     return NextResponse.json(
-      { error: 'Failed to update homepage section', details: error.message },
+      { error: 'Failed to update homepage section', details: errorMessage },
       { status: 500 }
     );
   }
@@ -116,9 +136,10 @@ export async function PUT(
 // DELETE - Delete a homepage section
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Verify admin authentication
     const authResult = await verifyAdminAuth(request);
     if (!authResult.success) {
@@ -128,20 +149,21 @@ export async function DELETE(
     // Check if section exists
     const existingSection = await queryOne(
       `SELECT * FROM homepage_sections WHERE id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!existingSection) {
       return NextResponse.json({ error: 'Section not found' }, { status: 404 });
     }
 
-    await query(`DELETE FROM homepage_sections WHERE id = ?`, [params.id]);
+    await query(`DELETE FROM homepage_sections WHERE id = ?`, [id]);
 
     return NextResponse.json({ message: 'Homepage section deleted successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error deleting homepage section:', error);
     return NextResponse.json(
-      { error: 'Failed to delete homepage section', details: error.message },
+      { error: 'Failed to delete homepage section', details: errorMessage },
       { status: 500 }
     );
   }

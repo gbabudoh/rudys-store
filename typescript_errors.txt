@@ -1,0 +1,189 @@
+.next/dev/types/validator.ts(495,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/homepage-sections/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/homepage-sections/[id]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ section: any; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(513,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/users/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/users/[id]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ success: boolean; user: { id: any; email: any; firstName: any; ... 6 more ...; createdBy: any; }; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(621,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/placeholder/[...params]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/placeholder/[...params]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { params: string[]; }; }) => Promise<NextResponse<unknown>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ params: string[]; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ params: string[]; }>; }' is not assignable to type '{ params: { params: string[]; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'params' is missing in type 'Promise<{ params: string[]; }>' but required in type '{ params: string[]; }'.
+.next/types/validator.ts(495,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/homepage-sections/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/homepage-sections/[id]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ section: any; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(513,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/users/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/users/[id]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ success: boolean; user: { id: any; email: any; firstName: any; ... 6 more ...; createdBy: any; }; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(621,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/placeholder/[...params]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/placeholder/[...params]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { params: string[]; }; }) => Promise<NextResponse<unknown>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ params: string[]; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ params: string[]; }>; }' is not assignable to type '{ params: { params: string[]; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'params' is missing in type 'Promise<{ params: string[]; }>' but required in type '{ params: string[]; }'.
+app/api/payment/callback/route.ts(81,30): error TS18046: 'amount' is of type 'unknown'.
+app/api/payment/callback/route.ts(82,31): error TS18046: 'amount' is of type 'unknown'.
+app/contact/page.tsx(92,53): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/contact/page.tsx(106,52): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/contact/page.tsx(119,51): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/contact/page.tsx(132,52): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/faq/page.tsx(198,59): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/faq/page.tsx(206,25): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/faq/page.tsx(226,53): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/privacy/page.tsx(61,45): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/privacy/page.tsx(79,47): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/privacy/page.tsx(111,42): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/privacy/page.tsx(146,48): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/privacy/page.tsx(179,43): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(138,52): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(143,75): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(147,75): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(151,75): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(155,75): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(190,48): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(209,46): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/returns/page.tsx(233,69): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(64,52): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(91,52): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(152,47): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(161,54): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(165,54): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(169,54): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(177,46): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(186,54): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(190,54): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/shipping/page.tsx(194,54): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/size-guide/page.tsx(124,47): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/size-guide/page.tsx(158,47): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/size-guide/page.tsx(195,48): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/size-guide/page.tsx(225,48): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/size-guide/page.tsx(258,46): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/size-guide/page.tsx(330,47): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(86,51): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(97,45): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(108,46): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(119,50): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(130,49): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(141,54): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(155,49): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(168,50): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(181,50): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(200,58): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(213,53): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(226,57): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(239,56): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/support/page.tsx(256,46): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(60,44): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(106,47): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(185,45): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(193,78): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(200,78): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(207,78): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(214,78): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(221,78): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(228,78): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(407,44): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+app/terms/page.tsx(499,69): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+lib/__tests__/chatbot.test.ts(7,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(11,3): error TS2304: Cannot find name 'beforeEach'.
+lib/__tests__/chatbot.test.ts(16,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(18,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(21,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(23,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(26,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(28,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(31,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(33,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(36,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(38,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(41,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(43,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(44,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(47,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(49,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(52,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(54,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(57,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(59,5): error TS2304: Cannot find name 'expect'.
+lib/__tests__/chatbot.test.ts(62,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+lib/__tests__/chatbot.test.ts(64,5): error TS2304: Cannot find name 'expect'.

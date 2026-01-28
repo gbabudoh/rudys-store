@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
-import { hashPassword, getAdminById, hasPermission, canManageAdmin } from '@/lib/auth';
+import { hashPassword, getAdminById, AdminUser } from '@/lib/auth';
 import { verifyToken } from '@/lib/auth';
+
+interface AdminUserWithCreator extends AdminUser {
+  created_at: string;
+  created_by: number | null;
+  created_by_email: string | null;
+}
 
 // Middleware to verify admin authentication
 async function verifyAdminAuth(request: NextRequest) {
@@ -61,7 +67,7 @@ export async function GET(request: NextRequest) {
       FROM admin_users au
       LEFT JOIN admin_users creator ON au.created_by = creator.id
       ORDER BY au.created_at DESC`
-    ) as any[];
+    ) as AdminUserWithCreator[];
 
     const usersData = users.map(user => ({
       id: user.id,
@@ -77,7 +83,7 @@ export async function GET(request: NextRequest) {
     }));
 
     return NextResponse.json({ success: true, users: usersData });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Get users error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -155,7 +161,7 @@ export async function POST(request: NextRequest) {
     const passwordHash = await hashPassword(password);
     const finalPermissions = permissions || [];
 
-    const result: any = await query(
+    const result = await query(
       `INSERT INTO admin_users 
         (email, password_hash, first_name, last_name, role, permissions, created_by)
       VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -168,16 +174,21 @@ export async function POST(request: NextRequest) {
         JSON.stringify(finalPermissions),
         currentUser.id,
       ]
-    );
+    ) as { insertId: number };
 
-    // MySQL2 execute returns [ResultSetHeader, FieldPacket[]]
-    // We need to extract insertId from ResultSetHeader
-    const insertId = (result as any).insertId || (result as any)[0]?.insertId;
+    const insertId = result.insertId;
     
-    const newUser = await queryOne(
+    const newUser = await queryOne<AdminUser & { created_at: string }>(
       'SELECT id, email, first_name, last_name, role, permissions, is_active, last_login, created_at FROM admin_users WHERE id = ?',
       [insertId]
-    ) as any;
+    );
+
+    if (!newUser) {
+      return NextResponse.json(
+        { error: 'Failed to fetch newly created user' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -193,7 +204,7 @@ export async function POST(request: NextRequest) {
         createdAt: newUser.created_at,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Create user error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },

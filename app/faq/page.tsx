@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-const ChevronDown = ({ className }: { className?: string }) => (
-  <svg className={className || "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const ChevronDown = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-5 h-5"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
   </svg>
 );
 
-const HelpCircle = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const HelpCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
@@ -150,7 +150,7 @@ export default function FAQPage() {
           <div className="max-w-3xl mx-auto text-center text-white">
             <h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#cfa224' }}>Frequently Asked Questions</h1>
             <p className="text-xl md:text-2xl" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              Find answers to common questions about shopping at Rudy's Store
+              Find answers to common questions about shopping at Rudy&apos;s Store
             </p>
           </div>
         </div>
@@ -229,8 +229,8 @@ export default function FAQPage() {
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Still Have Questions?</h3>
                   <p className="text-gray-600 mb-4">
-                    Can't find the answer you're looking for? Our customer service team is here to help. 
-                    Contact us and we'll respond as soon as possible.
+                    Can&apos;t find the answer you&apos;re looking for? Our customer service team is here to help. 
+                    Contact us and we&apos;ll respond as soon as possible.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Link

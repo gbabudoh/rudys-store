@@ -2,32 +2,32 @@
 
 import Link from 'next/link';
 
-const Scale = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Scale = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
   </svg>
 );
 
-const FileText = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const FileText = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
   </svg>
 );
 
-const Shield = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const Shield = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
   </svg>
 );
 
-const CheckCircle = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const CheckCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
-const AlertCircle = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const AlertCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
@@ -41,7 +41,7 @@ export default function TermsPage() {
           <div className="max-w-3xl mx-auto text-center text-white">
             <h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#cfa224' }}>Terms of Service</h1>
             <p className="text-xl md:text-2xl" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              Terms and conditions governing your use of Rudy's Store
+              Terms and conditions governing your use of Rudy&apos;s Store
             </p>
             <p className="mt-4 text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               Last Updated: {new Date().toLocaleDateString('en-NG', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -61,7 +61,7 @@ export default function TermsPage() {
                 <h2 className="text-2xl font-bold text-gray-900">Introduction</h2>
               </div>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Welcome to Rudy's Store. These Terms of Service ("Terms") govern your access to and use of our 
+                Welcome to Rudy&apos;s Store. These Terms of Service (&quot;Terms&quot;) govern your access to and use of our 
                 website, products, and services. By accessing or using our website, you agree to be bound by 
                 these Terms and all applicable laws and regulations in Nigeria.
               </p>
@@ -78,11 +78,11 @@ export default function TermsPage() {
               <p className="text-gray-700 text-sm mb-4">
                 By accessing our website, creating an account, or making a purchase, you acknowledge that you 
                 have read, understood, and agree to be bound by these Terms. These Terms constitute a legally 
-                binding agreement between you and Rudy's Store.
+                binding agreement between you and Rudy&apos;s Store.
               </p>
               <p className="text-gray-700 text-sm">
                 We reserve the right to modify these Terms at any time. Material changes will be notified on 
-                this page with an updated "Last Updated" date. Your continued use of our services after such 
+                this page with an updated &quot;Last Updated&quot; date. Your continued use of our services after such 
                 modifications constitutes acceptance of the updated Terms.
               </p>
             </div>
@@ -373,7 +373,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Intellectual Property</h2>
               <p className="text-gray-700 text-sm mb-4">
                 All content on our website, including text, graphics, logos, images, and software, is the 
-                property of Rudy's Store or its content suppliers and is protected by Nigerian and international 
+                property of Rudy&apos;s Store or its content suppliers and is protected by Nigerian and international 
                 copyright and trademark laws.
               </p>
               <p className="text-gray-700 text-sm">
@@ -451,7 +451,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Modifications to Terms</h2>
               <p className="text-gray-700 text-sm">
                 We reserve the right to modify these Terms at any time. Material changes will be posted on this 
-                page with an updated "Last Updated" date. Your continued use of our services after such 
+                page with an updated &quot;Last Updated&quot; date. Your continued use of our services after such 
                 modifications constitutes acceptance of the updated Terms. If you do not agree with the 
                 modifications, you must stop using our services.
               </p>
