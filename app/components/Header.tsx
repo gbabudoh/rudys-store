@@ -7,6 +7,7 @@ import SearchBar from '@/components/SearchBar';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter, usePathname } from 'next/navigation';
 // Simple icon components to replace lucide-react
 const ShoppingBag = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-6 h-6"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,6 +103,8 @@ export default function Header() {
   const { cartCount, setIsCartOpen } = useCart();
   const { wishlistCount } = useWishlist();
   const { isAuthenticated, user } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   useEffect(() => {
@@ -110,7 +113,68 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+    <>
+      {/* Mobile-Native Header */}
+      <div className="md:hidden">
+        {/* Custom Full-Width Header for Homepage */}
+        {pathname === '/' ? (
+          <div className="bg-white border-b border-gray-100 sticky top-0 z-50 px-4">
+            <div className="flex items-center justify-between h-14">
+              {/* Logo - Far Left */}
+              <div className="relative h-10 w-32">
+                <Image src="/rudy-store-logo.png" alt="Rudy Store Logo" fill className="object-contain object-left" priority />
+              </div>
+              {/* Cart - Far Right */}
+              <button 
+                onClick={() => setIsCartOpen(true)} 
+                className="p-2 relative active:opacity-50 transition-opacity"
+              >
+                <ShoppingBag className="w-6 h-6 text-gray-800" />
+                {mounted && cartCount > 0 && (
+                  <span className="absolute top-0 right-0 text-white text-[8px] rounded-full w-4 h-4 flex items-center justify-center font-bold" style={{ backgroundColor: '#201d1e' }}>
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Custom Header for Sub-pages */
+          <div className="bg-white/90 backdrop-blur-xl border-b border-gray-100/50 sticky top-0 z-50">
+            <div className="flex items-center h-14 px-4">
+              {/* Back Button */}
+              <button 
+                onClick={() => router.push('/')}
+                className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200"
+              >
+                <span className="text-2xl font-bold text-[#201d1e] -ml-1">&lt;</span>
+              </button>
+              {/* Page Title */}
+              <div className="absolute left-1/2 -translate-x-1/2">
+                <h1 className="text-[17px] font-bold tracking-tight text-gray-900 capitalize">
+                  {pathname.split('/').pop()?.replace(/-/g, ' ') || 'Rudy Store'}
+                </h1>
+              </div>
+              {/* Cart - Far Right */}
+              <div className="ml-auto">
+                <button 
+                  onClick={() => setIsCartOpen(true)} 
+                  className="p-2 relative active:opacity-50 transition-opacity"
+                >
+                  <ShoppingBag className="w-5 h-5 text-gray-800" />
+                  {mounted && cartCount > 0 && (
+                    <span className="absolute top-0 right-0 text-white text-[8px] rounded-full w-4 h-4 flex items-center justify-center font-bold" style={{ backgroundColor: '#201d1e' }}>
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <header className="hidden md:block bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto pl-0 pr-4 sm:pr-6 lg:pr-8">
         <div className="flex justify-between items-center h-20 md:h-24">
           {/* Logo */}
@@ -239,5 +303,6 @@ export default function Header() {
         )}
       </div>
     </header>
+    </>
   );
 }

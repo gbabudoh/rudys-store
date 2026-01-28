@@ -9,6 +9,8 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { QuickViewProvider } from '@/context/QuickViewContext';
 import { AuthProvider } from '@/context/AuthContext';
 import CartSidebar from './CartSidebar';
+import BottomNav from './BottomNav';
+import { App } from 'konsta/react';
 
 export default function ConditionalLayout({
   children,
@@ -17,8 +19,9 @@ export default function ConditionalLayout({
 }) {
   const pathname = usePathname();
   
-  // Check if we're on an admin route
+  // Check if we're on an admin or auth route
   const isAdminRoute = pathname?.startsWith('/admin');
+  const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/checkout' || pathname === '/wishlist' || pathname === '/orders';
 
   if (isAdminRoute) {
     // No header/footer for admin routes
@@ -31,11 +34,16 @@ export default function ConditionalLayout({
       <WishlistProvider>
         <CartProvider>
           <QuickViewProvider>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-            <CartSidebar />
-            <CookieBanner />
+            <App theme="parent" safeAreas>
+              {!isAuthRoute && <Header />}
+              <main className={`${!isAuthRoute ? 'pb-20 md:pb-0' : ''} ${isAuthRoute ? 'md:pt-0' : ''}`}>
+                {children}
+              </main>
+              {!isAuthRoute && <Footer />}
+              <BottomNav />
+              <CartSidebar />
+              <CookieBanner />
+            </App>
           </QuickViewProvider>
         </CartProvider>
       </WishlistProvider>

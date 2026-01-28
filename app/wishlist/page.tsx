@@ -4,6 +4,7 @@ import { useWishlist } from '@/context/WishlistContext';
 import { getAllProducts } from '@/lib/products';
 import ProductCard from '@/app/components/ProductCard';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // Simple Heart component
 const Heart = ({ className }: { className?: string }) => (
@@ -22,6 +23,7 @@ const X = ({ className }: { className?: string }) => (
 export default function WishlistPage() {
   const { wishlist, wishlistCount, removeFromWishlist } = useWishlist();
   const allProducts = getAllProducts();
+  const router = useRouter();
 
   // Get full product data for wishlisted items
   const wishlistedProducts = allProducts.filter(product => 
@@ -29,8 +31,24 @@ export default function WishlistPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-12 pb-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 md:pt-12 pb-24">
+      {/* Mobile Header - Sleek & Native */}
+      <div className="md:hidden sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100/50">
+        <div className="flex items-center h-14 px-4">
+          <button 
+            onClick={() => router.push('/')}
+            className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200"
+          >
+            <span className="text-2xl font-bold text-[#201d1e] -ml-1">&lt;</span>
+          </button>
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <h1 className="text-[17px] font-bold tracking-tight text-gray-900">Wishlist</h1>
+          </div>
+          <div className="ml-auto w-7 h-7" /> {/* Balance spacer */}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-0">
         {/* Header Section */}
         <div className="text-center mb-16">
           <div className="inline-block p-3 rounded-full bg-[#cfa224]/10 mb-4">
