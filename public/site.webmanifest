@@ -1,16 +1,16 @@
 {
   "name": "Rudy's Store",
-  "short_name": "Rudy's Store",
-  "description": "Fashion & Luxury Collections",
+  "short_name": "Rudy Store",
+  "description": "Premium Fashion & Luxury Collections - Shop the latest trends in clothing, footwear, and accessories.",
   "icons": [
     {
-      "src": "/pwa-icon.png",
+      "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-icon.png",
+      "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -22,9 +22,12 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#000000",
+  "theme_color": "#201d1e",
   "background_color": "#ffffff",
   "display": "standalone",
+  "orientation": "portrait",
   "start_url": "/",
-  "scope": "/"
+  "scope": "/",
+  "categories": ["shopping", "lifestyle", "fashion"],
+  "prefer_related_applications": false
 }
