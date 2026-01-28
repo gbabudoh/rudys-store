@@ -94,7 +94,7 @@ export default function ProductCard({
       >
         <div className="flex flex-col sm:flex-row gap-4 p-4">
           {/* Image Section */}
-          <div className="relative w-full sm:w-48 h-48 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden">
+          <div className="relative w-full sm:w-48 h-64 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden">
             <Link href={`/product/${product.slug || product.id}`} className="block w-full h-full">
               <Image
                 src={product.images?.[0] || '/placeholder.png'}

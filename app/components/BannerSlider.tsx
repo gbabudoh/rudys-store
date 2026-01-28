@@ -80,7 +80,8 @@ export default function BannerSlider({
       >
         {activeSlides.map((slide, index) => (
           <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-full">
+            {/* Desktop Layout - Overlay */}
+            <div className="hidden md:block relative w-full h-full">
               <Image
                 src={slide.image}
                 alt={slide.title}
@@ -112,6 +113,38 @@ export default function BannerSlider({
                     </Link>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Mobile Layout - Image + Text Below */}
+            <div className="md:hidden flex flex-col h-full">
+              {/* Full Image Section */}
+              <div className="relative w-full h-[60%] bg-gray-100">
+                <Image
+                  src={slide.image}
+                  alt={slide.title}
+                  fill
+                  className="object-contain"
+                  priority={index === 0}
+                  unoptimized
+                  sizes="100vw"
+                />
+              </div>
+              {/* Text Section Below */}
+              <div className="flex-1 bg-[#201d1e] px-4 py-3 flex flex-col justify-center">
+                <h1 className="text-xl font-bold text-white mb-1 animate-fade-in">
+                  {slide.title}
+                </h1>
+                <p className="text-xs text-white/80 mb-3 animate-fade-in-delay line-clamp-2">
+                  {slide.subtitle}
+                </p>
+                <Link
+                  href={slide.link}
+                  className="inline-block w-fit text-white px-5 py-2.5 rounded-full font-semibold transition-all duration-300 animate-fade-in-delay-2 cursor-pointer text-xs"
+                  style={{ backgroundColor: '#cfa224' }}
+                >
+                  {slide.buttonText}
+                </Link>
               </div>
             </div>
           </SwiperSlide>
