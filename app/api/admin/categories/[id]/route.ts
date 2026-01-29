@@ -23,7 +23,7 @@ async function checkAuth(request: Request): Promise<AdminJWTPayload | null> {
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await checkAuth(request);
   if (!user || user.role === 'staff') {
@@ -31,9 +31,9 @@ export async function PUT(
   }
 
   try {
+    const { id } = await params;
     const body = await request.json();
     const { name, description, image, parent_id, is_active, display_order } = body;
-    const { id } = params;
 
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
@@ -58,7 +58,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await checkAuth(request);
   if (!user || user.role === 'staff') {
@@ -66,7 +66,7 @@ export async function DELETE(
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
     await query('DELETE FROM categories WHERE id = ?', [id]);
     return NextResponse.json({ message: 'Category deleted successfully' });
   } catch (error: unknown) {
