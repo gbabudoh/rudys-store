@@ -289,7 +289,10 @@ function CategoryModal({ onClose, onSave, category, parentOptions }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    onSave({
+      ...formData,
+      parent_id: formData.parent_id ? Number(formData.parent_id) : null
+    });
   };
 
   return (
