@@ -51,6 +51,9 @@ self.addEventListener('fetch', event => {
   // Skip non-GET requests
   if (request.method !== 'GET') return;
 
+  // Skip chrome-extension and other non-http(s) requests
+  if (!url.protocol.startsWith('http')) return;
+
   // Skip API requests and admin routes
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin')) {
     return;

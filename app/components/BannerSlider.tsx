@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import Image from 'next/image';
+import ProductImage from './ProductImage';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
@@ -82,14 +82,13 @@ export default function BannerSlider({
           <SwiperSlide key={slide.id}>
             {/* Desktop Layout - Overlay */}
             <div className="hidden md:block relative w-full h-full">
-              <Image
+              <ProductImage
                 src={slide.image}
                 alt={slide.title}
-                fill
-                className="object-cover"
+                width={1920}
+                height={600}
+                className="object-cover w-full h-full"
                 priority={index === 0}
-                unoptimized
-                sizes="100vw"
               />
               
               {/* Overlay */}
@@ -120,14 +119,13 @@ export default function BannerSlider({
             <div className="md:hidden flex flex-col h-full">
               {/* Full Image Section */}
               <div className="relative w-full h-[60%] bg-gray-100">
-                <Image
+                <ProductImage
                   src={slide.image}
                   alt={slide.title}
-                  fill
-                  className="object-contain"
+                  width={600}
+                  height={400}
+                  className="object-contain w-full h-full"
                   priority={index === 0}
-                  unoptimized
-                  sizes="100vw"
                 />
               </div>
               {/* Text Section Below */}

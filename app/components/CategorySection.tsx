@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import ProductImage from './ProductImage';
 
 export interface Category {
   id: string;
@@ -43,12 +43,12 @@ export default function CategorySection({ categories }: CategorySectionProps) {
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
             >
               <div className="aspect-[4/5] relative bg-gradient-to-br from-purple-500 to-pink-600">
-                <Image
+                <ProductImage
                   src={category.image}
                   alt={category.name}
-                  fill
+                  width={400}
+                  height={500}
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  unoptimized
                 />
                 
                 {/* Overlay */}
@@ -59,12 +59,12 @@ export default function CategorySection({ categories }: CategorySectionProps) {
                   <div className="absolute top-4 right-4 z-10">
                     <div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg group-hover:scale-110 transition-transform duration-300">
                       <div className="relative w-16 h-16">
-                        <Image
+                        <ProductImage
                           src={categoryLogos[category.id]}
                           alt={`${category.name} logo`}
-                          fill
+                          width={64}
+                          height={64}
                           className="object-contain"
-                          sizes="64px"
                         />
                       </div>
                     </div>

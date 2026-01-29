@@ -1,75 +1,69 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { verifyAdminAuth } from '@/lib/auth';
+import { minioClient, BUCKET_NAME } from '@/lib/minio-client';
+import { v4 as uuidv4 } from 'uuid';
+import { UploadResponse } from '@/types/upload';
 
-export async function POST(request: NextRequest) {
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'];
+
+export async function POST(request: NextRequest): Promise<NextResponse<UploadResponse>> {
   try {
-    // Verify admin authentication
-    const authResult = await verifyAdminAuth(request);
-    if (!authResult.success) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const formData = await request.formData();
-    const file = formData.get('file') as File;
-
+    const file = formData.get('file') as File | null;
+    
     if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: 'No file provided' },
+        { status: 400 }
+      );
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed.' },
+        { success: false, error: 'Invalid file type' },
         { status: 400 }
       );
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: 'File too large. Maximum size is 5MB.' },
+        { success: false, error: 'File too large' },
         { status: 400 }
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const fileExtension = file.name.split('.').pop() || 'jpg';
+    const fileName = `${uuidv4()}.${fileExtension}`;
+    const folder = file.type.startsWith('video/') ? 'videos' : 'products';
+    const filePath = `${folder}/${fileName}`;
 
-    // Create unique filename
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filename = `${timestamp}-${originalName}`;
+    // Upload to MinIO
+    await minioClient.putObject(
+      BUCKET_NAME,
+      filePath,
+      buffer,
+      buffer.length,
+      {
+        'Content-Type': file.type,
+      }
+    );
 
-    // Ensure uploads directory exists
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    try {
-      await mkdir(uploadsDir, { recursive: true });
-    } catch (error) {
-      // Directory might already exist, ignore error
-    }
-
-    // Save file
-    const filepath = join(uploadsDir, filename);
-    await writeFile(filepath, buffer);
-
-    // Return public URL
-    const url = `/uploads/${filename}`;
+    // Generate URL
+    const fileUrl = `http://${process.env.MINIO_ENDPOINT || '149.102.128.35'}:${process.env.MINIO_PORT || '9000'}/${BUCKET_NAME}/${filePath}`;
 
     return NextResponse.json({
       success: true,
-      url,
-      filename,
-      size: file.size,
-      type: file.type,
+      url: fileUrl,
+      fileName: fileName,
+      path: filePath
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(
-      { error: 'Failed to upload file', details: error.message },
+      { success: false, error: 'Upload failed' },
       { status: 500 }
     );
   }
