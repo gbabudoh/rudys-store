@@ -40,57 +40,49 @@ export default function CategorySection({ categories }: CategorySectionProps) {
             <Link
               key={category.id}
               href={category.href}
-              className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              className="group flex flex-col items-center text-center"
             >
-              <div className="aspect-[4/5] relative bg-gradient-to-br from-purple-500 to-pink-600">
+              {/* Image Container with Border */}
+              <div className="w-full aspect-[4/5] relative rounded-3xl overflow-hidden border border-slate-200 transition-all duration-300 group-hover:border-stone-400 group-hover:shadow-xl mb-6">
                 <ProductImage
                   src={category.image}
                   alt={category.name}
-                  width={400}
-                  height={500}
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/90 transition-colors duration-300" />
-                
-                {/* Logo Overlay - Top Right Corner */}
+                {/* Logo Overlay - Top Right */}
                 {categoryLogos[category.id] && (
                   <div className="absolute top-4 right-4 z-10">
-                    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <div className="relative w-16 h-16">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm border border-slate-100">
+                      <div className="relative w-12 h-12">
                         <ProductImage
                           src={categoryLogos[category.id]}
                           alt={`${category.name} logo`}
-                          width={64}
-                          height={64}
+                          width={48}
+                          height={48}
                           className="object-contain"
                         />
                       </div>
                     </div>
                   </div>
                 )}
-                
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-end p-8">
-                  <div className="text-white">
-                    <h3 className="text-2xl font-bold mb-2 group-hover:translate-y-[-4px] transition-transform duration-300">
-                      {category.name}
-                    </h3>
-                    <p className="text-white/90 mb-4 group-hover:translate-y-[-4px] transition-transform duration-300 delay-75">
-                      {category.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                        {category.productCount > 0 ? `${category.productCount} products` : 'Explore'}
-                      </span>
-                      <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors duration-300">
-                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
+              </div>
+              
+              {/* Text Content Below Image */}
+              <div className="space-y-3 px-4">
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-stone-600 transition-colors uppercase">
+                  {category.name}
+                </h3>
+                <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-[250px]">
+                  {category.description}
+                </p>
+                <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#cfa224] pt-2 border-b-2 border-transparent group-hover:border-[#cfa224] transition-all">
+                  Shop Now
+                  <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
                 </div>
               </div>
             </Link>

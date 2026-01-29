@@ -56,7 +56,7 @@ export default function RegisterPage() {
       }
 
       login(data.token, data.user);
-      router.push('/dashboard');
+      router.push('/customer/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -75,7 +75,7 @@ export default function RegisterPage() {
         <div className="flex items-center h-14 px-4">
           <button 
             onClick={() => router.push('/')}
-            className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200"
+            className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200 cursor-pointer"
           >
             <span className="text-2xl font-bold text-[#201d1e] -ml-1">&lt;</span>
           </button>
@@ -234,7 +234,7 @@ export default function RegisterPage() {
                     />
                     <button
                       type="button"
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-300 hover:text-[#201d1e] active:scale-90 transition-all"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-300 hover:text-[#201d1e] active:scale-90 transition-all cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -246,7 +246,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-16 bg-[#201d1e] text-white rounded-2xl font-black text-lg shadow-2xl shadow-black/20 active:scale-[0.98] transition-all flex items-center justify-center space-x-3 disabled:opacity-50 group mt-4 overflow-hidden relative"
+                className="w-full h-16 bg-[#201d1e] text-white rounded-2xl font-black text-lg shadow-2xl shadow-black/20 active:scale-[0.98] transition-all flex items-center justify-center space-x-3 disabled:opacity-50 group mt-4 overflow-hidden relative cursor-pointer"
               >
                 {isLoading ? (
                   <Loader2 className="animate-spin h-6 w-6" />
@@ -263,7 +263,7 @@ export default function RegisterPage() {
             <div className="mt-10 text-center pb-8 md:pb-0">
               <p className="text-gray-500 font-bold">
                 Already have an account?{' '}
-                <Link href="/login" className="text-[#201d1e] font-black border-b-2 border-[#201d1e] pb-0.5 hover:opacity-70 transition-opacity">
+                <Link href="/login" className="text-[#201d1e] font-black border-b-2 border-[#201d1e] pb-0.5 hover:opacity-70 transition-opacity cursor-pointer">
                   Sign In
                 </Link>
               </p>

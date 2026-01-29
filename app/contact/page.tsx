@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
 const Mail = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
@@ -28,7 +28,31 @@ const Clock = ({ className, style }: { className?: string; style?: React.CSSProp
   </svg>
 );
 
+interface StoreSettings {
+  store_address?: string;
+  store_phone?: string;
+  store_phone_secondary?: string;
+  store_email?: string;
+  store_email_support?: string;
+  store_hours_weekday?: string;
+  store_hours_saturday?: string;
+  store_hours_sunday?: string;
+  social_facebook?: string;
+  social_instagram?: string;
+  social_twitter?: string;
+}
+
+interface PageContent {
+  title: string;
+  content: string;
+}
+
 export default function ContactPage() {
+  const [mounted, setMounted] = useState(false);
+  const [settings, setSettings] = useState<StoreSettings | null>(null);
+  const [content, setContent] = useState<PageContent | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -38,6 +62,34 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const fetchData = useCallback(async () => {
+    try {
+      const [settingsRes, contentRes] = await Promise.all([
+        fetch('/api/settings'),
+        fetch('/api/content-pages/contact-us')
+      ]);
+
+      if (settingsRes.ok) {
+        const settingsData = await settingsRes.json();
+        setSettings(settingsData.settings);
+      }
+
+      if (contentRes.ok) {
+        const contentData = await contentRes.json();
+        setContent(contentData.page);
+      }
+    } catch (error) {
+      console.error('Error fetching contact details:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
+    fetchData();
+  }, [fetchData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,15 +114,28 @@ export default function ContactPage() {
     });
   };
 
+  // Show loading spinner while fetching data
+  if (!mounted || loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100">
+        <div className="flex items-center justify-center py-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#cfa224' }}></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100">
       {/* Hero Section */}
       <section className="relative py-20" style={{ backgroundColor: '#201d1e' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#cfa224' }}>Contact Us</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#cfa224' }}>
+              {content?.title || 'Contact Us'}
+            </h1>
             <p className="text-xl md:text-2xl" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              We&apos;d love to hear from you. Get in touch with us!
+              {content?.content?.split('\n\n')[0]?.replace(/###\s/, '') || "We'd love to hear from you. Get in touch with us!"}
             </p>
           </div>
         </div>
@@ -93,10 +158,8 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
-                        <p className="text-gray-600 text-sm">
-                          123 Fashion Street<br />
-                          Style City, SC 12345<br />
-                          Nigeria
+                        <p className="text-gray-600 text-sm whitespace-pre-line">
+                          {settings?.store_address || `123 Fashion Street\nStyle City, SC 12345\nNigeria`}
                         </p>
                       </div>
                     </div>
@@ -107,9 +170,9 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                        <p className="text-gray-600 text-sm">
-                          +234 123 456 7890<br />
-                          +234 987 654 3210
+                        <p className="text-gray-600 text-sm whitespace-pre-line">
+                          {settings?.store_phone || '+234 123 456 7890'}
+                          {settings?.store_phone_secondary && `\n${settings.store_phone_secondary}`}
                         </p>
                       </div>
                     </div>
@@ -120,9 +183,9 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                        <p className="text-gray-600 text-sm">
-                          info@rudysstore.com<br />
-                          support@rudysstore.com
+                        <p className="text-gray-600 text-sm whitespace-pre-line">
+                          {settings?.store_email || 'info@rudysstore.com'}
+                          {settings?.store_email_support && `\n${settings.store_email_support}`}
                         </p>
                       </div>
                     </div>
@@ -133,10 +196,10 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900 mb-1">Business Hours</h3>
-                        <p className="text-gray-600 text-sm">
-                          Monday - Friday: 9:00 AM - 6:00 PM<br />
-                          Saturday: 10:00 AM - 4:00 PM<br />
-                          Sunday: Closed
+                        <p className="text-gray-600 text-sm whitespace-pre-line">
+                          {settings?.store_hours_weekday || 'Monday - Friday: 9:00 AM - 6:00 PM'}
+                          {settings?.store_hours_saturday && `\n${settings.store_hours_saturday}`}
+                          {settings?.store_hours_sunday && `\n${settings.store_hours_sunday}`}
                         </p>
                       </div>
                     </div>
@@ -146,22 +209,28 @@ export default function ContactPage() {
                 {/* Social Media */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="font-semibold text-gray-900 mb-4">Follow Us</h3>
-                  <div className="flex space-x-4">
-                    <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors" style={{ backgroundColor: 'rgba(207, 162, 36, 0.1)' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(207, 162, 36, 0.1)'}>
-                      <svg className="w-5 h-5" style={{ color: '#cfa224' }} fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                      </svg>
-                    </a>
-                    <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors" style={{ backgroundColor: 'rgba(207, 162, 36, 0.1)' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(207, 162, 36, 0.1)'}>
-                      <svg className="w-5 h-5" style={{ color: '#cfa224' }} fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                      </svg>
-                    </a>
-                    <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors" style={{ backgroundColor: 'rgba(207, 162, 36, 0.1)' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(207, 162, 36, 0.1)'}>
-                      <svg className="w-5 h-5" style={{ color: '#cfa224' }} fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                      </svg>
-                    </a>
+                  <div className="flex flex-wrap gap-4">
+                    {settings?.social_facebook && (
+                      <a href={settings.social_facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-[#cfa224] bg-stone-100">
+                        <svg className="w-5 h-5 text-stone-600 hover:text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                      </a>
+                    )}
+                    {settings?.social_instagram && (
+                      <a href={settings.social_instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-[#cfa224] bg-stone-100">
+                        <svg className="w-5 h-5 text-stone-600 hover:text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                      </a>
+                    )}
+                    {settings?.social_twitter && (
+                      <a href={settings.social_twitter} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-[#cfa224] bg-stone-100">
+                        <svg className="w-5 h-5 text-stone-600 hover:text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -198,8 +267,6 @@ export default function ContactPage() {
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
                           style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-                          onFocus={(e) => e.currentTarget.style.borderColor = '#cfa224'}
-                          onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                         />
                       </div>
 
@@ -216,8 +283,6 @@ export default function ContactPage() {
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
                           style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-                          onFocus={(e) => e.currentTarget.style.borderColor = '#cfa224'}
-                          onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                         />
                       </div>
                     </div>
@@ -235,8 +300,6 @@ export default function ContactPage() {
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
                           style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-                          onFocus={(e) => e.currentTarget.style.borderColor = '#cfa224'}
-                          onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                         />
                       </div>
 
@@ -252,8 +315,6 @@ export default function ContactPage() {
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
                           style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-                          onFocus={(e) => e.currentTarget.style.borderColor = '#cfa224'}
-                          onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                         >
                           <option value="">Select a subject</option>
                           <option value="general">General Inquiry</option>
@@ -279,8 +340,6 @@ export default function ContactPage() {
                         onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-colors resize-none"
                         style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => e.currentTarget.style.borderColor = '#cfa224'}
-                        onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                       />
                     </div>
 
@@ -302,8 +361,6 @@ export default function ContactPage() {
                       disabled={isSubmitting}
                       className="w-full px-6 py-3 rounded-lg font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{ backgroundColor: '#cfa224' }}
-                      onMouseEnter={(e) => !isSubmitting && (e.currentTarget.style.opacity = '0.9')}
-                      onMouseLeave={(e) => !isSubmitting && (e.currentTarget.style.opacity = '1')}
                     >
                       {isSubmitting ? (
                         <span className="flex items-center justify-center">
@@ -327,4 +384,3 @@ export default function ContactPage() {
     </div>
   );
 }
-

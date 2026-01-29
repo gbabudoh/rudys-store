@@ -32,25 +32,6 @@ const TrendingUp = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const TrendingDown = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-  </svg>
-);
-
-const Eye = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-  </svg>
-);
-
-const Plus = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-  </svg>
-);
-
 const Crown = ({ className }: { className?: string }) => (
   <svg className={className || "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -63,6 +44,20 @@ const Footprints = ({ className }: { className?: string }) => (
   </svg>
 );
 
+interface RecentOrder {
+  id: string;
+  customer: string;
+  amount: number;
+  status: string;
+  date: string;
+}
+
+interface TopProduct {
+  name: string;
+  sales: number;
+  revenue: number;
+}
+
 interface DashboardStats {
   totalProducts: number;
   totalOrders: number;
@@ -71,8 +66,8 @@ interface DashboardStats {
   collectionsProducts: number;
   luxuryProducts: number;
   crocsProducts: number;
-  recentOrders: any[];
-  topProducts: any[];
+  recentOrders: RecentOrder[];
+  topProducts: TopProduct[];
 }
 
 export default function AdminDashboard() {
@@ -153,7 +148,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome back! Here's what's happening with your store.</p>
+        <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening with your store.</p>
       </div>
 
       {/* Stats Grid */}

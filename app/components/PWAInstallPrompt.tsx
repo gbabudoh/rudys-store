@@ -79,7 +79,7 @@ export default function PWAInstallPrompt() {
         
         <button 
           onClick={() => setShowPrompt(false)}
-          className="absolute top-4 right-4 p-1 rounded-full bg-gray-100/50 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 p-1 rounded-full bg-gray-100/50 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
@@ -107,13 +107,13 @@ export default function PWAInstallPrompt() {
           {platform === 'ios' ? (
             <div className="bg-gray-50/50 rounded-2xl p-4 space-y-3">
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">How to Install</p>
-              <div className="flex items-center gap-3 text-sm text-gray-700">
+              <div className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
                 <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-500">
                   <Share2 className="w-4 h-4" />
                 </div>
                 <span>Tap the <strong>Share</strong> button below</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-700">
+              <div className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
                 <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-900">
                   <PlusSquare className="w-4 h-4" />
                 </div>

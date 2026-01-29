@@ -23,6 +23,13 @@ const Crown = ({ className, style }: { className?: string; style?: React.CSSProp
   </svg>
 );
 
+const Headphones = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a5 5 0 010-7.072m0 0l2.829 2.829m-4.243 2.829l-2.829 2.829m2.829-2.829L3 21M9.172 8.464a5 5 0 017.072 0" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 12m-3 0a3 3 0 106 0 3 3 0 10-6 0" />
+  </svg>
+);
+
 const ShoppingBag = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -138,6 +145,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Dashboard', href: '/admin', icon: Dashboard, category: 'Overview' },
     { name: 'Banners', href: '/admin/banners', icon: ImageIcon, category: 'Content' },
     { name: 'Homepage Sections', href: '/admin/homepage-sections', icon: ImageIcon, category: 'Content' },
+    { name: 'Customer Service', href: '/admin/customer-service', icon: Headphones, category: 'Content' },
     { name: 'Ruddy Collections', href: '/admin/collections', icon: Package, category: 'Products' },
     { name: 'Ruddy Luxury', href: '/admin/luxury', icon: Crown, category: 'Products' },
     { name: 'Slide & Sole', href: '/admin/crocs', icon: ShoppingBag, category: 'Products' },
@@ -196,12 +204,12 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
         <div className="flex flex-col h-full">
           {/* Logo and close button */}
           <div className="flex items-center justify-between h-20 px-6 border-b border-slate-700/50 bg-slate-900/50 backdrop-blur-sm">
-            <div className="relative h-12 w-36">
+            <div className="relative h-10 w-10">
               <Image
-                src="/rudy-store-logo.png"
-                alt="Rudy Store Logo"
+                src="/pwa-icon.png"
+                alt="Rudy Store Icon"
                 fill
-                className="object-contain brightness-0 invert"
+                className="object-contain"
                 priority
               />
             </div>

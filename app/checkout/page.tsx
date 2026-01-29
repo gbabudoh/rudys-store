@@ -100,7 +100,7 @@ export default function CheckoutPage() {
           <div className="flex items-center h-14 px-4">
             <button 
               onClick={() => router.push('/')}
-              className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200"
+              className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200 cursor-pointer"
             >
               <span className="text-2xl font-bold text-[#201d1e] -ml-1">&lt;</span>
             </button>
@@ -135,7 +135,7 @@ export default function CheckoutPage() {
               Looks like you haven&apos;t added any items to your cart yet.
             </p>
 
-            <Link href="/collections" className="group relative inline-flex items-center justify-center w-full md:w-auto px-10 h-16 bg-[#201d1e] text-white rounded-2xl font-black text-lg shadow-2xl shadow-black/20 active:scale-[0.98] transition-all overflow-hidden">
+            <Link href="/collections" className="group relative inline-flex items-center justify-center w-full md:w-auto px-10 h-16 bg-[#201d1e] text-white rounded-2xl font-black text-lg shadow-2xl shadow-black/20 active:scale-[0.98] transition-all overflow-hidden cursor-pointer">
               <span className="relative z-10">Browse Collections</span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </Link>
@@ -145,9 +145,9 @@ export default function CheckoutPage() {
                 Need help?
               </p>
               <div className="flex items-center justify-center space-x-6 text-gray-500">
-                <Link href="/contact" className="text-xs font-bold hover:text-[#201d1e] transition-colors">Contact Support</Link>
+                <Link href="/contact" className="text-xs font-bold hover:text-[#201d1e] transition-colors cursor-pointer">Contact Support</Link>
                 <div className="w-1 h-1 bg-gray-200 rounded-full"></div>
-                <Link href="/faq" className="text-xs font-bold hover:text-[#201d1e] transition-colors">View FAQ</Link>
+                <Link href="/faq" className="text-xs font-bold hover:text-[#201d1e] transition-colors cursor-pointer">View FAQ</Link>
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function CheckoutPage() {
         <div className="flex items-center h-14 px-4">
           <button 
             onClick={() => router.push('/')}
-            className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200"
+            className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200 cursor-pointer"
           >
             <span className="text-2xl font-bold text-[#201d1e] -ml-1">&lt;</span>
           </button>
@@ -176,7 +176,7 @@ export default function CheckoutPage() {
       <div className="flex-1 py-8 md:py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="hidden md:block mb-8">
-            <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-[#cfa224] transition-colors group">
+            <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-[#cfa224] transition-colors group cursor-pointer">
               <ChevronLeft className="mr-1 transition-transform group-hover:-translate-x-1" />
               Back to store
             </Link>
@@ -419,7 +419,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="hidden md:flex w-full bg-[#201d1e] text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-black/10 hover:bg-black transition-all items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+                className="hidden md:flex w-full bg-[#201d1e] text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-black/10 hover:bg-black transition-all items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer"
               >
                 {loading ? (
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
