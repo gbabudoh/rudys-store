@@ -155,6 +155,8 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Payments', href: '/admin/payments', icon: CreditCard, category: 'Sales' },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart, category: 'Insights' },
     { name: 'Google Analytics', href: '/admin/google-analytics', icon: BarChart, category: 'Insights' },
+    { name: 'Categories', href: '/admin/categories', icon: Package, category: 'Management' },
+    { name: 'Brands', href: '/admin/brands', icon: Crown, category: 'Management' },
     { name: 'Customers', href: '/admin/customers', icon: Users, category: 'Management' },
     { name: 'Admin Users', href: '/admin/users', icon: Users, category: 'Management' },
     { name: 'Settings', href: '/admin/settings', icon: Settings, category: 'Management' },

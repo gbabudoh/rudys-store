@@ -4,36 +4,31 @@ import { useState, useEffect } from 'react';
 import BannerSlider, { type BannerSlide } from './components/BannerSlider';
 import CategorySection, { type Category } from './components/CategorySection';
 import FeaturedProducts from './components/FeaturedProducts';
-import { getAllProducts, type Product } from '@/lib/products';
+import type { Product } from '@/lib/products';
 
 export default function Home() {
   const [bannerSlides, setBannerSlides] = useState<BannerSlide[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Get real products
-  const allProducts = getAllProducts();
-  const realFeaturedProducts = allProducts.map(product => ({
-    ...product,
-  }));
-
-  // Fetch banners and homepage sections from API
+  // Fetch banners, homepage sections, and featured products from API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [bannersRes, sectionsRes] = await Promise.all([
+        const [bannersRes, sectionsRes, productsRes] = await Promise.all([
           fetch('/api/banners'),
-          fetch('/api/homepage-sections')
+          fetch('/api/homepage-sections'),
+          fetch('/api/products?featured=true&limit=8')
         ]);
 
-        if (bannersRes.ok && sectionsRes.ok) {
+        if (bannersRes.ok && sectionsRes.ok && productsRes.ok) {
           const bannersData = await bannersRes.json();
           const sectionsData = await sectionsRes.json();
-          
-          console.log('Banners response:', bannersData);
-          console.log('Sections response:', sectionsData);
+          const productsData = await productsRes.json();
           
           setBannerSlides(bannersData.banners || []);
+          setFeaturedProducts(productsData.products || []);
           
           interface SectionData {
             id: string;
@@ -114,10 +109,9 @@ export default function Home() {
       {/* Category Sections */}
       <CategorySection categories={categories} />
       
-      {/* Featured Products */}
       <FeaturedProducts
         title="Featured Products"
-        products={realFeaturedProducts}
+        products={featuredProducts}
         onAddToCart={handleAddToCart}
         onAddToWishlist={handleAddToWishlist}
         onQuickView={handleQuickView}

@@ -3,11 +3,6 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const Plus = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-  </svg>
-);
 
 const Edit = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,7 +54,19 @@ export default function HomepageSectionsManagement() {
 
         const data = await response.json();
         // Transform database format to component format
-        const transformedSections = data.sections.map((section: any) => ({
+        const transformedSections = data.sections.map((section: {
+          id: number;
+          section_key: string;
+          title: string;
+          subtitle?: string;
+          description?: string;
+          image_url?: string;
+          link_url?: string;
+          product_count?: number;
+          is_active: boolean;
+          display_order: number;
+          gradient_color?: string;
+        }) => ({
           id: section.id.toString(),
           section_key: section.section_key,
           title: section.title,
@@ -74,9 +81,9 @@ export default function HomepageSectionsManagement() {
         }));
         setSections(transformedSections);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching homepage sections:', err);
-        setError(err.message || 'Failed to load homepage sections');
+        setError(err instanceof Error ? err.message : 'Failed to load homepage sections');
         setSections([]);
       } finally {
         setIsLoading(false);
@@ -139,8 +146,8 @@ export default function HomepageSectionsManagement() {
       setSections(prev => prev.map(s => s.id === editingSection?.id ? transformedSection : s));
       setIsModalOpen(false);
       setEditingSection(null);
-    } catch (err: any) {
-      alert(err.message || 'Failed to save homepage section');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Failed to save homepage section');
     }
   };
 
@@ -259,7 +266,7 @@ export default function HomepageSectionsManagement() {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleEditSection(section)}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                 >
                   <Edit className="w-4 h-4" />
                 </button>
@@ -315,7 +322,14 @@ function HomepageSectionModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">Edit Homepage Section</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Edit Homepage Section</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 cursor-pointer">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -449,9 +463,9 @@ function HomepageSectionModal({
               id="isActive"
               checked={formData.isActive}
               onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-              className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+              className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
             />
-            <label htmlFor="isActive" className="ml-2 text-sm text-gray-700">
+            <label htmlFor="isActive" className="ml-2 text-sm text-gray-700 cursor-pointer">
               Active
             </label>
           </div>
@@ -460,13 +474,13 @@ function HomepageSectionModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors cursor-pointer"
             >
               Update Section
             </button>

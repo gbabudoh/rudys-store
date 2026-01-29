@@ -1,33 +1,49 @@
 'use client';
 
 import { useState, use, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 // @ts-expect-error - react-image-gallery missing types
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
-import { getProductBySlug, getProductById, type Product } from '@/lib/products';
+import type { Product } from '@/lib/products';
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const router = useRouter();
   const { slug } = use(params);
-  
-  // Try finding by slug
-  const productBySlug = getProductBySlug(slug);
-  // If not found by slug, it might be an ID (backward compatibility)
-  const productById = !productBySlug ? getProductById(slug) : null;
-  
-  const product = productBySlug || productById;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (productById) {
-      // Found by ID, redirect to slug-based URL for better SEO
-      router.replace(`/product/${productById.slug}`);
-    }
-  }, [productById, router]);
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`/api/products/${slug}`);
+        if (response.ok) {
+          const data = await response.json();
+          setProduct(data.product);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!product) {
+    fetchProduct();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

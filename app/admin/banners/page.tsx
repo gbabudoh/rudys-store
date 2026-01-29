@@ -72,7 +72,18 @@ export default function BannerManagement() {
 
         const data = await response.json();
         // Transform database format to component format
-        const transformedSlides = data.banners.map((banner: any) => ({
+        const transformedSlides = data.banners.map((banner: { 
+          id: number; 
+          title: string; 
+          subtitle?: string; 
+          image_url: string; 
+          link_url?: string; 
+          button_text?: string; 
+          is_active: boolean; 
+          display_order: number; 
+          created_at?: string; 
+          updated_at?: string; 
+        }) => ({
           id: banner.id.toString(),
           title: banner.title,
           subtitle: banner.subtitle || '',
@@ -86,9 +97,9 @@ export default function BannerManagement() {
         }));
         setSlides(transformedSlides);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching banners:', err);
-        setError(err.message || 'Failed to load banners');
+        setError(err instanceof Error ? err.message : 'Failed to load banners');
         // Fallback to empty array
         setSlides([]);
       } finally {
@@ -130,9 +141,9 @@ export default function BannerManagement() {
 
       setSlides(prev => prev.filter(slide => slide.id !== id));
       alert('Banner deleted successfully!');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Delete error:', err);
-      alert(err.message || 'Failed to delete banner');
+      alert(err instanceof Error ? err.message : 'Failed to delete banner');
     }
   };
 
@@ -165,9 +176,9 @@ export default function BannerManagement() {
       };
       setSlides(prev => prev.map(s => s.id === id ? updatedSlide : s));
       alert(`Banner ${data.banner.is_active ? 'activated' : 'deactivated'} successfully!`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Toggle active error:', err);
-      alert(err.message || 'Failed to update banner');
+      alert(err instanceof Error ? err.message : 'Failed to update banner');
     }
   };
 
@@ -244,9 +255,9 @@ export default function BannerManagement() {
       setIsModalOpen(false);
       setEditingSlide(null);
       alert(`Banner ${editingSlide ? 'updated' : 'created'} successfully!`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Save error:', err);
-      alert(err.message || 'Failed to save banner');
+      alert(err instanceof Error ? err.message : 'Failed to save banner');
     }
   };
 
@@ -276,7 +287,7 @@ export default function BannerManagement() {
         </div>
         <button
           onClick={handleCreateSlide}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Add New Slide
@@ -355,7 +366,7 @@ export default function BannerManagement() {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleToggleActive(slide.id)}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                     slide.isActive
                       ? 'bg-red-100 text-red-700 hover:bg-red-200'
                       : 'bg-green-100 text-green-700 hover:bg-green-200'
@@ -365,13 +376,13 @@ export default function BannerManagement() {
                 </button>
                 <button
                   onClick={() => handleEditSlide(slide)}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                 >
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleDeleteSlide(slide.id)}
-                  className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                  className="p-2 text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -459,9 +470,9 @@ const BannerSlideModal = ({
 
       const data = await response.json();
       setFormData({ ...formData, image: data.url });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Upload error:', err);
-      setUploadError(err.message || 'Failed to upload image');
+      setUploadError(err instanceof Error ? err.message : 'Failed to upload image');
     } finally {
       setUploading(false);
     }
@@ -475,9 +486,16 @@ const BannerSlideModal = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">
-          {slide ? 'Edit Banner Slide' : 'Create New Banner Slide'}
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">
+            {slide ? 'Edit Banner Slide' : 'Create New Banner Slide'}
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 cursor-pointer">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -514,10 +532,11 @@ const BannerSlideModal = ({
             {/* Image Preview */}
             {formData.image && (
               <div className="mb-3 relative w-full h-48 rounded-lg overflow-hidden border border-gray-300">
-                <img
+                <Image
                   src={formData.image}
                   alt="Banner preview"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
             )}
@@ -597,9 +616,9 @@ const BannerSlideModal = ({
                 id="isActive"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
               />
-              <label htmlFor="isActive" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="isActive" className="ml-2 text-sm text-gray-700 cursor-pointer">
                 Active
               </label>
             </div>
@@ -623,13 +642,13 @@ const BannerSlideModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors cursor-pointer"
             >
               {slide ? 'Update Slide' : 'Create Slide'}
             </button>
