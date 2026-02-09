@@ -26,7 +26,7 @@ const List = ({ className }: { className?: string }) => (
 
 // Sample products for Rudy Collections
 
-const categories = ['All', 'T-Shirts', 'Shirts', 'Trousers', 'Dresses'];
+const categories = ['All', 'Clothing', 'Footwear', 'Accessories'];
 
 export default function CollectionsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -60,7 +60,14 @@ export default function CollectionsPage() {
   const subcategories = Array.from(new Set(collectionsProducts.map(p => p.subcategory))).filter(Boolean);
 
   const filteredProducts = collectionsProducts.filter(product => {
-    const categoryMatch = selectedCategory === 'All' || product.category === selectedCategory;
+    // Category mapping to productType
+    let categoryMatch = selectedCategory === 'All';
+    if (!categoryMatch) {
+      if (selectedCategory === 'Clothing') categoryMatch = product.productType === 'clothing';
+      else if (selectedCategory === 'Footwear') categoryMatch = product.productType === 'shoe';
+      else if (selectedCategory === 'Accessories') categoryMatch = product.productType === 'accessory';
+    }
+
     const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
     const genderMatch = selectedGender.length === 0 || selectedGender.includes(product.gender);
     const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand);

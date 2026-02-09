@@ -26,7 +26,7 @@ const SlidersHorizontal = ({ className }: { className?: string }) => (
 
 
 
-const categories = ['All', 'Footwear'];
+const categories = ['All', 'Clothing', 'Footwear', 'Accessories'];
 
 export default function CrocsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -60,7 +60,14 @@ export default function CrocsPage() {
   const subcategories = Array.from(new Set(crocsProducts.map(p => p.subcategory))).filter(Boolean);
 
   const filteredProducts = crocsProducts.filter(product => {
-    const categoryMatch = selectedCategory === 'All' || product.category === selectedCategory;
+    // Category mapping to productType
+    let categoryMatch = selectedCategory === 'All';
+    if (!categoryMatch) {
+      if (selectedCategory === 'Clothing') categoryMatch = product.productType === 'clothing';
+      else if (selectedCategory === 'Footwear') categoryMatch = product.productType === 'shoe';
+      else if (selectedCategory === 'Accessories') categoryMatch = product.productType === 'accessory';
+    }
+
     const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
     const genderMatch = selectedGender.length === 0 || selectedGender.includes(product.gender);
     const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
