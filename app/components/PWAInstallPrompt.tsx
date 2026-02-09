@@ -22,31 +22,66 @@ export default function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [platform, setPlatform] = useState<'ios' | 'android' | 'other' | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isAppDetected, setIsAppDetected] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Function to report installation/app open to the backend
+  const trackAppStatus = async () => {
+    try {
+      await fetch('/api/app-status', { method: 'POST' });
+    } catch (err) {
+      console.error('Failed to track app status:', err);
+    }
+  };
 
   useEffect(() => {
+    // 1. Check if IP is already registered as having the app
+    const checkIpStatus = async () => {
+      try {
+        const res = await fetch('/api/app-status');
+        const data = await res.json();
+        if (data.isInstalled) {
+          setIsAppDetected(true);
+        }
+      } catch (err) {
+        console.error('Failed to check IP status:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkIpStatus();
+
     // Detect platform
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIOS = /iphone|ipad|ipod/.test(userAgent);
     const isAndroid = /android/.test(userAgent);
     
-    // Check if app is already installed
+    // Check if app is already installed/running in standalone
     const isStandalone = (window.navigator as NavigatorWithStandalone).standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+    // If currently in standalone, make sure we log the IP
+    if (isStandalone) {
+      trackAppStatus();
+      setIsAppDetected(true);
+      return;
+    }
 
     if (!isStandalone) {
       if (isIOS) {
-        setTimeout(() => setPlatform('ios'), 0);
-        // Show iOS prompt after a small delay
+        setPlatform('ios');
+        // Show iOS prompt after a small delay if not detected by IP
         const timer = setTimeout(() => setShowPrompt(true), 3000);
         return () => clearTimeout(timer);
       } else if (isAndroid) {
-        setTimeout(() => setPlatform('android'), 0);
+        setPlatform('android');
       }
     }
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      // Show Android prompt after a small delay
+      // Show Android prompt after a small delay if not detected by IP
       setTimeout(() => setShowPrompt(true), 3000);
     };
 
@@ -65,11 +100,12 @@ export default function PWAInstallPrompt() {
     
     if (outcome === 'accepted') {
       setShowPrompt(false);
+      trackAppStatus(); // Log the IP now that they've accepted
     }
     setDeferredPrompt(null);
   };
 
-  if (!showPrompt) return null;
+  if (isLoading || isAppDetected || !showPrompt) return null;
 
   return (
     <div className="fixed bottom-24 left-4 right-4 z-[100] animate-slide-up">

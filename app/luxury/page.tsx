@@ -89,9 +89,9 @@ export default function LuxuryPage() {
   const genders = Array.from(
     new Set(luxuryProducts.map((p) => p.gender)),
   ).filter(Boolean);
-  const brands = Array.from(new Set(luxuryProducts.map((p) => p.brand))).filter(
+  const brands = Array.from(new Set([...luxuryProducts.map((p) => p.brand), 'Adidas', 'Nike'])).filter(
     Boolean,
-  );
+  ).sort();
   const allSizes = Array.from(new Set(luxuryProducts.flatMap((p) => p.sizes)))
     .filter(Boolean)
     .sort();

@@ -90,7 +90,8 @@ export async function initializeTransaction(
   email: string,
   amount: number,
   reference?: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
+  channels?: string[]
 ) {
   try {
     const result = await paystackFetch<InitializeResponse>('/transaction/initialize', {
@@ -101,6 +102,7 @@ export async function initializeTransaction(
         reference: reference || `ref_${Date.now()}`,
         metadata: metadata || {},
         callback_url: process.env.PAYSTACK_CALLBACK_URL || '',
+        channels,
       }),
     });
 

@@ -55,7 +55,7 @@ export default function CrocsPage() {
 
   // Extract unique values for filters
   const genders = Array.from(new Set(crocsProducts.map(p => p.gender))).filter(Boolean);
-  const brands = Array.from(new Set(crocsProducts.map(p => p.brand))).filter(Boolean);
+  const brands = Array.from(new Set([...crocsProducts.map(p => p.brand), 'Adidas', 'Nike'])).filter(Boolean).sort();
   const allSizes = Array.from(new Set(crocsProducts.flatMap(p => p.sizes))).filter(Boolean).sort();
   const subcategories = Array.from(new Set(crocsProducts.map(p => p.subcategory))).filter(Boolean);
 

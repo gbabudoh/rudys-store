@@ -4,7 +4,7 @@ import { initializeTransaction } from '@/lib/paystack';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, amount, reference, metadata } = body;
+    const { email, amount, reference, metadata, channels } = body;
 
     // Validate required fields
     if (!email || !amount) {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await initializeTransaction(email, amount, reference, metadata);
+    const result = await initializeTransaction(email, amount, reference, metadata, channels);
 
     if (result.success) {
       return NextResponse.json(
@@ -47,12 +47,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { 
         success: false, 
         message: 'Failed to initialize payment',
-        error: error.message 
+        error: errorMessage 
       },
       { status: 500 }
     );

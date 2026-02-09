@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/product';
+import ImageUpload from './ImageUpload';
 
 // Icons
 const X = ({ className }: { className?: string }) => (
@@ -75,7 +76,6 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<'basic' | 'details' | 'inventory'>('basic');
   const [newFeature, setNewFeature] = useState('');
-  const [newImageUrl, setNewImageUrl] = useState('');
   const [dbCategories, setDbCategories] = useState<CategoryData[]>([]);
   const [dbBrands, setDbBrands] = useState<BrandData[]>([]);
 
@@ -172,13 +172,12 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
     }));
   };
 
-  const handleAddImage = () => {
-    if (newImageUrl.trim()) {
+  const handleAddImage = (url: string) => {
+    if (url) {
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, newImageUrl.trim()],
+        images: [...prev.images, url],
       }));
-      setNewImageUrl('');
     }
   };
 
@@ -394,21 +393,11 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                   {/* Images */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
-                    <div className="flex gap-2 mb-3">
-                      <input
-                        type="text"
-                        value={newImageUrl}
-                        onChange={(e) => setNewImageUrl(e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Enter image URL"
+                    <div className="mb-4">
+                      <ImageUpload 
+                        onUploadSuccess={handleAddImage}
+                        accept="image/*"
                       />
-                      <button
-                        type="button"
-                        onClick={handleAddImage}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
-                      >
-                        Add
-                      </button>
                     </div>
                     <div className="grid grid-cols-4 gap-3">
                       {formData.images.map((img, index) => (

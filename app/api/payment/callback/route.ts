@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyTransaction } from '@/lib/paystack';
 import { transaction } from '@/lib/db';
 import { ResultSetHeader } from 'mysql2';
+import { sendEmail } from '@/lib/email';
 
 interface OrderMetadata {
   email: string;
@@ -84,6 +85,38 @@ export async function GET(request: NextRequest) {
           );
         }
       });
+
+      // Send Order Confirmation Email
+      try {
+        await sendEmail({
+          to: orderMetadata.email,
+          subject: `Order Confirmation - ${reference}`,
+          from: 'sales',
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; rounded: 8px;">
+              <h2 style="color: #cfa224;">Order Confirmed!</h2>
+              <p>Hi ${orderMetadata.firstName},</p>
+              <p>Thank you for your purchase. Your order has been successfully placed and is being processed.</p>
+              <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <p><strong>Order Reference:</strong> ${reference}</p>
+                <p><strong>Total Amount:</strong> ₦${(amount / 100).toLocaleString()}</p>
+              </div>
+              <h3>Order Summary:</h3>
+              <ul style="list-style: none; padding: 0;">
+                ${orderMetadata.items.map(item => `
+                  <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                    ${item.name} x ${item.quantity} ${item.size ? `(${item.size})` : ''} - ₦${((item.price || 0) / 100).toLocaleString()}
+                  </li>
+                `).join('')}
+              </ul>
+              <p style="margin-top: 30px;">We'll notify you once your order has been shipped.</p>
+              <p>Best regards,<br>The Ruddy's Store Sales Team</p>
+            </div>
+          `
+        });
+      } catch (emailError) {
+        console.error('Failed to send order confirmation email:', emailError);
+      }
 
       return NextResponse.redirect(new URL(`/checkout/success?reference=${reference}`, request.url));
     } else {

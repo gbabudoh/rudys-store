@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { queryOne, transaction } from '@/lib/db';
 import { hashPassword, generateToken, type User } from '@/lib/auth';
+import { sendEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
@@ -56,6 +57,30 @@ export async function POST(request: Request) {
 
     // Generate token
     const token = generateToken(user);
+
+    // Send Welcome Email
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Welcome to Ruddy's Store!",
+        from: 'info',
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; rounded: 8px;">
+            <h2 style="color: #cfa224;">Welcome, ${firstName}!</h2>
+            <p>Thank you for registering directly on our site. We're excited to have you as part of our community.</p>
+            <p>You can now log in to track your orders and enjoy a personalized shopping experience.</p>
+            <div style="margin: 30px 0;">
+              <a href="${process.env.NEXT_PUBLIC_APP_URL}/login" style="background-color: #cfa224; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Login to Your Account</a>
+            </div>
+            <p>If you have any questions, feel free to reply to this email.</p>
+            <p>Best regards,<br>The Ruddy's Store Team</p>
+          </div>
+        `
+      });
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Don't fail registration if email fails
+    }
 
     return NextResponse.json({
       user,

@@ -99,8 +99,9 @@ function ProductContent({ product }: { product: Product }) {
       <style jsx global>{`
         .image-gallery-slide img {
           object-fit: cover;
-          height: 600px;
+          aspect-ratio: 1 / 1;
           width: 100%;
+          height: 100%;
         }
         
         .image-gallery-thumbnails-wrapper {
@@ -172,7 +173,7 @@ function ProductContent({ product }: { product: Product }) {
         
         @media (max-width: 768px) {
           .image-gallery-slide img {
-            height: 400px;
+            aspect-ratio: 1 / 1;
           }
           
           .image-gallery-thumbnail {
