@@ -29,7 +29,7 @@ const SlidersHorizontal = ({ className }: { className?: string }) => (
 const categories = ['All', 'Clothing', 'Footwear', 'Accessories'];
 
 export default function CrocsPage() {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(['All']);
   const [selectedGender, setSelectedGender] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -61,11 +61,14 @@ export default function CrocsPage() {
 
   const filteredProducts = crocsProducts.filter(product => {
     // Category mapping to productType
-    let categoryMatch = selectedCategory === 'All';
+    let categoryMatch = selectedCategories.includes('All');
     if (!categoryMatch) {
-      if (selectedCategory === 'Clothing') categoryMatch = product.productType === 'clothing';
-      else if (selectedCategory === 'Footwear') categoryMatch = product.productType === 'shoe';
-      else if (selectedCategory === 'Accessories') categoryMatch = product.productType === 'accessory';
+      categoryMatch = selectedCategories.some(cat => {
+        if (cat === 'Clothing') return product.productType === 'clothing';
+        if (cat === 'Footwear') return product.productType === 'shoe';
+        if (cat === 'Accessories') return product.productType === 'accessory';
+        return false;
+      });
     }
 
     const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
@@ -105,7 +108,7 @@ export default function CrocsPage() {
   useEffect(() => {
     // eslint-disable-next-line
     setDisplayedCount(productsPerPage);
-  }, [selectedCategory, selectedGender, selectedBrands, selectedSizes, selectedSubcategories, priceRange, sortBy, productsPerPage]);
+  }, [selectedCategories, selectedGender, selectedBrands, selectedSizes, selectedSubcategories, priceRange, sortBy, productsPerPage]);
 
   const handleAddToCart = (product: Product) => {
     console.log('Added to cart:', product);
@@ -156,10 +159,10 @@ export default function CrocsPage() {
               <div className="flex items-center justify-between mb-6 pb-4 border-b" style={{ borderColor: '#cfa224' }}>
                 <h3 className="text-lg font-bold" style={{ color: '#201d1e' }}>Filters</h3>
                 <div className="flex items-center gap-2">
-                  {(selectedGender.length > 0 || selectedBrands.length > 0 || selectedSizes.length > 0 || selectedSubcategories.length > 0 || selectedCategory !== 'All') && (
+                  {(selectedGender.length > 0 || selectedBrands.length > 0 || selectedSizes.length > 0 || selectedSubcategories.length > 0 || !selectedCategories.includes('All')) && (
                     <button
                       onClick={() => {
-                        setSelectedCategory('All');
+                        setSelectedCategories(['All']);
                         setSelectedGender([]);
                         setSelectedBrands([]);
                         setSelectedSizes([]);
@@ -288,19 +291,27 @@ export default function CrocsPage() {
                   {categories.map((category) => (
                     <label key={category} className="flex items-center group cursor-pointer">
                       <input
-                        type="radio"
-                        name="category"
-                        value={category}
-                        checked={selectedCategory === category}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="mr-3 w-4 h-4 focus:ring-2 border-gray-300"
+                        type="checkbox"
+                        checked={selectedCategories.includes(category)}
+                        onChange={(e) => {
+                          if (category === 'All') {
+                            setSelectedCategories(['All']);
+                          } else {
+                            const newCategories = e.target.checked
+                              ? [...selectedCategories.filter(c => c !== 'All'), category]
+                              : selectedCategories.filter(c => c !== category);
+                            
+                            setSelectedCategories(newCategories.length === 0 ? ['All'] : newCategories);
+                          }
+                        }}
+                        className="mr-3 w-4 h-4 focus:ring-2 border-gray-300 rounded"
                         style={{ accentColor: '#cfa224' }}
                       />
                       <span className={`text-sm transition-colors ${
-                        selectedCategory === category 
-                          ? 'font-semibold' 
+                        selectedCategories.includes(category)
+                          ? 'font-semibold'
                           : 'text-gray-700 group-hover:opacity-70'
-                      }`} style={selectedCategory === category ? { color: '#cfa224' } : {}}>{category}</span>
+                      }`} style={selectedCategories.includes(category) ? { color: '#cfa224' } : {}}>{category}</span>
                     </label>
                   ))}
                 </div>

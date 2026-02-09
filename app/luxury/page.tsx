@@ -59,7 +59,7 @@ const SlidersHorizontal = ({ className }: { className?: string }) => (
 const categories = ["All", "Clothing", "Footwear", "Accessories"];
 
 export default function LuxuryPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(["All"]);
   const [selectedGender, setSelectedGender] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -101,14 +101,14 @@ export default function LuxuryPage() {
 
   const filteredProducts = luxuryProducts.filter((product) => {
     // Category mapping to productType
-    let categoryMatch = selectedCategory === "All";
+    let categoryMatch = selectedCategories.includes("All");
     if (!categoryMatch) {
-      if (selectedCategory === "Clothing")
-        categoryMatch = product.productType === "clothing";
-      else if (selectedCategory === "Footwear")
-        categoryMatch = product.productType === "shoe";
-      else if (selectedCategory === "Accessories")
-        categoryMatch = product.productType === "accessory";
+      categoryMatch = selectedCategories.some(cat => {
+        if (cat === "Clothing") return product.productType === "clothing";
+        if (cat === "Footwear") return product.productType === "shoe";
+        if (cat === "Accessories") return product.productType === "accessory";
+        return false;
+      });
     }
 
     const priceMatch =
@@ -163,7 +163,7 @@ export default function LuxuryPage() {
     // eslint-disable-next-line
     setDisplayedCount(productsPerPage);
   }, [
-    selectedCategory,
+    selectedCategories,
     selectedGender,
     selectedBrands,
     selectedSizes,
@@ -249,10 +249,10 @@ export default function LuxuryPage() {
                     selectedBrands.length > 0 ||
                     selectedSizes.length > 0 ||
                     selectedSubcategories.length > 0 ||
-                    selectedCategory !== "All") && (
+                    !selectedCategories.includes("All")) && (
                     <button
                       onClick={() => {
-                        setSelectedCategory("All");
+                        setSelectedCategories(["All"]);
                         setSelectedGender([]);
                         setSelectedBrands([]);
                         setSelectedSizes([]);
@@ -448,22 +448,37 @@ export default function LuxuryPage() {
                       className="flex items-center group cursor-pointer"
                     >
                       <input
-                        type="radio"
-                        name="category"
-                        value={category}
-                        checked={selectedCategory === category}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="mr-3 w-4 h-4 focus:ring-2 border-gray-300"
+                        type="checkbox"
+                        checked={selectedCategories.includes(category)}
+                        onChange={(e) => {
+                          if (category === "All") {
+                            setSelectedCategories(["All"]);
+                          } else {
+                            const newCategories = e.target.checked
+                              ? [
+                                  ...selectedCategories.filter(
+                                    (c) => c !== "All",
+                                  ),
+                                  category,
+                                ]
+                              : selectedCategories.filter((c) => c !== category);
+
+                            setSelectedCategories(
+                              newCategories.length === 0 ? ["All"] : newCategories,
+                            );
+                          }
+                        }}
+                        className="mr-3 w-4 h-4 focus:ring-2 border-gray-300 rounded"
                         style={{ accentColor: "#cfa224" }}
                       />
                       <span
                         className={`text-sm transition-colors ${
-                          selectedCategory === category
+                          selectedCategories.includes(category)
                             ? "font-semibold"
                             : "text-gray-700 group-hover:opacity-70"
                         }`}
                         style={
-                          selectedCategory === category
+                          selectedCategories.includes(category)
                             ? { color: "#cfa224" }
                             : {}
                         }

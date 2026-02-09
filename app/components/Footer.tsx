@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -65,12 +65,13 @@ interface StoreSettings {
   social_whatsapp?: string;
 }
 
+const emptySubscribe = () => () => {};
+
 export default function Footer() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [settings, setSettings] = useState<StoreSettings>({});
 
   useEffect(() => {
-    setMounted(true);
     fetch('/api/settings')
       .then(res => res.ok ? res.json() : null)
       .then(data => {
