@@ -66,21 +66,19 @@ interface StoreSettings {
 }
 
 export default function Footer() {
-  const [settings, setSettings] = useState<StoreSettings | null>(null);
-  const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [settings, setSettings] = useState<StoreSettings>({});
 
   useEffect(() => {
-    setCurrentYear(new Date().getFullYear());
+    setMounted(true);
     fetch('/api/settings')
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (data?.settings) {
           setSettings(data.settings);
-        } else {
-          setSettings({});
         }
       })
-      .catch(() => setSettings({}));
+      .catch(() => {});
   }, []);
 
   const socialLinks = [
@@ -112,7 +110,7 @@ export default function Footer() {
               Your one-stop destination for men&apos;s, women&apos;s, and children&apos;s fashion.
             </p>
             <div className="flex space-x-4">
-              {settings && socialLinks.map(({ key, label, Icon }) => {
+              {mounted && socialLinks.map(({ key, label, Icon }) => {
                 const href = settings[key as keyof StoreSettings];
                 if (href) {
                   return (
@@ -212,19 +210,19 @@ export default function Footer() {
               <div className="flex items-start space-x-3">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#cfa224' }} />
                 <span className="text-gray-300 text-sm">
-                  {settings?.store_address || 'Loading...'}
+                  {mounted ? (settings.store_address || 'Loading...') : '\u00A0'}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 flex-shrink-0" style={{ color: '#cfa224' }} />
                 <span className="text-gray-300 text-sm">
-                  {settings?.store_phone || 'Loading...'}
+                  {mounted ? (settings.store_phone || 'Loading...') : '\u00A0'}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 flex-shrink-0" style={{ color: '#cfa224' }} />
                 <span className="text-gray-300 text-sm">
-                  {settings?.store_email || 'Loading...'}
+                  {mounted ? (settings.store_email || 'Loading...') : '\u00A0'}
                 </span>
               </div>
             </div>
@@ -235,7 +233,7 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © {currentYear ?? ''} Rudy&apos;s Store. All rights reserved.
+              © {mounted ? new Date().getFullYear() : ''} Rudy&apos;s Store. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm cursor-pointer">
