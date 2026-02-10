@@ -174,8 +174,8 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
   }, []);
 
   const navigation: NavItem[] = [
-    { name: 'Email Inbox', href: '/admin/customer-service', icon: Mail, category: 'Overview', badge: unreadCount > 0 ? unreadCount : undefined },
     { name: 'Dashboard', href: '/admin', icon: Dashboard, category: 'Overview' },
+    { name: 'Customer Service', href: '/admin/customer-service', icon: Mail, category: 'Overview', badge: unreadCount > 0 ? unreadCount : undefined },
     { name: 'Banners', href: '/admin/banners', icon: ImageIcon, category: 'Content' },
     { name: 'Homepage Sections', href: '/admin/homepage-sections', icon: ImageIcon, category: 'Content' },
     { name: 'Ruddy Collections', href: '/admin/collections', icon: Package, category: 'Products' },
