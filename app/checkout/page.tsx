@@ -47,6 +47,18 @@ export default function CheckoutPage() {
     }
   }, [cartCount, router, loading]);
 
+  // Handle browser back button (bfcache) - reset loading state when returning to page
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted || !event.persisted) {
+        setLoading(false);
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
