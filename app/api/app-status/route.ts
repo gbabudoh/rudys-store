@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryOne, query } from '@/lib/db';
 
+async function ensureTable() {
+  await query(`
+    CREATE TABLE IF NOT EXISTS app_installations (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      ip_address VARCHAR(45) NOT NULL UNIQUE,
+      last_opened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_ip (ip_address)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `);
+}
+
 /**
  * GET: Checks if the current visitor's IP has already installed/opened the app.
  * POST: Records the current visitor's IP as having the app.
@@ -16,6 +28,7 @@ function getClientIp(req: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    await ensureTable();
     const ip = getClientIp(request);
 
     const installation = await queryOne<{ id: number }>(
@@ -36,6 +49,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureTable();
     const ip = getClientIp(request);
 
     // Insert or update last_opened_at
