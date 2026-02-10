@@ -178,6 +178,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Customer Service', href: '/admin/customer-service', icon: Mail, category: 'Overview', badge: unreadCount > 0 ? unreadCount : undefined },
     { name: 'Banners', href: '/admin/banners', icon: ImageIcon, category: 'Content' },
     { name: 'Homepage Sections', href: '/admin/homepage-sections', icon: ImageIcon, category: 'Content' },
+    { name: 'Footer', href: '/admin/footer', icon: ImageIcon, category: 'Content' },
     { name: 'Ruddy Collections', href: '/admin/collections', icon: Package, category: 'Products' },
     { name: 'Ruddy Luxury', href: '/admin/luxury', icon: Crown, category: 'Products' },
     { name: 'Slide & Sole', href: '/admin/crocs', icon: ShoppingBag, category: 'Products' },

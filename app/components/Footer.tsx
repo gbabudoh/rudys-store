@@ -67,17 +67,28 @@ interface StoreSettings {
 
 const emptySubscribe = () => () => {};
 
+interface FooterLinks {
+  quick_links?: { label: string; href: string }[];
+  customer_service?: { label: string; href: string }[];
+}
+
 export default function Footer() {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [settings, setSettings] = useState<StoreSettings>({});
+  const [footerLinks, setFooterLinks] = useState<FooterLinks>({});
 
   useEffect(() => {
     fetch('/api/settings')
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        if (data?.settings) {
-          setSettings(data.settings);
-        }
+        if (data?.settings) setSettings(data.settings);
+      })
+      .catch(() => {});
+
+    fetch('/api/footer')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.links) setFooterLinks(data.links);
       })
       .catch(() => {});
   }, []);
@@ -144,31 +155,22 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/collections" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Rudy Collections
-                </Link>
-              </li>
-              <li>
-                <Link href="/luxury" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Rudy Luxury
-                </Link>
-              </li>
-              <li>
-                <Link href="/crocs" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Slide & Sole
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Contact
-                </Link>
-              </li>
+              {mounted && footerLinks.quick_links?.map((link, i) => (
+                <li key={i}>
+                  <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {!footerLinks.quick_links?.length && mounted && (
+                <>
+                  <li><Link href="/collections" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Rudy Collections</Link></li>
+                  <li><Link href="/luxury" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Rudy Luxury</Link></li>
+                  <li><Link href="/crocs" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Slide & Sole</Link></li>
+                  <li><Link href="/about" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">About Us</Link></li>
+                  <li><Link href="/contact" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Contact</Link></li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -176,31 +178,22 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Customer Service</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/shipping" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link href="/returns" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Returns & Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link href="/size-guide" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Size Guide
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
-                  Support
-                </Link>
-              </li>
+              {mounted && footerLinks.customer_service?.map((link, i) => (
+                <li key={i}>
+                  <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {!footerLinks.customer_service?.length && mounted && (
+                <>
+                  <li><Link href="/shipping" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Shipping Info</Link></li>
+                  <li><Link href="/returns" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Returns & Exchanges</Link></li>
+                  <li><Link href="/size-guide" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Size Guide</Link></li>
+                  <li><Link href="/faq" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">FAQ</Link></li>
+                  <li><Link href="/support" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Support</Link></li>
+                </>
+              )}
             </ul>
           </div>
 
