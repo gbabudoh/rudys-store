@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -23,10 +23,9 @@ const Crown = ({ className, style }: { className?: string; style?: React.CSSProp
   </svg>
 );
 
-const Headphones = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+const Mail = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a5 5 0 010-7.072m0 0l2.829 2.829m-4.243 2.829l-2.829 2.829m2.829-2.829L3 21M9.172 8.464a5 5 0 017.072 0" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 12m-3 0a3 3 0 106 0 3 3 0 10-6 0" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
   </svg>
 );
 
@@ -123,6 +122,7 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [adminUser] = useState<AdminSidebarProps['adminUser']>(() => {
     if (adminUserProp) return adminUserProp;
     if (typeof window !== 'undefined') {
@@ -141,11 +141,43 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
   const pathname = usePathname();
   const router = useRouter();
 
+  const fetchUnreadCount = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch('/api/admin/messages', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const messages = await res.json();
+        const unread = messages.filter((m: { status: string }) => m.status === 'unread').length;
+        setUnreadCount(unread);
+      }
+    } catch (err) {
+      console.error('Error fetching unread count:', err);
+    }
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    const initFetch = async () => {
+      await fetchUnreadCount();
+      // Polling every 2 minutes
+      interval = setInterval(fetchUnreadCount, 120000);
+    };
+
+    initFetch();
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
   const navigation: NavItem[] = [
+    { name: 'Email Inbox', href: '/admin/customer-service', icon: Mail, category: 'Overview', badge: unreadCount > 0 ? unreadCount : undefined },
     { name: 'Dashboard', href: '/admin', icon: Dashboard, category: 'Overview' },
     { name: 'Banners', href: '/admin/banners', icon: ImageIcon, category: 'Content' },
     { name: 'Homepage Sections', href: '/admin/homepage-sections', icon: ImageIcon, category: 'Content' },
-    { name: 'Customer Service', href: '/admin/customer-service', icon: Headphones, category: 'Content' },
     { name: 'Ruddy Collections', href: '/admin/collections', icon: Package, category: 'Products' },
     { name: 'Ruddy Luxury', href: '/admin/luxury', icon: Crown, category: 'Products' },
     { name: 'Slide & Sole', href: '/admin/crocs', icon: ShoppingBag, category: 'Products' },

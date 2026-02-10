@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
+import { query } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +14,30 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // 0. Self-healing: Create table if not exists
+    await query(`
+      CREATE TABLE IF NOT EXISTS contact_messages (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          phone VARCHAR(50),
+          subject VARCHAR(255) NOT NULL,
+          message TEXT NOT NULL,
+          status ENUM('unread', 'read', 'archived') DEFAULT 'unread',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_status (status),
+          INDEX idx_email (email)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+
+    // 0.1. Persist message to database
+    await query(
+      'INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)',
+      [name, email, phone || null, subject, message]
+    );
+
 
     // 1. Send Email to Admin (support@ruddysstore.com)
     await sendEmail({

@@ -38,8 +38,8 @@ export default function GoogleAnalyticsSetup() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-blue-100 rounded-lg cursor-pointer">
+              <svg className="w-6 h-6 text-blue-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
@@ -49,13 +49,13 @@ export default function GoogleAnalyticsSetup() {
             </div>
           </div>
           {isConfigured ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-              <CheckCircle className="w-4 h-4 mr-1" />
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 cursor-pointer">
+              <CheckCircle className="w-4 h-4 mr-1 cursor-pointer" />
               Active
             </span>
           ) : (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
-              <XCircle className="w-4 h-4 mr-1" />
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 cursor-pointer">
+              <XCircle className="w-4 h-4 mr-1 cursor-pointer" />
               Not Configured
             </span>
           )}
@@ -90,7 +90,7 @@ export default function GoogleAnalyticsSetup() {
 
           <button
             onClick={handleSave}
-            className="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 font-medium transition-all"
+            className="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 font-medium transition-all cursor-pointer"
           >
             Save Configuration
           </button>
@@ -110,9 +110,9 @@ export default function GoogleAnalyticsSetup() {
             'Purchase Completed',
             'Search',
           ].map((event) => (
-            <div key={event} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span className="text-sm font-medium text-gray-900">{event}</span>
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+            <div key={event} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+              <span className="text-sm font-medium text-gray-900 cursor-pointer">{event}</span>
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 cursor-pointer">
                 Active
               </span>
             </div>
