@@ -63,6 +63,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           email: formData.email,
           amount: totalAmount,
+          channels: ['card', 'bank', 'ussd', 'bank_transfer', 'opay', 'payattitude'],
           metadata: {
             ...formData,
             items: cart.map(item => ({
