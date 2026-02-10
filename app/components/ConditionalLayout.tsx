@@ -11,6 +11,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import CartSidebar from './CartSidebar';
 import BottomNav from './BottomNav';
 import PWAInstallPrompt from './PWAInstallPrompt';
+import Chatbot from '@/components/Chatbot';
 import { App } from 'konsta/react';
 
 export default function ConditionalLayout({
@@ -45,6 +46,7 @@ export default function ConditionalLayout({
               <PWAInstallPrompt />
               <CartSidebar />
               <CookieBanner />
+              <Chatbot />
             </App>
           </QuickViewProvider>
         </CartProvider>

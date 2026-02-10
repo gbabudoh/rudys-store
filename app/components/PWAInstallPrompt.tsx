@@ -35,13 +35,23 @@ export default function PWAInstallPrompt() {
   };
 
   useEffect(() => {
-    // 1. Check if IP is already registered as having the app
+    // Check local storage first to see if they've dismissed it
+    const isDismissed = localStorage.getItem('pwa_prompt_dismissed');
+    if (isDismissed) {
+      setIsLoading(false);
+      return;
+    }
+
+    // 1. Check if IP/App is already registered
     const checkIpStatus = async () => {
       try {
         const res = await fetch('/api/app-status');
         const data = await res.json();
+        // If the backend says it's NOT installed, continue
+        // If it says it IS installed, we'll still show the prompt if localStorage doesn't exist
+        // to be SAFE, but we'll prioritize the App state detection below
         if (data.isInstalled) {
-          setIsAppDetected(true);
+          // setIsAppDetected(true); // Don't block purely on IP anymore
         }
       } catch (err) {
         console.error('Failed to check IP status:', err);
@@ -54,13 +64,18 @@ export default function PWAInstallPrompt() {
 
     // Detect platform
     const userAgent = window.navigator.userAgent.toLowerCase();
-    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+    
+    // Improved iOS detection including newer iPads
+    const isIOS = /iphone|ipad|ipod/.test(userAgent) || 
+                 (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+                 
     const isAndroid = /android/.test(userAgent);
     
     // Check if app is already installed/running in standalone
-    const isStandalone = (window.navigator as NavigatorWithStandalone).standalone || window.matchMedia('(display-mode: standalone)').matches;
+    const isStandalone = (window.navigator as NavigatorWithStandalone).standalone || 
+                         window.matchMedia('(display-mode: standalone)').matches;
 
-    // If currently in standalone, make sure we log the IP
+    // If currently in standalone, make sure we log the IP and hide the prompt
     if (isStandalone) {
       trackAppStatus();
       setIsAppDetected(true);
@@ -70,7 +85,7 @@ export default function PWAInstallPrompt() {
     if (!isStandalone) {
       if (isIOS) {
         setPlatform('ios');
-        // Show iOS prompt after a small delay if not detected by IP
+        // Show iOS prompt after a small delay
         const timer = setTimeout(() => setShowPrompt(true), 3000);
         return () => clearTimeout(timer);
       } else if (isAndroid) {
@@ -81,7 +96,7 @@ export default function PWAInstallPrompt() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      // Show Android prompt after a small delay if not detected by IP
+      // Show Android prompt after a small delay
       setTimeout(() => setShowPrompt(true), 3000);
     };
 
@@ -91,6 +106,11 @@ export default function PWAInstallPrompt() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
     };
   }, []);
+
+  const handleDismiss = () => {
+    setShowPrompt(false);
+    localStorage.setItem('pwa_prompt_dismissed', 'true');
+  };
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -114,7 +134,7 @@ export default function PWAInstallPrompt() {
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#cfa224]/10 rounded-full blur-3xl group-hover:bg-[#cfa224]/20 transition-colors duration-500"></div>
         
         <button 
-          onClick={() => setShowPrompt(false)}
+          onClick={handleDismiss}
           className="absolute top-4 right-4 p-1 rounded-full bg-gray-100/50 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />

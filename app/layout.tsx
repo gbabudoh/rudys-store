@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalLayout from "./components/ConditionalLayout";
 import GoogleAnalytics from "./components/GoogleAnalytics";
-import Chatbot from "@/components/Chatbot";
 import SWRegistration from "./components/SWRegistration";
 
 const geistSans = Geist({
@@ -45,17 +44,18 @@ export default function RootLayout({
       <head>
         {/* PWA primary color */}
         <meta name="theme-color" content="#201d1e" />
+        
         {/* iOS PWA support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Rudy Store" />
+        <meta name="mobile-web-app-capable" content="yes" />
         
         {/* Explicit favicon links for better Firefox support */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -63,7 +63,6 @@ export default function RootLayout({
         <SWRegistration />
         <GoogleAnalytics />
         <ConditionalLayout>{children}</ConditionalLayout>
-        <Chatbot />
       </body>
     </html>
   );
