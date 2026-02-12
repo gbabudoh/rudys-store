@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { type Product } from '@/lib/products';
+import MessageModal from '@/app/components/MessageModal';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -45,6 +46,8 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
     if (product) {
@@ -65,7 +68,8 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
   const handleAddToCart = () => {
     if ((product.sizes?.length > 0 && !selectedSize) || (product.colors?.length > 0 && !selectedColor)) {
-      alert('Please select size and color');
+      setModalMessage('Please select your preferred size and color to add this item to your cart.');
+      setIsModalOpen(true);
       return;
     }
     
@@ -265,6 +269,11 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
           </div>
         </div>
       </div>
+      <MessageModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        message={modalMessage} 
+      />
     </div>
   );
 }

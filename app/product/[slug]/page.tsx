@@ -8,6 +8,7 @@ import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import type { Product } from '@/lib/products';
 import ProductImage from '@/app/components/ProductImage';
+import MessageModal from '@/app/components/MessageModal';
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -69,6 +70,8 @@ function ProductContent({ product }: { product: Product }) {
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'additional'>('description');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   // Transform images for react-image-gallery
   const galleryImages = product.images.map((image: string) => ({
@@ -79,7 +82,8 @@ function ProductContent({ product }: { product: Product }) {
   const handleAddToCart = () => {
     const size = sizeSystem === 'eu' ? selectedEuSize : selectedSize;
     if (!size || !selectedColor) {
-      alert('Please select size and color');
+      setModalMessage('Please select your preferred size and color to add this item to your cart.');
+      setIsModalOpen(true);
       return;
     }
     
@@ -477,6 +481,12 @@ function ProductContent({ product }: { product: Product }) {
         </div>
       </div>
     </div>
+    
+    <MessageModal 
+      isOpen={isModalOpen} 
+      onClose={() => setIsModalOpen(false)} 
+      message={modalMessage} 
+    />
     </>
   );
 }
