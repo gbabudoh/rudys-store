@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
-import { List, ListInput, BlockTitle, Button } from 'konsta/react';
+import { List, ListInput, Button } from 'konsta/react';
 
 // Icons
 const ChevronLeft = ({ className }: { className?: string }) => (
@@ -203,132 +203,154 @@ export default function CheckoutPage() {
               {/* Mobile Native Form (Konsta UI) */}
               <div className="md:hidden space-y-6">
                 {/* Compact Order Summary for Mobile - Shows at Top */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="p-4 bg-gray-50 border-b border-gray-100">
+                <div className="bg-white rounded-[2rem] shadow-2xl shadow-black/5 border border-gray-400 overflow-hidden mb-8">
+                  <div className="p-5 bg-gray-50/80 border-b border-gray-400">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-bold text-gray-900">Order Summary</h3>
-                      <span className="text-sm text-gray-500">{cartCount} item{cartCount !== 1 ? 's' : ''}</span>
+                      <h3 className="font-black text-gray-900 uppercase tracking-wider text-sm">Order Summary</h3>
+                      <span className="bg-[#cfa224]/10 text-[#cfa224] px-2.5 py-1 rounded-full text-[10px] font-black uppercase">{cartCount} {cartCount !== 1 ? 'items' : 'item'}</span>
                     </div>
                   </div>
-                  <div className="p-4 space-y-3 max-h-48 overflow-y-auto">
+                  <div className="p-5 space-y-4 max-h-60 overflow-y-auto">
                     {cart.map((item) => (
-                      <div key={`mobile-${item.id}-${item.size}-${item.color}`} className="flex items-center gap-3">
-                        <div className="relative h-14 w-14 flex-shrink-0 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fill
-                            className="object-cover"
-                          />
-                          <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                      <div key={`mobile-${item.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
+                        <div className="relative flex-shrink-0">
+                          <div className="h-16 w-16 bg-gray-50 rounded-2xl overflow-hidden border border-gray-400 shadow-sm">
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              className="object-cover rounded-2xl"
+                            />
+                          </div>
+                          <span className="absolute -top-2 -right-2 bg-[#201d1e] text-white text-[10px] font-black w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-lg z-10">
                             {item.quantity}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-semibold text-gray-900 truncate">{item.name}</h4>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            {item.size && <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">{item.size}</span>}
-                            {item.color && <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">{item.color}</span>}
+                          <h4 className="text-sm font-bold text-gray-900 truncate">{item.name}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            {item.size && <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter bg-gray-50 px-2 py-0.5 rounded-md border border-gray-400">{item.size}</span>}
+                            {item.color && <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter bg-gray-50 px-2 py-0.5 rounded-md border border-gray-400">{item.color}</span>}
                           </div>
                         </div>
-                        <span className="font-bold text-gray-900 text-sm">₦{(item.price * item.quantity).toLocaleString()}</span>
+                        <span className="font-black text-gray-900 text-sm">₦{(item.price * item.quantity).toLocaleString()}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="p-4 bg-[#cfa224]/5 border-t border-[#cfa224]/20">
+                  <div className="p-5 bg-[#cfa224]/5 border-t border-[#cfa224]/30">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-sm text-gray-600">Total</span>
-                        <p className="text-[10px] text-gray-400">Incl. VAT & Free Shipping</p>
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Total to Pay</span>
+                        <p className="text-[10px] text-gray-400 font-medium">Free Express Shipping & VAT Incl.</p>
                       </div>
-                      <span className="text-xl font-black text-[#cfa224]">₦{totalAmount.toLocaleString()}</span>
+                      <span className="text-2xl font-black text-[#cfa224] tracking-tighter">₦{totalAmount.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
 
-                <BlockTitle>Contact Information</BlockTitle>
-                <List strong inset>
-                  <ListInput
-                    label="Email Address"
-                    type="email"
-                    placeholder="alex@example.com"
-                    value={formData.email}
-                    name="email"
-                    onInput={handleInputChange}
-                    required
-                  />
-                  <ListInput
-                    label="Phone Number"
-                    type="tel"
-                    placeholder="+234 ..."
-                    value={formData.phone}
-                    name="phone"
-                    onInput={handleInputChange}
-                    required
-                  />
-                </List>
+                <div className="px-4">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-8 rounded-full bg-[#201d1e] text-white flex items-center justify-center text-xs font-black shadow-lg">1</div>
+                    <h2 className="text-lg font-black text-gray-900 uppercase tracking-tight">Contact Info</h2>
+                  </div>
+                  <List strong inset className="!m-0 !mt-2">
+                    <ListInput
+                      label={<span className="text-xs font-black uppercase text-gray-400 tracking-widest mb-3 mt-1 block">Email Address</span>}
+                      type="email"
+                      placeholder="alex@example.com"
+                      value={formData.email}
+                      name="email"
+                      onInput={handleInputChange}
+                      required
+                      className="!mb-4"
+                      inputClassName="!h-12 !px-4 !bg-gray-50 !border-gray-400 !rounded-xl !font-bold !text-gray-900 focus:!border-[#cfa224] transition-all border shadow-sm"
+                    />
+                    <ListInput
+                      label={<span className="text-xs font-black uppercase text-gray-400 tracking-widest mb-3 mt-4 block">Phone Number</span>}
+                      type="tel"
+                      placeholder="+234 ..."
+                      value={formData.phone}
+                      name="phone"
+                      onInput={handleInputChange}
+                      required
+                      inputClassName="!h-12 !px-4 !bg-gray-50 !border-gray-400 !rounded-xl !font-bold !text-gray-900 focus:!border-[#cfa224] transition-all border shadow-sm"
+                    />
+                  </List>
 
-                <BlockTitle>Shipping Details</BlockTitle>
-                <List strong inset>
-                  <ListInput
-                    label="First Name"
-                    type="text"
-                    placeholder="First Name"
-                    value={formData.firstName}
-                    name="firstName"
-                    onInput={handleInputChange}
-                    required
-                  />
-                  <ListInput
-                    label="Last Name"
-                    type="text"
-                    placeholder="Last Name"
-                    value={formData.lastName}
-                    name="lastName"
-                    onInput={handleInputChange}
-                    required
-                  />
-                  <ListInput
-                    label="Address"
-                    type="text"
-                    placeholder="Street address"
-                    value={formData.address}
-                    name="address"
-                    onInput={handleInputChange}
-                    required
-                  />
-                  <ListInput
-                    label="City"
-                    type="text"
-                    placeholder="City"
-                    value={formData.city}
-                    name="city"
-                    onInput={handleInputChange}
-                    required
-                  />
-                  <ListInput
-                    label="Country"
-                    type="text"
-                    placeholder="Country"
-                    value={formData.country}
-                    name="country"
-                    onInput={handleInputChange}
-                    required
-                  />
-                </List>
+                  <div className="flex items-center space-x-3 mt-10 mb-4">
+                    <div className="w-8 h-8 rounded-full bg-[#201d1e] text-white flex items-center justify-center text-xs font-black shadow-lg">2</div>
+                    <h2 className="text-lg font-black text-gray-900 uppercase tracking-tight">Shipping</h2>
+                  </div>
+                  <List strong inset className="!m-0 !mt-2 pb-32">
+                    <ListInput
+                      label={<span className="text-xs font-black uppercase text-gray-400 tracking-widest mb-3 mt-1 block">First Name</span>}
+                      type="text"
+                      placeholder="Enter your first name"
+                      value={formData.firstName}
+                      name="firstName"
+                      onInput={handleInputChange}
+                      required
+                      className="!mb-3"
+                      inputClassName="!h-12 !px-4 !bg-gray-50 !border-gray-400 !rounded-xl !font-bold !text-gray-900 focus:!border-[#cfa224] transition-all border shadow-sm"
+                    />
+                    <ListInput
+                      label={<span className="text-xs font-black uppercase text-gray-400 tracking-widest mb-3 mt-4 block">Last Name</span>}
+                      type="text"
+                      placeholder="Enter your last name"
+                      value={formData.lastName}
+                      name="lastName"
+                      onInput={handleInputChange}
+                      required
+                      className="!mb-3"
+                      inputClassName="!h-12 !px-4 !bg-gray-50 !border-gray-400 !rounded-xl !font-bold !text-gray-900 focus:!border-[#cfa224] transition-all border shadow-sm"
+                    />
+                    <ListInput
+                      label={<span className="text-xs font-black uppercase text-gray-400 tracking-widest mb-3 mt-4 block">Address</span>}
+                      type="text"
+                      placeholder="Street address, apartment..."
+                      value={formData.address}
+                      name="address"
+                      onInput={handleInputChange}
+                      required
+                      className="!mb-3"
+                      inputClassName="!h-12 !px-4 !bg-gray-50 !border-gray-400 !rounded-xl !font-bold !text-gray-900 focus:!border-[#cfa224] transition-all border shadow-sm"
+                    />
+                    <ListInput
+                      label={<span className="text-xs font-black uppercase text-gray-400 tracking-widest mb-3 mt-4 block">City</span>}
+                      type="text"
+                      placeholder="Enter your city"
+                      value={formData.city}
+                      name="city"
+                      onInput={handleInputChange}
+                      required
+                      className="!mb-3"
+                      inputClassName="!h-12 !px-4 !bg-gray-50 !border-gray-400 !rounded-xl !font-bold !text-gray-900 focus:!border-[#cfa224] transition-all border shadow-sm"
+                    />
+                    <ListInput
+                      label={<span className="text-xs font-black uppercase text-gray-400 tracking-widest mb-3 mt-4 block">Country</span>}
+                      type="text"
+                      placeholder="Enter your country"
+                      value={formData.country}
+                      name="country"
+                      onInput={handleInputChange}
+                      required
+                      inputClassName="!h-12 !px-4 !bg-gray-50 !border-gray-400 !rounded-xl !font-bold !text-gray-900 focus:!border-[#cfa224] transition-all border shadow-sm"
+                    />
+                  </List>
+                </div>
               </div>
 
               {/* Desktop Checkout Form */}
-              <div className="hidden md:block space-y-8">
+              <div className="hidden md:block space-y-10">
                 {/* Contact Information */}
-                <section className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm mr-3">1</span>
-                    Contact Information
-                  </h2>
-                  <div className="grid grid-cols-1 gap-4">
+                <section className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-2xl shadow-black/5 border border-gray-400 transition-all hover:shadow-black/10">
+                  <div className="flex items-center space-x-4 mb-8">
+                    <div className="w-10 h-10 rounded-2xl bg-[#201d1e] text-white flex items-center justify-center text-sm font-black shadow-xl shadow-black/20">1</div>
+                    <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Contact Information</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                      <label htmlFor="email" className="block text-xs font-black uppercase text-gray-400 tracking-widest mb-5 ml-1">Email Address</label>
                       <input
                         required
                         type="email"
@@ -336,12 +358,12 @@ export default function CheckoutPage() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#cfa224]/20 focus:border-[#cfa224] outline-none transition-all"
+                        className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-400 focus:bg-white focus:ring-4 focus:ring-[#cfa224]/10 focus:border-[#cfa224] outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300 border shadow-sm"
                         placeholder="alex@example.com"
                       />
                     </div>
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                      <label htmlFor="phone" className="block text-xs font-black uppercase text-gray-400 tracking-widest mb-5 ml-1">Phone Number</label>
                       <input
                         required
                         type="tel"
@@ -349,7 +371,7 @@ export default function CheckoutPage() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#cfa224]/20 focus:border-[#cfa224] outline-none transition-all"
+                        className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-400 focus:bg-white focus:ring-4 focus:ring-[#cfa224]/10 focus:border-[#cfa224] outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300 border shadow-sm"
                         placeholder="+234 ..."
                       />
                     </div>
@@ -357,14 +379,14 @@ export default function CheckoutPage() {
                 </section>
 
                 {/* Shipping Address */}
-                <section className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm mr-3">2</span>
-                    Shipping Details
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                <section className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-2xl shadow-black/5 border border-gray-400 transition-all hover:shadow-black/10">
+                  <div className="flex items-center space-x-4 mb-8">
+                    <div className="w-10 h-10 rounded-2xl bg-[#201d1e] text-white flex items-center justify-center text-sm font-black shadow-xl shadow-black/20">2</div>
+                    <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Shipping Details</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="mt-8 md:mt-0">
+                      <label htmlFor="firstName" className="block text-xs font-black uppercase text-gray-400 tracking-widest mb-5 ml-1">First Name</label>
                       <input
                         required
                         type="text"
@@ -372,11 +394,12 @@ export default function CheckoutPage() {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#cfa224]/20 focus:border-[#cfa224] outline-none transition-all"
+                        className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-400 focus:bg-white focus:ring-4 focus:ring-[#cfa224]/10 focus:border-[#cfa224] outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300 border shadow-sm"
+                        placeholder="John"
                       />
                     </div>
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                    <div className="mt-8 md:mt-0">
+                      <label htmlFor="lastName" className="block text-xs font-black uppercase text-gray-400 tracking-widest mb-5 ml-1">Last Name</label>
                       <input
                         required
                         type="text"
@@ -384,11 +407,12 @@ export default function CheckoutPage() {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#cfa224]/20 focus:border-[#cfa224] outline-none transition-all"
+                        className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-400 focus:bg-white focus:ring-4 focus:ring-[#cfa224]/10 focus:border-[#cfa224] outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300 border shadow-sm"
+                        placeholder="Doe"
                       />
                     </div>
-                    <div className="md:col-span-2">
-                      <label htmlFor="address" className="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+                    <div className="md:col-span-2 mt-8">
+                      <label htmlFor="address" className="block text-xs font-black uppercase text-gray-400 tracking-widest mb-5 ml-1">Address</label>
                       <input
                         required
                         type="text"
@@ -396,12 +420,12 @@ export default function CheckoutPage() {
                         name="address"
                         value={formData.address}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#cfa224]/20 focus:border-[#cfa224] outline-none transition-all"
+                        className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-400 focus:bg-white focus:ring-4 focus:ring-[#cfa224]/10 focus:border-[#cfa224] outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300 border shadow-sm"
                         placeholder="Street address, apartment, suite, etc."
                       />
                     </div>
-                    <div>
-                      <label htmlFor="city" className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+                    <div className="mt-8">
+                      <label htmlFor="city" className="block text-xs font-black uppercase text-gray-400 tracking-widest mb-5 ml-1">City</label>
                       <input
                         required
                         type="text"
@@ -409,11 +433,12 @@ export default function CheckoutPage() {
                         name="city"
                         value={formData.city}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#cfa224]/20 focus:border-[#cfa224] outline-none transition-all"
+                        className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-400 focus:bg-white focus:ring-4 focus:ring-[#cfa224]/10 focus:border-[#cfa224] outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300 border shadow-sm"
+                        placeholder="Lagos"
                       />
                     </div>
-                    <div>
-                      <label htmlFor="country" className="block text-sm font-semibold text-gray-700 mb-2">Country</label>
+                    <div className="mt-8">
+                      <label htmlFor="country" className="block text-xs font-black uppercase text-gray-400 tracking-widest mb-5 ml-1">Country</label>
                       <input
                         required
                         type="text"
@@ -421,7 +446,8 @@ export default function CheckoutPage() {
                         name="country"
                         value={formData.country}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#cfa224]/20 focus:border-[#cfa224] outline-none transition-all"
+                        className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-400 focus:bg-white focus:ring-4 focus:ring-[#cfa224]/10 focus:border-[#cfa224] outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300 border shadow-sm"
+                        placeholder="Nigeria"
                       />
                     </div>
                   </div>
@@ -445,7 +471,7 @@ export default function CheckoutPage() {
               </button>
 
               {/* Mobile-Only Fixed Bottom Button */}
-              <div className="md:hidden fixed bottom-16 left-0 right-0 p-4 bg-white/80 backdrop-blur-lg border-t border-gray-100 z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+              <div className="md:hidden fixed bottom-16 left-0 right-0 p-5 bg-white/80 backdrop-blur-2xl border-t border-gray-100/50 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
                 <Button
                   large
                   rounded
@@ -454,9 +480,14 @@ export default function CheckoutPage() {
                     if (form) form.requestSubmit();
                   }}
                   disabled={loading}
-                  className="bg-[#201d1e] text-white font-black h-14"
+                  className="bg-[#201d1e] text-white font-black h-14 shadow-2xl shadow-black/20 active:scale-95 transition-all"
                 >
-                  {loading ? 'Processing...' : `Pay ₦${totalAmount.toLocaleString()} Now`}
+                  {loading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                       <span>Processing...</span>
+                    </div>
+                  ) : `Pay ₦${totalAmount.toLocaleString()} Now`}
                 </Button>
               </div>
               
@@ -468,19 +499,21 @@ export default function CheckoutPage() {
 
           {/* Order Summary - Hidden on Mobile (shown at top of form instead) */}
           <div className="hidden md:block lg:col-span-5">
-            <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 sticky top-32">
+            <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-2xl shadow-black/5 border border-gray-400 sticky top-32">
               <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-hide">
                 {cart.map((item) => (
                   <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-4">
-                    <div className="relative h-20 w-20 flex-shrink-0 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                      <span className="absolute top-1 right-1 bg-gray-900 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-lg">
+                    <div className="relative flex-shrink-0">
+                      <div className="h-20 w-20 bg-gray-50 rounded-2xl overflow-hidden border border-gray-400 shadow-sm transition-all group-hover:scale-105">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover rounded-2xl"
+                        />
+                      </div>
+                      <span className="absolute -top-2 -right-2 bg-[#201d1e] text-white text-[10px] font-black w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-lg z-10">
                         {item.quantity}
                       </span>
                     </div>
@@ -506,7 +539,7 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="mt-8 pt-8 border-t border-gray-100 space-y-4">
+              <div className="mt-8 pt-8 border-t border-gray-400 space-y-4">
                 <div className="flex justify-between text-gray-500">
                   <span>Subtotal</span>
                   <span className="font-semibold text-gray-900">₦{totalAmount.toLocaleString()}</span>
@@ -515,7 +548,7 @@ export default function CheckoutPage() {
                   <span>Shipping</span>
                   <span className="text-green-600 font-bold">FREE</span>
                 </div>
-                <div className="flex justify-between items-end pt-4 border-t border-gray-100">
+                <div className="flex justify-between items-end pt-4 border-t border-gray-400">
                   <div>
                     <span className="text-lg font-black text-gray-900 tracking-tight">Total</span>
                     <p className="text-[10px] text-gray-400">Including VAT and taxes</p>

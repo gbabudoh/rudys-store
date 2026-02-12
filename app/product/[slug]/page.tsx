@@ -7,6 +7,7 @@ import { useCart } from '@/context/CartContext';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import type { Product } from '@/lib/products';
+import ProductImage from '@/app/components/ProductImage';
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -94,14 +95,44 @@ function ProductContent({ product }: { product: Product }) {
     });
   };
 
+  // Custom item renderer for edge-to-edge image fill
+  const renderItem = (item: { original: string; thumbnail: string }) => {
+    return (
+      <div className="relative aspect-square w-full h-full overflow-hidden">
+        <ProductImage
+          src={item.original}
+          alt={product.name}
+          fill
+          className="object-cover"
+          priority={true}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+        />
+      </div>
+    );
+  };
+
   return (
     <>
       <style jsx global>{`
+        .image-gallery-slide .image-gallery-image {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+        }
+
+        .image-gallery-slide {
+          background: #fff;
+        }
+
+        .image-gallery-swipe,
+        .image-gallery-slides {
+          width: 100% !important;
+        }
+
         .image-gallery-slide img {
-          object-fit: cover;
-          aspect-ratio: 1 / 1;
-          width: 100%;
-          height: 100%;
+          object-fit: cover !important;
+          width: 100% !important;
+          height: 100% !important;
         }
         
         .image-gallery-thumbnails-wrapper {
@@ -172,10 +203,6 @@ function ProductContent({ product }: { product: Product }) {
         }
         
         @media (max-width: 768px) {
-          .image-gallery-slide img {
-            aspect-ratio: 1 / 1;
-          }
-          
           .image-gallery-thumbnail {
             width: calc(20% - 4px) !important;
             margin: 0 2px;
@@ -214,6 +241,7 @@ function ProductContent({ product }: { product: Product }) {
             <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100">
               <ImageGallery
                 items={galleryImages}
+                renderItem={renderItem}
                 showPlayButton={false}
                 showFullscreenButton={true}
                 showNav={true}
