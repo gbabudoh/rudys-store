@@ -40,10 +40,7 @@ export default function FeaturedProducts({
         filtered = products.filter(product => product.isOnSale);
         break;
       case 'bestseller':
-        // Filter products with high ratings (4.5+) and good review counts
-        filtered = products.filter(product => 
-          product.rating >= 4.5 && product.reviews >= 50
-        );
+        filtered = products.filter(product => product.isBestSeller);
         break;
       case 'featured':
       default:

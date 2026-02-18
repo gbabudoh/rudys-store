@@ -57,6 +57,7 @@ const defaultProduct: Product = {
   is_new: false,
   is_on_sale: false,
   is_featured: false,
+  is_best_seller: false,
   discount: 0,
   status: 'draft',
 };
@@ -70,6 +71,12 @@ const SIZES = {
 
 const COLORS = ['Black', 'White', 'Navy', 'Gray', 'Red', 'Blue', 'Green', 'Brown', 'Beige', 'Pink', 'Purple', 'Orange', 'Yellow', 'Multi'];
 
+interface ColorData {
+  id: number;
+  name: string;
+  hex_code: string;
+}
+
 export default function ProductFormModal({ isOpen, onClose, onSave, product, storeSection }: ProductFormModalProps) {
   const [formData, setFormData] = useState<Product>({ ...defaultProduct, store_section: storeSection });
   const [saving, setSaving] = useState(false);
@@ -78,6 +85,9 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
   const [newFeature, setNewFeature] = useState('');
   const [dbCategories, setDbCategories] = useState<CategoryData[]>([]);
   const [dbBrands, setDbBrands] = useState<BrandData[]>([]);
+  const [dbColors, setDbColors] = useState<ColorData[]>([]);
+  const [dbProductTypes, setDbProductTypes] = useState<ProductTypeData[]>([]);
+  const [dbSubCategories, setDbSubCategories] = useState<SubCategoryData[]>([]);
 
   interface CategoryData {
     id: number;
@@ -89,14 +99,28 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
     id: number;
     name: string;
   }
+  
+  interface ProductTypeData {
+    id: number;
+    name: string;
+  }
+
+  interface SubCategoryData {
+    id: number;
+    name: string;
+    parent_category_id: number;
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('admin_token');
-        const [catsRes, brandsRes] = await Promise.all([
+        const [catsRes, brandsRes, colorsRes, typesRes, subsRes] = await Promise.all([
           fetch('/api/admin/categories', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('/api/admin/brands', { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch('/api/admin/brands', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/admin/colors', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/admin/product-types', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/admin/sub-categories', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         
         if (catsRes.ok) {
@@ -106,6 +130,18 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
         if (brandsRes.ok) {
           const data = await brandsRes.json();
           setDbBrands(data.brands);
+        }
+        if (colorsRes.ok) {
+          const data = await colorsRes.json();
+          setDbColors(data.colors);
+        }
+        if (typesRes.ok) {
+          const data = await typesRes.json();
+          setDbProductTypes(data.productTypes);
+        }
+        if (subsRes.ok) {
+          const data = await subsRes.json();
+          setDbSubCategories(data.subCategories);
         }
       } catch (error) {
         console.error('Error fetching form data:', error);
@@ -218,13 +254,27 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
 
   if (!isOpen) return null;
 
+  // Now using separate tables, so categories are just the ones from categories table (likely all roots if intended, but let's keep logic if recursive)
+  // But wait, the previous code filtered dbCategories by !c.parent_id.
+  // With the new system, dbCategories likely still contains the main categories (Men, Women etc).
+  // subCategories should now come from dbSubCategories filtered by parent_category_id.
+  
   const mainCategories = dbCategories.filter(c => !c.parent_id);
-  const subCategories = dbCategories.filter(c => c.parent_id && c.parent_id.toString() === formData.category);
+  
+  // Find the selected category object to get its ID for filtering subcategories
+  const selectedCategoryObj = dbCategories.find(c => c.name === formData.category);
+  const selectedCategoryId = selectedCategoryObj ? selectedCategoryObj.id : null;
+  
+  const filteredSubCategories = dbSubCategories.filter(c => 
+    selectedCategoryId && c.parent_category_id === selectedCategoryId
+  );
 
   const getSizeOptions = () => {
     const type = formData.product_type;
-    if (type === 'shoes') return SIZES.shoe;
-    if (['Bag', 'Glasses', 'Watch', 'Belt', 'Hat', 'Accessory'].includes(type)) return SIZES.accessory;
+    // Map dynamic types to size charts if possible, or default to clothing
+    // For now, simple matching
+    if (type.toLowerCase().includes('shoe')) return SIZES.shoe;
+    if (['Bag', 'Glasses', 'Watch', 'Belt', 'Hat', 'Accessory'].some(t => type.includes(t))) return SIZES.accessory;
     return SIZES.clothing;
   };
 
@@ -301,13 +351,16 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                       >
                         <option value="">Select category</option>
                         {mainCategories.map(cat => (
-                          <option key={cat.id} value={cat.id.toString()}>{cat.name}</option>
+                          <option key={cat.id} value={cat.name}>{cat.name}</option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Sub Category</label>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm font-medium text-gray-700">Sub Category</label>
+                        <a href="/admin/sub-categories" className="text-xs text-purple-600 hover:text-purple-700 font-medium">Manage Sub-Cats</a>
+                      </div>
                       <select
                         name="subcategory"
                         value={formData.subcategory || ''}
@@ -316,31 +369,39 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                         disabled={!formData.category}
                       >
                         <option value="">None</option>
-                        {subCategories.map(cat => (
-                          <option key={cat.id} value={cat.id.toString()}>{cat.name}</option>
+                        {filteredSubCategories.map(cat => (
+                          <option key={cat.id} value={cat.name}>{cat.name}</option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Product Type</label>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm font-medium text-gray-700">Product Type</label>
+                        <a href="/admin/product-types" className="text-xs text-purple-600 hover:text-purple-700 font-medium">Manage Types</a>
+                      </div>
                       <select
                         name="product_type"
                         value={formData.product_type}
                         onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer"
                       >
-                        <option value="Shirt">Shirt</option>
-                        <option value="T-Shirt">T-Shirt</option>
-                        <option value="Dress">Dress</option>
-                        <option value="shoes">shoes</option>
-                        <option value="Pants">Pants</option>
-                        <option value="Bag">Bag</option>
-                        <option value="Glasses">Glasses</option>
-                        <option value="Watch">Watch</option>
-                        <option value="Belt">Belt</option>
-                        <option value="Hat">Hat</option>
-                        <option value="Accessory">Accessory</option>
+                        <option value="">Select Type</option>
+                        {dbProductTypes.length > 0 ? (
+                          dbProductTypes.map(type => (
+                            <option key={type.id} value={type.name}>{type.name}</option>
+                          ))
+                        ) : (
+                          // Fallback if no types created yet
+                          <>
+                            <option value="Shirt">Shirt</option>
+                            <option value="T-Shirt">T-Shirt</option>
+                            <option value="Dress">Dress</option>
+                            <option value="shoes">shoes</option>
+                            <option value="Pants">Pants</option>
+                            <option value="Accessory">Accessory</option>
+                          </>
+                        )}
                       </select>
                     </div>
 
@@ -443,22 +504,35 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
 
                   {/* Colors */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Available Colors</label>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium text-gray-700">Available Colors</label>
+                      <a href="/admin/colors" className="text-xs text-purple-600 hover:text-purple-700 font-medium">Manage Colors</a>
+                    </div>
                     <div className="flex flex-wrap gap-2">
-                      {COLORS.map(color => (
-                        <button
-                          key={color}
-                          type="button"
-                          onClick={() => handleColorToggle(color)}
-                          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                            formData.colors.includes(color)
-                              ? 'bg-purple-600 text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
-                        >
-                          {color}
-                        </button>
-                      ))}
+                      {(dbColors.length > 0 ? dbColors : COLORS.map(c => ({ name: c, hex_code: '' }))).map(color => {
+                        const colorName = typeof color === 'string' ? color : color.name;
+                        const isSelected = formData.colors.includes(colorName);
+                        return (
+                          <button
+                            key={colorName}
+                            type="button"
+                            onClick={() => handleColorToggle(colorName)}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer border ${
+                              isSelected
+                                ? 'bg-purple-600 text-white border-purple-600'
+                                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                            }`}
+                          >
+                            {typeof color !== 'string' && color.hex_code && (
+                              <span 
+                                className="w-4 h-4 rounded-full border border-gray-200" 
+                                style={{ backgroundColor: color.hex_code }}
+                              />
+                            )}
+                            {colorName}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -638,6 +712,16 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                         className="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
                       />
                       <span className="text-sm font-medium text-gray-700">Featured Product</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="is_best_seller"
+                        checked={formData.is_best_seller}
+                        onChange={handleCheckboxChange}
+                        className="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Best Seller</span>
                     </label>
                   </div>
                 </div>

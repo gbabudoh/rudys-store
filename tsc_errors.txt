@@ -1,0 +1,21 @@
+.next/dev/types/validator.ts(639,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/colors/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/colors/[id]">'.
+  Types of property 'DELETE' are incompatible.
+    Type '(request: Request, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ message: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(783,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/shipping/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/shipping/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ message: string; }> | NextResponse<{ error: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(801,31): error TS2344: Type 'typeof import("E:/APPLICATIONS/CLIENTS/Rudy Store/rudy-store/app/api/admin/tracking/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/tracking/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ message: string; }> | NextResponse<{ error: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.

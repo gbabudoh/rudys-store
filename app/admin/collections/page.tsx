@@ -50,6 +50,7 @@ export default function CollectionsManagement() {
             is_new: !!p.is_new,
             is_on_sale: !!p.is_on_sale,
             is_featured: !!p.is_featured,
+            is_best_seller: !!p.is_best_seller,
           } as Product,
         }));
         setProducts(transformedProducts);
@@ -139,7 +140,7 @@ export default function CollectionsManagement() {
   return (
     <>
       <ProductManagement
-        title="Ruddy Collections"
+        title="Ruddys Store"
         category="Collections"
         products={products}
         onAddProduct={handleAddProduct}

@@ -6,25 +6,25 @@ import { Tabbar, TabbarLink } from 'konsta/react';
 
 // Icons
 const HomeIcon = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-6 h-6"} cursor-pointer`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
   </svg>
 );
 
 const ShopIcon = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-6 h-6"} cursor-pointer`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
   </svg>
 );
 
 const UserIcon = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-6 h-6"} cursor-pointer`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
   </svg>
 );
 
 const MoreIcon = ({ className }: { className?: string }) => (
-  <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-6 h-6"} cursor-pointer`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
   </svg>
 );
@@ -41,7 +41,7 @@ export default function BottomNav() {
     router.push(path);
   };
 
-  const isShopActive = ['/collections', '/luxury', '/crocs'].includes(pathname);
+  const isShopActive = ['/store', '/luxury', '/crocs'].includes(pathname);
   const isMoreActive = ['/wishlist', '/orders', '/contact', '/faq'].includes(pathname);
 
   return (
@@ -89,8 +89,8 @@ export default function BottomNav() {
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Rudy Store Categories</p>
             </div>
             <button 
-              onClick={() => handleNavigate('/collections')}
-              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3"
+              onClick={() => handleNavigate('/store')}
+              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 cursor-pointer"
             >
               <span className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +101,7 @@ export default function BottomNav() {
             </button>
             <button 
               onClick={() => handleNavigate('/luxury')}
-              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50"
+              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50 cursor-pointer"
             >
               <span className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,7 +112,7 @@ export default function BottomNav() {
             </button>
             <button 
               onClick={() => handleNavigate('/crocs')}
-              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50"
+              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50 cursor-pointer"
             >
               <span className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ export default function BottomNav() {
             </button>
             <button 
               onClick={() => setIsShopMenuOpen(false)}
-              className="w-full px-4 py-4 text-center text-gray-500 font-bold hover:bg-gray-50 active:bg-gray-100 transition-colors border-t border-gray-100"
+              className="w-full px-4 py-4 text-center text-gray-500 font-bold hover:bg-gray-50 active:bg-gray-100 transition-colors border-t border-gray-100 cursor-pointer"
             >
               Cancel
             </button>
@@ -146,7 +146,7 @@ export default function BottomNav() {
             </div>
             <button 
               onClick={() => handleNavigate('/wishlist')}
-              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3"
+              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 cursor-pointer"
             >
               <span className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +157,7 @@ export default function BottomNav() {
             </button>
             <button 
               onClick={() => handleNavigate('/orders')}
-              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50"
+              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50 cursor-pointer"
             >
               <span className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +168,7 @@ export default function BottomNav() {
             </button>
             <button 
               onClick={() => handleNavigate('/contact')}
-              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50"
+              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50 cursor-pointer"
             >
               <span className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,7 +179,7 @@ export default function BottomNav() {
             </button>
             <button 
               onClick={() => handleNavigate('/faq')}
-              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50"
+              className="w-full px-4 py-4 text-left text-gray-800 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center space-x-3 border-t border-gray-50 cursor-pointer"
             >
               <span className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +190,7 @@ export default function BottomNav() {
             </button>
             <button 
               onClick={() => setIsMoreMenuOpen(false)}
-              className="w-full px-4 py-4 text-center text-gray-500 font-bold hover:bg-gray-50 active:bg-gray-100 transition-colors border-t border-gray-100"
+              className="w-full px-4 py-4 text-center text-gray-500 font-bold hover:bg-gray-50 active:bg-gray-100 transition-colors border-t border-gray-100 cursor-pointer"
             >
               Cancel
             </button>

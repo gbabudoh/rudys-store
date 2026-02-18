@@ -89,27 +89,15 @@ export default function AdminDashboard() {
     const fetchDashboardData = () => {
       setTimeout(() => {
         setStats({
-          totalProducts: 2847,
-          totalOrders: 1234,
-          totalRevenue: 456789,
-          totalCustomers: 892,
-          collectionsProducts: 1200,
-          luxuryProducts: 800,
-          crocsProducts: 847,
-          recentOrders: [
-            { id: '1', customer: 'John Doe', amount: 299.99, status: 'completed', date: '2024-01-15' },
-            { id: '2', customer: 'Jane Smith', amount: 149.99, status: 'pending', date: '2024-01-15' },
-            { id: '3', customer: 'Mike Johnson', amount: 89.99, status: 'shipped', date: '2024-01-14' },
-            { id: '4', customer: 'Sarah Wilson', amount: 199.99, status: 'completed', date: '2024-01-14' },
-            { id: '5', customer: 'David Brown', amount: 79.99, status: 'processing', date: '2024-01-13' }
-          ],
-          topProducts: [
-            { name: 'Premium Cotton T-Shirt', sales: 234, revenue: 7019.66 },
-            { name: 'Crocs Classic Clogs', sales: 189, revenue: 9448.11 },
-            { name: 'Luxury Designer Handbag', sales: 45, revenue: 58499.55 },
-            { name: 'Designer Jeans', sales: 156, revenue: 14038.44 },
-            { name: 'Crocs Slides', sales: 112, revenue: 3918.88 }
-          ]
+          totalProducts: 0,
+          totalOrders: 0,
+          totalRevenue: 0,
+          totalCustomers: 0,
+          collectionsProducts: 0,
+          luxuryProducts: 0,
+          crocsProducts: 0,
+          recentOrders: [],
+          topProducts: []
         });
         setIsLoading(false);
       }, 1000);
@@ -215,9 +203,9 @@ export default function AdminDashboard() {
               <span className="font-semibold">{stats.collectionsProducts}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-purple-600 h-2 rounded-full" style={{ width: '42%' }}></div>
+              <div className="bg-purple-600 h-2 rounded-full" style={{ width: '0%' }}></div>
             </div>
-            <p className="text-xs text-gray-500">42% of total products</p>
+            <p className="text-xs text-gray-500">0% of total products</p>
           </div>
         </div>
 
@@ -232,9 +220,9 @@ export default function AdminDashboard() {
               <span className="font-semibold">{stats.luxuryProducts}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-amber-600 h-2 rounded-full" style={{ width: '28%' }}></div>
+              <div className="bg-amber-600 h-2 rounded-full" style={{ width: '0%' }}></div>
             </div>
-            <p className="text-xs text-gray-500">28% of total products</p>
+            <p className="text-xs text-gray-500">0% of total products</p>
           </div>
         </div>
 
@@ -249,9 +237,9 @@ export default function AdminDashboard() {
               <span className="font-semibold">{stats.crocsProducts}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-green-600 h-2 rounded-full" style={{ width: '30%' }}></div>
+              <div className="bg-green-600 h-2 rounded-full" style={{ width: '0%' }}></div>
             </div>
-            <p className="text-xs text-gray-500">30% of total products</p>
+            <p className="text-xs text-gray-500">0% of total products</p>
           </div>
         </div>
       </div>
@@ -306,7 +294,7 @@ export default function AdminDashboard() {
                     <p className="font-semibold text-gray-900">{formatCurrency(product.revenue)}</p>
                     <div className="flex items-center text-sm text-green-600">
                       <TrendingUp className="w-4 h-4 mr-1" />
-                      <span>+12%</span>
+                      <span>+0%</span>
                     </div>
                   </div>
                 </div>

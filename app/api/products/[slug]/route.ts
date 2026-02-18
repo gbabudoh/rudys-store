@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { queryOne } from '@/lib/db';
+import { queryOne, queryMany } from '@/lib/db';
 
 export async function GET(
   request: Request,
@@ -16,6 +16,13 @@ export async function GET(
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
+
+    // Fetch color details for hex codes
+    const allColors = await queryMany('SELECT name, hex_code FROM colors');
+    const colorMap = (allColors || []).reduce((acc: Record<string, string>, curr: { name: string; hex_code: string }) => {
+      acc[curr.name] = curr.hex_code;
+      return acc;
+    }, {});
 
     // Parse JSON fields and transform to frontend format
     const parsedProduct = {
@@ -47,6 +54,10 @@ export async function GET(
       isOnSale: !!product.is_on_sale,
       isFeatured: !!product.is_featured,
       discount: product.discount || 0,
+      colorDetails: (typeof product.colors === 'string' ? JSON.parse(product.colors || '[]') : product.colors || []).map((c: string) => ({
+        name: c,
+        hex_code: colorMap[c] || ''
+      }))
     };
 
     return NextResponse.json({ product: parsedProduct });

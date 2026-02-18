@@ -30,6 +30,7 @@ async function ensureProductsTable() {
       is_new BOOLEAN DEFAULT FALSE,
       is_on_sale BOOLEAN DEFAULT FALSE,
       is_featured BOOLEAN DEFAULT FALSE,
+      is_best_seller BOOLEAN DEFAULT FALSE,
       discount INT DEFAULT 0,
       status ENUM('active', 'inactive', 'draft') DEFAULT 'draft',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -48,6 +49,7 @@ export async function GET(request: Request) {
     const featured = url.searchParams.get('featured');
     const isNew = url.searchParams.get('is_new');
     const isOnSale = url.searchParams.get('is_on_sale');
+    const isBestSeller = url.searchParams.get('is_best_seller');
     const limit = url.searchParams.get('limit');
     
     let sql = 'SELECT * FROM products WHERE status = ?';
@@ -70,6 +72,9 @@ export async function GET(request: Request) {
     if (isOnSale === 'true') {
       sql += ' AND is_on_sale = 1';
     }
+    if (isBestSeller === 'true') {
+      sql += ' AND is_best_seller = 1';
+    }
     
     sql += ' ORDER BY created_at DESC';
     
@@ -81,12 +86,45 @@ export async function GET(request: Request) {
     const products = await queryMany(sql, params);
     
     // Parse JSON fields and transform to frontend format
-    const parsedProducts = products.map((p: any) => ({
+    interface ProductRow {
+      id: number;
+      name: string;
+      slug: string;
+      description: string;
+      full_description: string | null;
+      price: number;
+      original_price: number | null;
+      sku: string | null;
+      category: string;
+      subcategory: string | null;
+      product_type: string;
+      store_section: string;
+      images: string | null; // JSON stored as string
+      sizes: string | null; // JSON stored as string
+      eu_sizes: string | null; // JSON stored as string
+      colors: string | null; // JSON stored as string
+      features: string | null; // JSON stored as string
+      additional_info: string | null; // JSON stored as string
+      gender: string;
+      brand: string;
+      stock: number;
+      rating: number;
+      reviews: number;
+      is_new: number; // MySQL BOOLEAN is 0 or 1
+      is_on_sale: number; // MySQL BOOLEAN is 0 or 1
+      is_featured: number; // MySQL BOOLEAN is 0 or 1
+      is_best_seller: number; // MySQL BOOLEAN is 0 or 1
+      discount: number;
+      status: string;
+      created_at: string;
+      updated_at: string;
+    }
+    const parsedProducts = (products as ProductRow[]).map((p) => ({
       id: p.id.toString(),
       slug: p.slug,
       name: p.name,
-      price: parseFloat(p.price),
-      originalPrice: p.original_price ? parseFloat(p.original_price) : undefined,
+      price: parseFloat(p.price.toString()),
+      originalPrice: p.original_price ? parseFloat(p.original_price.toString()) : undefined,
       description: p.description,
       fullDescription: p.full_description,
       images: typeof p.images === 'string' ? JSON.parse(p.images || '[]') : p.images || [],
@@ -104,17 +142,22 @@ export async function GET(request: Request) {
       inStock: p.stock > 0,
       stock: p.stock,
       sku: p.sku,
-      rating: parseFloat(p.rating) || 0,
+      rating: parseFloat(p.rating?.toString() || '0'),
       reviews: p.reviews || 0,
       isNew: !!p.is_new,
       isOnSale: !!p.is_on_sale,
       isFeatured: !!p.is_featured,
+      isBestSeller: !!p.is_best_seller,
       discount: p.discount || 0,
     }));
 
     return NextResponse.json({ products: parsedProducts });
   } catch (error) {
+    let errorMessage = 'An unknown error occurred';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     console.error('API Error:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch products', details: errorMessage }, { status: 500 });
   }
 }

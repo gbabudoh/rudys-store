@@ -26,7 +26,7 @@ export default function ProductImage({
   // Handle error fallback
   const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
-    target.src = '/placeholder-image.png';
+    target.src = '/placeholder-image.svg';
   };
 
   if (fill) {
@@ -38,7 +38,7 @@ export default function ProductImage({
         className={className}
         priority={priority}
         sizes={sizes || '100vw'}
-        quality={quality}
+        quality={75}
         onError={handleError}
       />
     );
@@ -52,7 +52,7 @@ export default function ProductImage({
       height={height}
       className={className}
       priority={priority}
-      quality={quality}
+      quality={75}
       loading={priority ? undefined : 'lazy'}
       onError={handleError}
     />

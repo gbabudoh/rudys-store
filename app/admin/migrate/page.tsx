@@ -4,7 +4,14 @@ import { useState } from 'react';
 
 export default function MigratePage() {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{
+    message?: string;
+    totalHardcodedProducts?: number;
+    imported?: number;
+    skipped?: number;
+    total?: number;
+    errors?: string[];
+  } | null>(null);
   const [error, setError] = useState('');
 
   const handleMigrate = async () => {
@@ -32,8 +39,9 @@ export default function MigratePage() {
       }
 
       setResult(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -53,8 +61,9 @@ export default function MigratePage() {
 
       const data = await response.json();
       setResult(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -148,7 +157,7 @@ export default function MigratePage() {
           Once products are migrated, you can manage them from:
         </p>
         <ul className="text-sm text-blue-700 mt-2 space-y-1">
-          <li>• <strong>Ruddy Collections</strong> → /admin/collections</li>
+          <li>• <strong>Ruddys Store</strong> → /admin/collections</li>
           <li>• <strong>Ruddy Luxury</strong> → /admin/luxury</li>
           <li>• <strong>Slide & Sole</strong> → /admin/crocs</li>
         </ul>

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import SuccessModal from '@/app/components/SuccessModal';
+import ConfirmModal from '@/app/components/ConfirmModal';
 
 // Simple icon components to replace lucide-react
 const Plus = ({ className }: { className?: string }) => (
@@ -54,6 +56,11 @@ export default function BannerManagement() {
   const [editingSlide, setEditingSlide] = useState<BannerSlide | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; slideId: string | null }>({
+    isOpen: false,
+    slideId: null
+  });
 
   // Fetch banners from API
   useEffect(() => {
@@ -120,10 +127,13 @@ export default function BannerManagement() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteSlide = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this banner slide?')) {
-      return;
-    }
+  const confirmDeleteSlide = (id: string) => {
+    setDeleteConfirmation({ isOpen: true, slideId: id });
+  };
+
+  const handleDeleteSlide = async () => {
+    const id = deleteConfirmation.slideId;
+    if (!id) return;
 
     try {
       const token = localStorage.getItem('admin_token');
@@ -140,10 +150,12 @@ export default function BannerManagement() {
       }
 
       setSlides(prev => prev.filter(slide => slide.id !== id));
-      alert('Banner deleted successfully!');
+      setSuccessMessage('Banner deleted successfully!');
     } catch (err: unknown) {
       console.error('Delete error:', err);
       alert(err instanceof Error ? err.message : 'Failed to delete banner');
+    } finally {
+      setDeleteConfirmation({ isOpen: false, slideId: null });
     }
   };
 
@@ -175,7 +187,7 @@ export default function BannerManagement() {
         isActive: data.banner.is_active,
       };
       setSlides(prev => prev.map(s => s.id === id ? updatedSlide : s));
-      alert(`Banner ${data.banner.is_active ? 'activated' : 'deactivated'} successfully!`);
+      setSuccessMessage(`Banner ${data.banner.is_active ? 'activated' : 'deactivated'} successfully!`);
     } catch (err: unknown) {
       console.error('Toggle active error:', err);
       alert(err instanceof Error ? err.message : 'Failed to update banner');
@@ -254,7 +266,7 @@ export default function BannerManagement() {
 
       setIsModalOpen(false);
       setEditingSlide(null);
-      alert(`Banner ${editingSlide ? 'updated' : 'created'} successfully!`);
+      setSuccessMessage(`Banner ${editingSlide ? 'updated' : 'created'} successfully!`);
     } catch (err: unknown) {
       console.error('Save error:', err);
       alert(err instanceof Error ? err.message : 'Failed to save banner');
@@ -381,7 +393,7 @@ export default function BannerManagement() {
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => handleDeleteSlide(slide.id)}
+                  onClick={() => confirmDeleteSlide(slide.id)}
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -403,6 +415,25 @@ export default function BannerManagement() {
           }}
         />
       )}
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={!!successMessage}
+        message={successMessage || ''}
+        onClose={() => setSuccessMessage(null)}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteConfirmation.isOpen}
+        onClose={() => setDeleteConfirmation({ isOpen: false, slideId: null })}
+        onConfirm={handleDeleteSlide}
+        title="Delete Banner Slide?"
+        message="Are you sure you want to delete this banner? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        isDestructive={true}
+      />
     </div>
   );
 }

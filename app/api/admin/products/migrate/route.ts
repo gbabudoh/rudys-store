@@ -98,9 +98,10 @@ async function ensureProductsTable() {
   for (const col of columnsToAdd) {
     try {
       await query(`ALTER TABLE products ADD COLUMN ${col.name} ${col.definition}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { message?: string };
       // Column already exists, ignore
-      if (!err.message?.includes('Duplicate column')) {
+      if (!error.message?.includes('Duplicate column')) {
         // Ignore duplicate column errors
       }
     }
@@ -169,21 +170,23 @@ export async function POST(request: Request) {
           ]
         );
         imported++;
-      } catch (err: any) {
-        errors.push(`${product.name}: ${err.message}`);
-      }
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      errors.push(`${product.name}: ${error.message || 'Unknown error'}`);
     }
+  }
 
-    return NextResponse.json({
-      message: 'Migration completed',
-      imported,
-      skipped,
-      total: hardcodedProducts.length,
-      errors: errors.length > 0 ? errors : undefined,
+  return NextResponse.json({
+    message: 'Migration completed',
+    imported,
+    skipped,
+    total: hardcodedProducts.length,
+    errors: errors.length > 0 ? errors : undefined,
     });
-  } catch (error: any) {
-    console.error('Migration Error:', error);
-    return NextResponse.json({ error: 'Migration failed: ' + error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Migration Error:', err);
+    return NextResponse.json({ error: 'Migration failed: ' + err.message }, { status: 500 });
   }
 }
 

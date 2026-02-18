@@ -33,7 +33,7 @@ export default function OptimizedImage({
   // Handle placeholder/fallback for missing images
   const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
-    target.src = '/placeholder-image.png';
+    target.src = '/placeholder-image.svg';
   };
 
   if (fill) {

@@ -15,6 +15,7 @@ export interface Product {
   sizes: string[];
   eu_sizes?: string[];
   colors: string[];
+  color_details?: { name: string; hex_code: string }[];
   features: string[];
   gender: 'Men' | 'Women' | 'Unisex' | 'Kids';
   brand: string;
@@ -22,6 +23,7 @@ export interface Product {
   is_new: boolean;
   is_on_sale: boolean;
   is_featured: boolean;
+  is_best_seller: boolean;
   discount: number;
   status: 'active' | 'inactive' | 'draft';
   created_at?: string;
@@ -67,6 +69,7 @@ export interface RawProduct {
   is_new: number | boolean;
   is_on_sale: number | boolean;
   is_featured: number | boolean;
+  is_best_seller: number | boolean;
   discount: number;
   status: 'active' | 'inactive' | 'draft';
   created_at: string;

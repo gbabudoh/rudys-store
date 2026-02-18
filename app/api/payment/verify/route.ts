@@ -37,12 +37,16 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-  } catch (error: any) {
+  } catch (error) {
+    let errorMessage = 'An unknown error occurred';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     return NextResponse.json(
       { 
         success: false, 
         message: 'Failed to verify payment',
-        error: error.message 
+        error: errorMessage 
       },
       { status: 500 }
     );

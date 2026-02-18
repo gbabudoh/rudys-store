@@ -52,11 +52,11 @@ async function createHomepageSectionsTable() {
     const sections = [
       {
         section_key: 'ruddy_collections',
-        title: 'Ruddy Collections',
+        title: 'Ruddys Store',
         subtitle: 'Premium Fashion for Everyone',
         description: 'Discover our curated collection of premium fashion items',
         image_url: 'https://images.unsplash.com/photo-1445205170230-053b83016050',
-        link_url: '/collections',
+        link_url: '/store',
         product_count: 0,
         is_active: true,
         display_order: 1,

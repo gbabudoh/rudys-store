@@ -23,6 +23,18 @@ const Crown = ({ className, style }: { className?: string; style?: React.CSSProp
   </svg>
 );
 
+const Folder = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+  </svg>
+);
+
+const Tag = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 011 12V7a4 4 0 014-4z" />
+  </svg>
+);
+
 const Mail = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -103,6 +115,12 @@ const ImageIcon = ({ className, style }: { className?: string; style?: React.CSS
   </svg>
 );
 
+const ColorSwatch = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+  </svg>
+);
+
 interface NavItem {
   name: string;
   href: string;
@@ -179,7 +197,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Banners', href: '/admin/banners', icon: ImageIcon, category: 'Content' },
     { name: 'Homepage Sections', href: '/admin/homepage-sections', icon: ImageIcon, category: 'Content' },
     { name: 'Footer', href: '/admin/footer', icon: ImageIcon, category: 'Content' },
-    { name: 'Ruddy Collections', href: '/admin/collections', icon: Package, category: 'Products' },
+    { name: 'Ruddys Store', href: '/admin/collections', icon: Package, category: 'Products' },
     { name: 'Ruddy Luxury', href: '/admin/luxury', icon: Crown, category: 'Products' },
     { name: 'Slide & Sole', href: '/admin/crocs', icon: ShoppingBag, category: 'Products' },
     { name: 'Orders', href: '/admin/orders', icon: ShoppingBag, category: 'Sales' },
@@ -189,7 +207,10 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart, category: 'Insights' },
     { name: 'Google Analytics', href: '/admin/google-analytics', icon: BarChart, category: 'Insights' },
     { name: 'Categories', href: '/admin/categories', icon: Package, category: 'Management' },
+    { name: 'Sub-Categories', href: '/admin/sub-categories', icon: Folder, category: 'Management' },
+    { name: 'Product Types', href: '/admin/product-types', icon: Tag, category: 'Management' },
     { name: 'Brands', href: '/admin/brands', icon: Crown, category: 'Management' },
+    { name: 'Colors', href: '/admin/colors', icon: ColorSwatch, category: 'Management' },
     { name: 'Customers', href: '/admin/customers', icon: Users, category: 'Management' },
     { name: 'Admin Users', href: '/admin/users', icon: Users, category: 'Management' },
     { name: 'Settings', href: '/admin/settings', icon: Settings, category: 'Management' },

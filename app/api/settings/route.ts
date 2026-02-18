@@ -19,6 +19,7 @@ const PUBLIC_SETTINGS = [
   'social_twitter',
   'social_tiktok',
   'social_whatsapp',
+  'store_whatsapp',
 ];
 
 async function ensureSettingsTable() {

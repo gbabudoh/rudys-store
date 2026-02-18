@@ -47,7 +47,8 @@ export default function Settings() {
     social_instagram: '',
     social_twitter: '',
     social_tiktok: '',
-    social_whatsapp: ''
+    social_whatsapp: '',
+    store_whatsapp: ''
   });
 
   const fetchSettings = useCallback(async () => {
@@ -322,6 +323,19 @@ export default function Settings() {
                     value={formData.store_phone_secondary}
                     onChange={handleChange}
                     className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                    <MessageCircle className="w-3.5 h-3.5 mr-2" /> WhatsApp Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="store_whatsapp"
+                    value={formData.store_whatsapp}
+                    onChange={handleChange}
+                    className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                    placeholder="(+234) ..."
                   />
                 </div>
               </div>

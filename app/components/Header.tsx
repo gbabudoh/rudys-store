@@ -11,31 +11,31 @@ import { useRouter, usePathname } from 'next/navigation';
 import { getProductBySlug } from '@/lib/products';
 // Simple icon components to replace lucide-react
 const ShoppingBag = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
-  <svg className={className || "w-6 h-6"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-6 h-6"} cursor-pointer`} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
   </svg>
 );
 
 const Menu = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
-  <svg className={className || "w-6 h-6"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-6 h-6"} cursor-pointer`} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
   </svg>
 );
 
 const X = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
-  <svg className={className || "w-6 h-6"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-6 h-6"} cursor-pointer`} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
   </svg>
 );
 
 const User = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
-  <svg className={className || "w-5 h-5"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-5 h-5"} cursor-pointer`} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
   </svg>
 );
 
 const Heart = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
-  <svg className={className || "w-5 h-5"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={`${className || "w-5 h-5"} cursor-pointer`} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
   </svg>
 );
@@ -127,12 +127,12 @@ export default function Header() {
         }
       }
       // Default for products is collections
-      router.push('/collections');
+      router.push('/store');
       return;
     }
 
     // From product list pages back to home
-    if (pathname === '/collections' || pathname === '/luxury' || pathname === '/crocs' || pathname === '/products') {
+    if (pathname === '/store' || pathname === '/luxury' || pathname === '/crocs' || pathname === '/products') {
       router.push('/');
       return;
     }
@@ -225,9 +225,9 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/collections" className="text-gray-700 hover:transition-colors font-medium cursor-pointer" style={{ '--hover-color': '#cfa224' } as React.CSSProperties & { '--hover-color': string }} onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}>
-              Rudy Collections
+          <nav className="hidden md:flex items-center space-x-8" suppressHydrationWarning>
+            <Link href="/store" className="text-gray-700 hover:transition-colors font-medium cursor-pointer" style={{ '--hover-color': '#cfa224' } as React.CSSProperties & { '--hover-color': string }} onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}>
+              Ruddys Store
             </Link>
             <Link href="/luxury" className="text-gray-700 hover:transition-colors font-medium cursor-pointer" onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}>
               Rudy Luxury
@@ -301,13 +301,13 @@ export default function Header() {
           <div className="md:hidden border-t border-gray-100 py-4">
             <nav className="flex flex-col space-y-4">
               <Link 
-                href="/collections" 
+                href="/store" 
                 className="text-gray-700 transition-colors font-medium py-2 cursor-pointer"
                 onClick={() => setIsMenuOpen(false)}
                 onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}
               >
-                Rudy Collections
+                Ruddys Store
               </Link>
               <Link 
                 href="/luxury" 

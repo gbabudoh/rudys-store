@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import ProductCard from "../components/ProductCard";
-import { getAllProducts, type Product } from "@/lib/products";
+import { type Product } from "@/lib/products";
 // Simple icon components to replace lucide-react
 
 const Grid = ({ className }: { className?: string }) => (
@@ -66,47 +66,64 @@ export default function LuxuryPage() {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>(
     [],
   );
-  const [priceRange, setPriceRange] = useState([0, 500]);
+  const [priceRange, setPriceRange] = useState([0, 1000000]);
   const [sortBy, setSortBy] = useState("featured");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
   const productsPerPage = 12;
   const [displayedCount, setDisplayedCount] = useState(productsPerPage);
+  const [luxuryProducts, setLuxuryProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
-  // Get real luxury products (bags, glasses, dresses)
-  const allProducts = getAllProducts();
-  const luxuryProducts = allProducts
-    .filter((p) => ["Bags", "Glasses", "Dresses"].includes(p.category))
-    .map((product) => ({
-      ...product,
-      gender: product.gender || "Unisex",
-      brand: product.brand || "Rudy Store",
-      sizes: product.sizes || [],
-      subcategory: product.subcategory || product.category,
-    }));
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoadingProducts(true);
+      const response = await fetch('/api/products?store_section=luxury');
+      if (response.ok) {
+        const data = await response.json();
+        const mapped = data.products.map((p: Product) => ({
+          ...p,
+          gender: p.gender || "Unisex",
+          brand: p.brand,
+          sizes: p.sizes || [],
+          subcategory: p.subcategory || p.category,
+        }));
+        setLuxuryProducts(mapped);
+      }
+    } catch (error) {
+      console.error('Error fetching luxury products:', error);
+    } finally {
+      setLoadingProducts(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   // Extract unique values for filters
   const genders = Array.from(
     new Set(luxuryProducts.map((p) => p.gender)),
-  ).filter(Boolean);
-  const brands = Array.from(new Set([...luxuryProducts.map((p) => p.brand), 'Adidas', 'Nike'])).filter(
-    Boolean,
+  ).filter((g): g is string => Boolean(g));
+  const brands = Array.from(new Set(luxuryProducts.map((p) => p.brand))).filter(
+    (brand): brand is string => Boolean(brand)
   ).sort();
   const allSizes = Array.from(new Set(luxuryProducts.flatMap((p) => p.sizes)))
-    .filter(Boolean)
+    .filter((s): s is string => Boolean(s))
     .sort();
   const subcategories = Array.from(
     new Set(luxuryProducts.map((p) => p.subcategory)),
-  ).filter(Boolean);
+  ).filter((s): s is string => Boolean(s));
 
   const filteredProducts = luxuryProducts.filter((product) => {
     // Category mapping to productType
     let categoryMatch = selectedCategories.includes("All");
     if (!categoryMatch) {
       categoryMatch = selectedCategories.some(cat => {
-        if (cat === "Clothing") return product.productType === "clothing";
-        if (cat === "Footwear") return product.productType === "shoe";
-        if (cat === "Accessories") return product.productType === "accessory";
+        const type = (product.productType || "").toLowerCase();
+        if (cat === "Clothing") return ["clothing", "shirt", "t-shirt", "dress", "pants"].some(t => type.includes(t));
+        if (cat === "Footwear") return ["shoe", "footwear", "sneaker", "boot", "sandal"].some(t => type.includes(t));
+        if (cat === "Accessories") return ["accessory", "accessories", "bag", "glasses", "watch", "belt", "hat"].some(t => type.includes(t));
         return false;
       });
     }
@@ -114,15 +131,19 @@ export default function LuxuryPage() {
     const priceMatch =
       product.price >= priceRange[0] && product.price <= priceRange[1];
     const genderMatch =
-      selectedGender.length === 0 || selectedGender.includes(product.gender);
+      selectedGender.length === 0 ||
+      (product.gender ? selectedGender.includes(product.gender) : false);
     const brandMatch =
-      selectedBrands.length === 0 || selectedBrands.includes(product.brand);
+      selectedBrands.length === 0 ||
+      (product.brand ? selectedBrands.includes(product.brand) : false);
     const sizeMatch =
       selectedSizes.length === 0 ||
       selectedSizes.some((size) => product.sizes.includes(size));
     const subcategoryMatch =
       selectedSubcategories.length === 0 ||
-      selectedSubcategories.includes(product.subcategory);
+      (product.subcategory
+        ? selectedSubcategories.includes(product.subcategory)
+        : false);
 
     return (
       categoryMatch &&
@@ -160,7 +181,6 @@ export default function LuxuryPage() {
 
   // Reset displayed count when filters change
   useEffect(() => {
-    // eslint-disable-next-line
     setDisplayedCount(productsPerPage);
   }, [
     selectedCategories,
@@ -186,7 +206,7 @@ export default function LuxuryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#201d1e]/5 to-[#cfa224]/5">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#201d1e]/5 to-[#cfa224]/5" suppressHydrationWarning>
       {/* Hero Section */}
       <div
         className="relative text-white py-20 overflow-hidden"
@@ -327,56 +347,58 @@ export default function LuxuryPage() {
               </div>
 
               {/* Brand Filter */}
-              <div className="mb-6">
-                <h4
-                  className="font-semibold mb-4 flex items-center"
-                  style={{ color: "#201d1e" }}
-                >
-                  <span
-                    className="w-1 h-5 rounded-full mr-2"
-                    style={{ backgroundColor: "#cfa224" }}
-                  ></span>
-                  Brand
-                </h4>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {brands.map((brand) => (
-                    <label
-                      key={brand}
-                      className="flex items-center group cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedBrands.includes(brand)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedBrands([...selectedBrands, brand]);
-                          } else {
-                            setSelectedBrands(
-                              selectedBrands.filter((b) => b !== brand),
-                            );
-                          }
-                        }}
-                        className="mr-3 w-4 h-4 focus:ring-2 border-gray-300 rounded"
-                        style={{ accentColor: "#cfa224" }}
-                      />
-                      <span
-                        className={`text-sm transition-colors ${
-                          selectedBrands.includes(brand)
-                            ? "font-semibold"
-                            : "text-gray-700 group-hover:opacity-70"
-                        }`}
-                        style={
-                          selectedBrands.includes(brand)
-                            ? { color: "#cfa224" }
-                            : {}
-                        }
+              {brands.length > 0 && (
+                <div className="mb-6">
+                  <h4
+                    className="font-semibold mb-4 flex items-center"
+                    style={{ color: "#201d1e" }}
+                  >
+                    <span
+                      className="w-1 h-5 rounded-full mr-2"
+                      style={{ backgroundColor: "#cfa224" }}
+                    ></span>
+                    Brand
+                  </h4>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {brands.map((brand) => (
+                      <label
+                        key={brand}
+                        className="flex items-center group cursor-pointer"
                       >
-                        {brand}
-                      </span>
-                    </label>
-                  ))}
+                        <input
+                          type="checkbox"
+                          checked={selectedBrands.includes(brand)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedBrands([...selectedBrands, brand]);
+                            } else {
+                              setSelectedBrands(
+                                selectedBrands.filter((b) => b !== brand),
+                              );
+                            }
+                          }}
+                          className="mr-3 w-4 h-4 focus:ring-2 border-gray-300 rounded"
+                          style={{ accentColor: "#cfa224" }}
+                        />
+                        <span
+                          className={`text-sm transition-colors ${
+                            selectedBrands.includes(brand)
+                              ? "font-semibold"
+                              : "text-gray-700 group-hover:opacity-70"
+                          }`}
+                          style={
+                            selectedBrands.includes(brand)
+                              ? { color: "#cfa224" }
+                              : {}
+                          }
+                        >
+                          {brand}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Size Filter */}
               <div className="mb-6">
@@ -563,14 +585,14 @@ export default function LuxuryPage() {
                   <input
                     type="range"
                     min="0"
-                    max="500"
+                    max="1000000"
                     value={priceRange[1]}
                     onChange={(e) =>
                       setPriceRange([priceRange[0], parseInt(e.target.value)])
                     }
                     className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #cfa224 0%, #cfa224 ${(priceRange[1] / 500) * 100}%, #e5e5e5 ${(priceRange[1] / 500) * 100}%, #e5e5e5 100%)`,
+                      background: `linear-gradient(to right, #cfa224 0%, #cfa224 ${(priceRange[1] / 1000000) * 100}%, #e5e5e5 ${(priceRange[1] / 1000000) * 100}%, #e5e5e5 100%)`,
                       accentColor: "#cfa224",
                     }}
                   />
@@ -585,7 +607,7 @@ export default function LuxuryPage() {
                       className="font-semibold"
                       style={{ color: "#cfa224" }}
                     >
-                      ₦{priceRange[1]}
+                      ₦{priceRange[1].toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -673,24 +695,30 @@ export default function LuxuryPage() {
             </div>
 
             {/* Products Grid/List */}
-            <div
-              className={`${
-                viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-                  : "flex flex-col gap-4"
-              }`}
-            >
-              {displayedProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={handleAddToCart}
-                  onAddToWishlist={handleAddToWishlist}
-                  onQuickView={handleQuickView}
-                  viewMode={viewMode}
-                />
-              ))}
-            </div>
+            {loadingProducts ? (
+              <div className="flex justify-center items-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#cfa224]"></div>
+              </div>
+            ) : (
+              <div
+                className={`transition-all duration-500 ${
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                    : "flex flex-col gap-4"
+                }`}
+              >
+                {displayedProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    onAddToWishlist={handleAddToWishlist}
+                    onQuickView={handleQuickView}
+                    viewMode={viewMode}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* Load More */}
             {hasMoreProducts && (

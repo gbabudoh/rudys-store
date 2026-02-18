@@ -42,18 +42,26 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    if (value.trim().length < 2) {
+      setSearchResults([]);
+      setShowResults(false);
+      setIsSearching(false);
+    } else {
+      setIsSearching(true);
+    }
+  };
+
   // Search products
   useEffect(() => {
     const query = searchQuery.trim();
     if (query.length < 2) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      if (searchResults.length > 0) setSearchResults([]);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      if (showResults) setShowResults(false);
       return;
     }
 
-    setIsSearching(true);
     const timer = setTimeout(() => {
       const products = getAllProducts();
       const lowerQuery = query.toLowerCase();
@@ -72,12 +80,13 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
     }, 300); // Debounce search
 
     return () => clearTimeout(timer);
-  }, [searchQuery, searchResults.length, showResults]);
+  }, [searchQuery]);
 
   const handleClearSearch = () => {
     setSearchQuery('');
     setSearchResults([]);
     setShowResults(false);
+    setIsSearching(false);
   };
 
   const handleResultClick = () => {
@@ -106,7 +115,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleInputChange}
           onKeyPress={handleKeyPress}
           placeholder="Search products..."
           className="w-full pl-10 pr-24 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:border-transparent transition-all"

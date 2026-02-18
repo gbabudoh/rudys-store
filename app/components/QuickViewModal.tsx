@@ -51,7 +51,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
   useEffect(() => {
     if (product) {
-      const img = product.images?.[0] || '/placeholder.png';
+      const img = product.images?.[0] || '/placeholder-image.svg';
       const frame = requestAnimationFrame(() => {
         setMainImage(img);
         setSelectedSize('');
@@ -77,7 +77,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0] || '/placeholder.png',
+      image: product.images?.[0] || '/placeholder-image.svg',
       quantity: quantity,
       size: selectedSize,
       color: selectedColor
@@ -90,7 +90,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0] || '/placeholder.png',
+      image: product.images?.[0] || '/placeholder-image.svg',
       slug: product.slug || product.id
     });
   };
@@ -114,7 +114,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
           <div className="space-y-4">
             <div className="relative aspect-square rounded-2xl overflow-hidden border border-gray-100 shadow-inner group">
               <Image
-                src={mainImage || '/placeholder.png'}
+                src={mainImage || '/placeholder-image.svg'}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"

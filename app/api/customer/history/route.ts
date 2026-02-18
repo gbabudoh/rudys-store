@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
         o.status as order_status,
         o.created_at as purchase_date,
         p.slug as product_slug,
-        COALESCE(pi.image_url, '/placeholder.png') as product_image,
+        COALESCE(pi.image_url, '/placeholder-image.svg') as product_image,
         p.price as current_price,
         p.status as product_status
       FROM order_items oi

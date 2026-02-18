@@ -2,6 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import SuccessModal from '@/app/components/SuccessModal';
+import ImageUpload from '@/app/components/ImageUpload';
+import ConfirmModal from '@/app/components/ConfirmModal';
+
+const Plus = ({ className }: { className?: string }) => (
+  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+  </svg>
+);
+
+const Trash = ({ className }: { className?: string }) => (
+  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+  </svg>
+);
 
 
 const Edit = ({ className }: { className?: string }) => (
@@ -34,8 +49,11 @@ export default function HomepageSectionsManagement() {
   const [sections, setSections] = useState<HomepageSection[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSection, setEditingSection] = useState<HomepageSection | null>(null);
+  const [deletingSection, setDeletingSection] = useState<HomepageSection | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Fetch sections from API
   useEffect(() => {
@@ -98,6 +116,41 @@ export default function HomepageSectionsManagement() {
     setIsModalOpen(true);
   };
 
+  const handleCreateSection = () => {
+    setEditingSection(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteClick = (section: HomepageSection) => {
+    setDeletingSection(section);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingSection) return;
+
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await fetch(`/api/admin/homepage-sections/${deletingSection.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete homepage section');
+      }
+
+      setSections(prev => prev.filter(s => s.id !== deletingSection.id));
+      setIsDeleteModalOpen(false);
+      setDeletingSection(null);
+      setSuccessMessage('Section deleted successfully');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Failed to delete homepage section');
+    }
+  };
+
   const handleSaveSection = async (sectionData: Omit<HomepageSection, 'id'>) => {
     try {
       const token = localStorage.getItem('admin_token');
@@ -114,17 +167,32 @@ export default function HomepageSectionsManagement() {
         gradient_color: sectionData.gradient,
       };
 
-      const response = await fetch(`/api/admin/homepage-sections/${editingSection?.id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      let response;
+      if (editingSection) {
+        // Update existing section
+        response = await fetch(`/api/admin/homepage-sections/${editingSection.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        // Create new section
+        response = await fetch('/api/admin/homepage-sections', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+      }
 
       if (!response.ok) {
-        throw new Error('Failed to update homepage section');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to save homepage section');
       }
 
       const data = await response.json();
@@ -143,9 +211,15 @@ export default function HomepageSectionsManagement() {
         gradient: section.gradient_color || '',
       };
 
-      setSections(prev => prev.map(s => s.id === editingSection?.id ? transformedSection : s));
+      if (editingSection) {
+        setSections(prev => prev.map(s => s.id === editingSection.id ? transformedSection : s));
+      } else {
+        setSections(prev => [...prev, transformedSection]);
+      }
+      
       setIsModalOpen(false);
       setEditingSection(null);
+      setSuccessMessage(`Section ${editingSection ? 'updated' : 'created'} successfully!`);
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Failed to save homepage section');
     }
@@ -175,6 +249,13 @@ export default function HomepageSectionsManagement() {
           <h1 className="text-2xl font-bold text-gray-900">Homepage Sections</h1>
           <p className="text-gray-600">Manage the three main category sections on homepage</p>
         </div>
+        <button
+          onClick={handleCreateSection}
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 cursor-pointer"
+        >
+          <Plus className="w-4 h-4" />
+          Add New Section
+        </button>
       </div>
 
       {/* Stats */}
@@ -266,9 +347,17 @@ export default function HomepageSectionsManagement() {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleEditSection(section)}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                  className="p-2 text-gray-400 hover:text-purple-600 transition-colors cursor-pointer"
+                  title="Edit Section"
                 >
-                  <Edit className="w-4 h-4" />
+                  <Edit className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(section)}
+                  className="p-2 text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                  title="Delete Section"
+                >
+                  <Trash className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -277,7 +366,7 @@ export default function HomepageSectionsManagement() {
       </div>
 
       {/* Modal */}
-      {isModalOpen && editingSection && (
+      {isModalOpen && (
         <HomepageSectionModal
           section={editingSection}
           onSave={handleSaveSection}
@@ -287,9 +376,35 @@ export default function HomepageSectionsManagement() {
           }}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        title="Delete Homepage Section"
+        message={`Are you sure you want to delete "${deletingSection?.title}"? This action cannot be undone.`}
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDeletingSection(null);
+        }}
+        isDestructive={true}
+      />
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={!!successMessage}
+        message={successMessage || ''}
+        onClose={() => setSuccessMessage(null)}
+      />
     </div>
   );
 }
+
+import Modal from '@/app/components/Modal';
+
+// ... (previous code)
 
 // Modal Component
 function HomepageSectionModal({
@@ -297,22 +412,40 @@ function HomepageSectionModal({
   onSave,
   onClose,
 }: {
-  section: HomepageSection;
+  section: HomepageSection | null;
   onSave: (sectionData: Omit<HomepageSection, 'id'>) => void;
   onClose: () => void;
 }) {
+  // Initialize form data. Use safe defaults for null section.
   const [formData, setFormData] = useState<Omit<HomepageSection, 'id'>>({
-    section_key: section.section_key,
-    title: section.title,
-    subtitle: section.subtitle,
-    description: section.description,
-    image: section.image,
-    link: section.link,
-    productCount: section.productCount,
-    isActive: section.isActive,
-    displayOrder: section.displayOrder,
-    gradient: section.gradient,
+    section_key: section?.section_key || '',
+    title: section?.title || '',
+    subtitle: section?.subtitle || '',
+    description: section?.description || '',
+    image: section?.image || '',
+    link: section?.link || '',
+    productCount: section?.productCount || 0,
+    isActive: section?.isActive ?? true,
+    displayOrder: section?.displayOrder || 0,
+    gradient: section?.gradient || '',
   });
+
+  const generateSectionKey = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      title: newTitle,
+      // Only auto-generate key if we are creating a new section (no existing section)
+      section_key: !section ? generateSectionKey(newTitle) : prev.section_key
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -320,174 +453,163 @@ function HomepageSectionModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Edit Homepage Section</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 cursor-pointer">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title={section ? 'Edit Homepage Section' : 'Create New Homepage Section'}
+      width="max-w-2xl"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Section Key is hidden and auto-generated */}
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Section Key
-            </label>
-            <input
-              type="text"
-              value={formData.section_key}
-              disabled
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
-            />
-            <p className="text-xs text-gray-500 mt-1">Section key cannot be changed</p>
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Title
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={handleTitleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400"
+            required
+            placeholder="e.g. New Arrivals"
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              required
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Subtitle
+          </label>
+          <input
+            type="text"
+            value={formData.subtitle}
+            onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400"
+            placeholder="e.g. Fresh styles just for you"
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Subtitle
-            </label>
-            <input
-              type="text"
-              value={formData.subtitle}
-              onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Description
+          </label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400 resize-none"
+            rows={3}
+            placeholder="Brief description of this section..."
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Image URL
-            </label>
-            <input
-              type="url"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Section Image
+          </label>
+          <div className="space-y-4">
             {formData.image && (
-              <div className="mt-2 relative w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
+              <div className="relative w-full h-48 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm group">
                 <Image
                   src={formData.image}
-                  alt="Preview"
+                  alt="Section preview"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, image: '' })}
+                  className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg text-red-600 hover:text-white hover:bg-red-600 transition-all cursor-pointer transform hover:scale-110"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            )}
+            
+            {!formData.image && (
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors bg-gray-50/50">
+                <ImageUpload
+                  onUploadSuccess={(url) => setFormData({ ...formData, image: url })}
+                  maxSize={5 * 1024 * 1024} // 5MB
                 />
               </div>
             )}
           </div>
+          <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Recommended size: 800x600px or larger. Max size: 5MB.
+          </p>
+        </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Link URL
+          </label>
+          <input
+            type="text"
+            value={formData.link}
+            onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+            placeholder="e.g., /products/categories or https://example.com"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Link URL
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Display Order
             </label>
             <input
-              type="url"
-              value={formData.link}
-              onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              type="number"
+              min="0"
+              value={formData.displayOrder}
+              onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900"
             />
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Product Count
-              </label>
+          <div className="flex items-end pb-3">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all ${
+                formData.isActive 
+                  ? 'bg-purple-600 border-purple-600' 
+                  : 'bg-white border-gray-300 group-hover:border-purple-400'
+              }`}>
+                {formData.isActive && (
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
               <input
-                type="number"
-                min="0"
-                value={formData.productCount}
-                onChange={(e) => setFormData({ ...formData, productCount: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                type="checkbox"
+                className="hidden"
+                id="isActive"
+                checked={formData.isActive}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Display Order
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={formData.displayOrder}
-                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Gradient Color (CSS class)
-            </label>
-            <input
-              type="text"
-              value={formData.gradient}
-              onChange={(e) => setFormData({ ...formData, gradient: e.target.value })}
-              placeholder="bg-gradient-to-br from-purple-500 to-pink-500"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="isActive"
-              checked={formData.isActive}
-              onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-              className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
-            />
-            <label htmlFor="isActive" className="ml-2 text-sm text-gray-700 cursor-pointer">
-              Active
+              <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700 transition-colors">Active Status</span>
             </label>
           </div>
+        </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors cursor-pointer"
-            >
-              Update Section
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-2.5 text-gray-700 font-semibold hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-8 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] transform transition-all cursor-pointer shadow-purple-500/25"
+          >
+            {section ? 'Update Section' : 'Create Section'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }
 

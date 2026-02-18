@@ -91,7 +91,7 @@ function ProductContent({ product }: { product: Product }) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images[0] || '/placeholder.png',
+      image: product.images[0] || '/placeholder-image.svg',
       quantity: quantity,
       size: `${size} ${product.productType === 'shoe' ? `(${sizeSystem.toUpperCase()})` : ''}`,
       color: selectedColor,
@@ -366,20 +366,42 @@ function ProductContent({ product }: { product: Product }) {
               <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">
                 Select Color
               </label>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((color: string) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`px-6 py-2 border-2 rounded-lg font-bold transition-all text-sm cursor-pointer ${
-                      selectedColor === color
-                        ? 'border-[#cfa224] bg-[#cfa224]/5 text-[#cfa224]'
-                        : 'border-gray-100 bg-white hover:border-[#cfa224]/30'
-                    }`}
-                  >
-                    {color}
-                  </button>
-                ))}
+              <div className="flex flex-wrap gap-3">
+                {product.colorDetails ? (
+                  product.colorDetails.map((color) => (
+                    <button
+                      key={color.name}
+                      onClick={() => setSelectedColor(color.name)}
+                      className={`group flex items-center gap-3 px-4 py-2 border-2 rounded-xl transition-all cursor-pointer ${
+                        selectedColor === color.name
+                          ? 'border-[#cfa224] bg-[#cfa224]/5 text-[#cfa224]'
+                          : 'border-gray-100 bg-white hover:border-[#cfa224]/30'
+                      }`}
+                    >
+                      {color.hex_code && (
+                        <span 
+                          className="w-5 h-5 rounded-full border border-gray-100 shadow-sm"
+                          style={{ backgroundColor: color.hex_code }}
+                        />
+                      )}
+                      <span className="font-bold text-sm uppercase tracking-wide">{color.name}</span>
+                    </button>
+                  ))
+                ) : (
+                  product.colors.map((color: string) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-6 py-2 border-2 rounded-xl font-bold transition-all text-sm cursor-pointer ${
+                        selectedColor === color
+                          ? 'border-[#cfa224] bg-[#cfa224]/5 text-[#cfa224]'
+                          : 'border-gray-100 bg-white hover:border-[#cfa224]/30'
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))
+                )}
               </div>
             </div>
 

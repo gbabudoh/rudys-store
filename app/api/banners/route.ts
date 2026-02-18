@@ -15,12 +15,21 @@ export async function GET() {
     );
 
     return NextResponse.json({ banners });
-  } catch (error: any) {
-    console.error('Error fetching banners:', error);
+  } catch (error) {
+    let errorMessage = 'An unknown error occurred';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      console.error('Error fetching banners:', error);
+    } else if (typeof error === 'object' && error !== null && 'message' in error) {
+      // Fallback for objects that might have a message property but are not Error instances
+      errorMessage = (error as { message: string }).message;
+      console.error('Error fetching banners:', error);
+    } else {
+      console.error('Error fetching banners:', error);
+    }
     return NextResponse.json(
-      { error: 'Failed to fetch banners', details: error.message },
+      { error: 'Failed to fetch banners', details: errorMessage },
       { status: 500 }
     );
   }
 }
-

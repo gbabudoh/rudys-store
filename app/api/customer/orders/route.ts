@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
             oi.unit_price,
             oi.total_price,
             p.slug as product_slug,
-            COALESCE(pi.image_url, '/placeholder.png') as product_image
+            COALESCE(pi.image_url, '/placeholder-image.svg') as product_image
           FROM order_items oi
           LEFT JOIN products p ON oi.product_id = p.id
           LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1

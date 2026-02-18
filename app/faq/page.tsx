@@ -25,7 +25,7 @@ const faqData: FAQItem[] = [
   {
     category: 'general',
     question: 'What is Rudy\'s Store?',
-    answer: 'Rudy\'s Store is your premier destination for premium fashion, luxury items, and exclusive footwear. We offer a curated selection that combines elegance, comfort, and the latest trends, including Ruddy Collections, Ruddy Luxury, and Slide & Sole footwear.',
+    answer: 'Rudy\'s Store is your premier destination for premium fashion, luxury items, and exclusive footwear. We offer a curated selection that combines elegance, comfort, and the latest trends, including Ruddys Store, Ruddy Luxury, and Slide & Sole footwear.',
   },
   {
     category: 'general',

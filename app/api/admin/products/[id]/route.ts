@@ -53,9 +53,10 @@ export async function GET(
     };
 
     return NextResponse.json({ product: parsedProduct });
-  } catch (error) {
-    console.error('API Error:', error);
-    return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('API Error:', err);
+    return NextResponse.json({ error: 'Failed to fetch product', details: err.message }, { status: 500 });
   }
 }
 
@@ -95,6 +96,7 @@ export async function PUT(
       is_new,
       is_on_sale,
       is_featured,
+      is_best_seller,
       discount,
       status,
     } = body;
@@ -111,7 +113,7 @@ export async function PUT(
         sku = ?, category = ?, subcategory = ?, product_type = ?, store_section = ?,
         images = ?, sizes = ?, eu_sizes = ?, colors = ?, features = ?, additional_info = ?,
         gender = ?, brand = ?, stock = ?, is_new = ?, is_on_sale = ?, is_featured = ?,
-        discount = ?, status = ?
+        is_best_seller = ?, discount = ?, status = ?
       WHERE id = ?`,
       [
         name,
@@ -136,6 +138,7 @@ export async function PUT(
         is_new || false,
         is_on_sale || false,
         is_featured || false,
+        is_best_seller || false,
         discount || 0,
         status || 'draft',
         id,
@@ -143,12 +146,13 @@ export async function PUT(
     );
 
     return NextResponse.json({ message: 'Product updated successfully' });
-  } catch (error: any) {
-    console.error('API Error:', error);
-    if (error.code === 'ER_DUP_ENTRY') {
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    console.error('API Error:', err);
+    if (err.code === 'ER_DUP_ENTRY') {
       return NextResponse.json({ error: 'A product with this SKU already exists' }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update product', details: err.message }, { status: 500 });
   }
 }
 

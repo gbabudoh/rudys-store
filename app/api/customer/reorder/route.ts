@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
         p.price as current_price,
         p.stock_quantity,
         p.status as product_status,
-        COALESCE(pi.image_url, '/placeholder.png') as product_image,
+        COALESCE(pi.image_url, '/placeholder-image.svg') as product_image,
         MAX(o.created_at) as last_ordered,
         SUM(oi.quantity) as total_ordered
       FROM order_items oi

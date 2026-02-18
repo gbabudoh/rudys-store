@@ -86,7 +86,7 @@ export default function Chatbot() {
         className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-all z-50 flex items-center gap-2 border-4 border-yellow-500 cursor-pointer"
         aria-label="Open chat"
       >
-        <MessageCircle className="w-6 h-6" />
+        <MessageCircle className="w-6 h-6 cursor-pointer" />
         <span className="hidden sm:inline">Chat with us</span>
       </button>
     );
@@ -101,7 +101,7 @@ export default function Chatbot() {
       {/* Header */}
       <div className="bg-black text-white p-4 rounded-t-lg flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <MessageCircle className="w-5 h-5" />
+          <MessageCircle className="w-5 h-5 cursor-pointer" />
           <div>
             <h3 className="font-semibold">Rudy Store Assistant</h3>
             <p className="text-xs text-gray-300">Always here to help</p>
@@ -113,14 +113,14 @@ export default function Chatbot() {
             className="hover:bg-gray-800 p-1 rounded cursor-pointer"
             aria-label={isMinimized ? 'Maximize' : 'Minimize'}
           >
-            <Minimize2 className="w-4 h-4" />
+            <Minimize2 className="w-4 h-4 cursor-pointer" />
           </button>
           <button
             onClick={() => setIsOpen(false)}
             className="hover:bg-gray-800 p-1 rounded cursor-pointer"
             aria-label="Close chat"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 cursor-pointer" />
           </button>
         </div>
       </div>
@@ -203,7 +203,7 @@ export default function Chatbot() {
                 className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 aria-label="Send message"
               >
-                <Send className="w-5 h-5" />
+                <Send className="w-5 h-5 cursor-pointer" />
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">

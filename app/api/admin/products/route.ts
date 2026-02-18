@@ -36,7 +36,7 @@ async function ensureProductsTable() {
       sku VARCHAR(100) UNIQUE,
       category VARCHAR(100) NOT NULL,
       subcategory VARCHAR(100),
-      product_type ENUM('Shirt', 'T-Shirt', 'Dress', 'shoes', 'Pants', 'Bag', 'Glasses', 'Watch', 'Belt', 'Hat', 'Accessory') DEFAULT 'Shirt',
+      product_type VARCHAR(100) DEFAULT 'Shirt',
       store_section ENUM('collections', 'luxury', 'crocs') DEFAULT 'collections',
       images JSON,
       sizes JSON,
@@ -52,6 +52,7 @@ async function ensureProductsTable() {
       is_new BOOLEAN DEFAULT FALSE,
       is_on_sale BOOLEAN DEFAULT FALSE,
       is_featured BOOLEAN DEFAULT FALSE,
+      is_best_seller BOOLEAN DEFAULT FALSE,
       discount INT DEFAULT 0,
       status ENUM('active', 'inactive', 'draft') DEFAULT 'draft',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -145,6 +146,7 @@ export async function POST(request: Request) {
       is_new,
       is_on_sale,
       is_featured,
+      is_best_seller,
       discount,
       status,
     } = body;
@@ -167,8 +169,8 @@ export async function POST(request: Request) {
         name, slug, description, full_description, price, original_price, sku,
         category, subcategory, product_type, store_section, images, sizes, eu_sizes,
         colors, features, additional_info, gender, brand, stock, is_new, is_on_sale,
-        is_featured, discount, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        is_featured, is_best_seller, discount, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
         slug,
@@ -193,6 +195,7 @@ export async function POST(request: Request) {
         is_new || false,
         is_on_sale || false,
         is_featured || false,
+        is_best_seller || false,
         discount || 0,
         status || 'draft',
       ]
@@ -204,7 +207,7 @@ export async function POST(request: Request) {
     });
   } catch (error: unknown) {
     console.error('API Error:', error);
-    if (error.code === 'ER_DUP_ENTRY') {
+    if ((error as { code?: string }).code === 'ER_DUP_ENTRY') {
       return NextResponse.json({ error: 'A product with this SKU already exists' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });

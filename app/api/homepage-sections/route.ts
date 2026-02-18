@@ -15,7 +15,21 @@ export async function GET() {
     );
 
     // Transform the data for frontend
-    const transformedSections = (sections as any[]).map(section => ({
+    interface SectionRow {
+      id: number;
+      section_key: string;
+      title: string;
+      subtitle: string;
+      description: string;
+      image_url: string;
+      link_url: string;
+      product_count: number;
+      is_active: boolean;
+      display_order: number;
+      gradient_color: string;
+    }
+    
+    const transformedSections = (sections as SectionRow[]).map(section => ({
       id: section.id,
       key: section.section_key,
       section_key: section.section_key,
@@ -35,10 +49,14 @@ export async function GET() {
     }));
 
     return NextResponse.json({ sections: transformedSections });
-  } catch (error: any) {
+  } catch (error) {
+    let errorMessage = 'An unknown error occurred';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     console.error('Error fetching homepage sections:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch homepage sections', details: error.message },
+      { error: 'Failed to fetch homepage sections', details: errorMessage },
       { status: 500 }
     );
   }

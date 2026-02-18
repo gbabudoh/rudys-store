@@ -62,7 +62,7 @@ export default function ProductCard({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0] || '/placeholder.png',
+      image: product.images?.[0] || '/placeholder-image.svg',
       slug: product.slug || product.id
     });
     onAddToWishlist?.(product);
@@ -73,7 +73,7 @@ export default function ProductCard({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0] || '/placeholder.png',
+      image: product.images?.[0] || '/placeholder-image.svg',
       quantity: 1
     });
     onAddToCart?.(product);
@@ -97,7 +97,7 @@ export default function ProductCard({
           <div className="relative w-full sm:w-48 h-64 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden">
             <Link href={`/product/${product.slug || product.id}`} className="block w-full h-full">
               <Image
-                src={product.images?.[0] || '/placeholder.png'}
+                src={product.images?.[0] || '/placeholder-image.svg'}
                 alt={product.name}
                 fill
                 className="object-cover"
@@ -218,7 +218,7 @@ export default function ProductCard({
       <div className="relative aspect-square overflow-hidden">
         <Link href={`/product/${product.slug || product.id}`} className="block w-full h-full">
           <Image
-            src={product.images?.[0] || '/placeholder.png'}
+            src={product.images?.[0] || '/placeholder-image.svg'}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"

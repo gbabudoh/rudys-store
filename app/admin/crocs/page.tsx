@@ -48,6 +48,7 @@ export default function SlideSoleManagement() {
             is_new: !!p.is_new,
             is_on_sale: !!p.is_on_sale,
             is_featured: !!p.is_featured,
+            is_best_seller: !!p.is_best_seller,
           } as Product,
         }));
         setProducts(transformedProducts);

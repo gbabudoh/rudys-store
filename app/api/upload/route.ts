@@ -51,8 +51,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadRes
       }
     );
 
-    // Generate URL
-    const fileUrl = `http://${process.env.MINIO_ENDPOINT || '149.102.128.35'}:${process.env.MINIO_PORT || '9000'}/${BUCKET_NAME}/${filePath}`;
+    // Generate URL using public domain
+    const publicBaseUrl = process.env.MINIO_PUBLIC_URL || `https://www.ruddysstore.com/minio`;
+    const fileUrl = `${publicBaseUrl}/${BUCKET_NAME}/${filePath}`;
 
     return NextResponse.json({
       success: true,

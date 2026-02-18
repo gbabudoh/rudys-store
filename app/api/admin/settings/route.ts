@@ -52,7 +52,8 @@ async function ensureSettingsTable() {
     ['social_instagram', '', 'social'],
     ['social_twitter', '', 'social'],
     ['social_tiktok', '', 'social'],
-    ['social_whatsapp', '', 'social']
+    ['social_whatsapp', '', 'social'],
+    ['store_whatsapp', '', 'store_info']
   ];
 
   for (const [key, value, category] of defaultSettings) {

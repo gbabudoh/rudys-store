@@ -31,7 +31,7 @@ async function ensureFooterTable() {
   const existing = await queryMany<{ cnt: number }>('SELECT COUNT(*) as cnt FROM footer_links');
   if (existing[0]?.cnt === 0) {
     const defaults = [
-      ['quick_links', 'Rudy Collections', '/collections', 1],
+      ['quick_links', 'Ruddys Store', '/store', 1],
       ['quick_links', 'Rudy Luxury', '/luxury', 2],
       ['quick_links', 'Slide & Sole', '/crocs', 3],
       ['quick_links', 'About Us', '/about', 4],

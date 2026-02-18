@@ -73,70 +73,7 @@ const statusIcons = {
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: '1',
-      orderNumber: 'RUDY-001',
-      customerName: 'John Smith',
-      customerEmail: 'john@example.com',
-      status: 'delivered',
-      total: 299.99,
-      items: 3,
-      date: '2024-01-15',
-      shippingAddress: '123 Main St, New York, NY 10001',
-      paymentMethod: 'Credit Card',
-      trackingNumber: 'TRK123456789'
-    },
-    {
-      id: '2',
-      orderNumber: 'RUDY-002',
-      customerName: 'Sarah Johnson',
-      customerEmail: 'sarah@example.com',
-      status: 'shipped',
-      total: 149.99,
-      items: 2,
-      date: '2024-01-16',
-      shippingAddress: '456 Oak Ave, Los Angeles, CA 90210',
-      paymentMethod: 'PayPal',
-      trackingNumber: 'TRK987654321'
-    },
-    {
-      id: '3',
-      orderNumber: 'RUDY-003',
-      customerName: 'Mike Davis',
-      customerEmail: 'mike@example.com',
-      status: 'processing',
-      total: 89.99,
-      items: 1,
-      date: '2024-01-17',
-      shippingAddress: '789 Pine St, Chicago, IL 60601',
-      paymentMethod: 'Credit Card'
-    },
-    {
-      id: '4',
-      orderNumber: 'RUDY-004',
-      customerName: 'Emily Brown',
-      customerEmail: 'emily@example.com',
-      status: 'pending',
-      total: 199.99,
-      items: 2,
-      date: '2024-01-18',
-      shippingAddress: '321 Elm St, Houston, TX 77001',
-      paymentMethod: 'Debit Card'
-    },
-    {
-      id: '5',
-      orderNumber: 'RUDY-005',
-      customerName: 'David Wilson',
-      customerEmail: 'david@example.com',
-      status: 'cancelled',
-      total: 79.99,
-      items: 1,
-      date: '2024-01-19',
-      shippingAddress: '654 Maple Dr, Phoenix, AZ 85001',
-      paymentMethod: 'Credit Card'
-    }
-  ]);
+  const [orders, setOrders] = useState<Order[]>([]);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');

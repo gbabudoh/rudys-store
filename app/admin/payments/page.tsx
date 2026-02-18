@@ -15,9 +15,9 @@ const XCircle = ({ className }: { className?: string }) => (
 );
 
 export default function PaymentSetup() {
-  const [paystackConfigured] = useState(true);
-  const [paystackPublicKey, setPaystackPublicKey] = useState('pk_test_...');
-  const [paystackSecretKey, setPaystackSecretKey] = useState('sk_test_...');
+  const [paystackConfigured] = useState(false);
+  const [paystackPublicKey, setPaystackPublicKey] = useState('');
+  const [paystackSecretKey, setPaystackSecretKey] = useState('');
 
   return (
     <div className="space-y-6">
