@@ -98,7 +98,7 @@ export default function AdminLogin() {
             <div className="relative h-20 w-56">
               <Image
                 src="/rudy-store-logo.png"
-                alt="Rudy Store Logo"
+                alt="Ruddy's Store Logo"
                 fill
                 className="object-contain drop-shadow-lg"
                 priority
@@ -134,7 +134,7 @@ export default function AdminLogin() {
                   autoComplete="email"
                   required
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                  placeholder="admin@rudystore.com"
+                  placeholder="admin@ruddysstore.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

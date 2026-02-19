@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 interface AdminJWTPayload {
   id: number;
   email: string;
-  role: 'super_admin' | 'admin' | 'staff';
+  role: 'super_admin' | 'admin' | 'staff' | 'store_manager' | 'sales_manager' | 'customer_service' | 'other';
 }
 
 async function checkAuth(request: Request): Promise<AdminJWTPayload | null> {
@@ -65,7 +65,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await checkAuth(request);
-  if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -88,6 +88,7 @@ export async function PUT(
       sizes,
       eu_sizes,
       colors,
+      color_images,
       features,
       additional_info,
       gender,
@@ -111,7 +112,7 @@ export async function PUT(
       `UPDATE products SET
         name = ?, description = ?, full_description = ?, price = ?, original_price = ?,
         sku = ?, category = ?, subcategory = ?, product_type = ?, store_section = ?,
-        images = ?, sizes = ?, eu_sizes = ?, colors = ?, features = ?, additional_info = ?,
+        images = ?, sizes = ?, eu_sizes = ?, colors = ?, color_images = ?, features = ?, additional_info = ?,
         gender = ?, brand = ?, stock = ?, is_new = ?, is_on_sale = ?, is_featured = ?,
         is_best_seller = ?, discount = ?, status = ?
       WHERE id = ?`,
@@ -130,6 +131,7 @@ export async function PUT(
         JSON.stringify(sizes || []),
         JSON.stringify(eu_sizes || []),
         JSON.stringify(colors || []),
+        JSON.stringify(color_images || []),
         JSON.stringify(features || []),
         JSON.stringify(additional_info || {}),
         gender || 'Unisex',
@@ -161,7 +163,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await checkAuth(request);
-  if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

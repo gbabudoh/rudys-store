@@ -141,7 +141,7 @@ export default function ColorsManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-sm">
         <div>
-          <h1 className="text-sm font-bold text-gray-900 leading-tight italic">Colors</h1>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight">Colors</h1>
           <p className="mt-0.5 text-gray-500 text-xs leading-relaxed">Manage product color options and swatches</p>
         </div>
         <button

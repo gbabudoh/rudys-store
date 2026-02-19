@@ -165,7 +165,7 @@ export default function Footer() {
               ))}
               {!footerLinks.quick_links?.length && mounted && (
                 <>
-                  <li><Link href="/store" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Ruddys Store</Link></li>
+                  <li><Link href="/store" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Ruddy&apos;s Store</Link></li>
                   <li><Link href="/luxury" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Rudy Luxury</Link></li>
                   <li><Link href="/crocs" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">Slide & Sole</Link></li>
                   <li><Link href="/about" className="text-gray-300 hover:text-white transition-colors text-sm cursor-pointer">About Us</Link></li>
@@ -244,7 +244,7 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p suppressHydrationWarning className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} Rudy&apos;s Store. All rights reserved.
+              © {new Date().getFullYear()} Ruddy&apos;s Store. All rights reserved.
             </p>
             <div className="flex space-x-6 sm:pr-40 md:pr-64 lg:pr-80">
               <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm cursor-pointer">

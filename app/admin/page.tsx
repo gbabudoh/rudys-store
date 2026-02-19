@@ -135,7 +135,7 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div className="bg-white/50 backdrop-blur-md p-8 rounded-3xl border border-white/20 shadow-sm">
-        <h1 className="text-4xl font-black text-[#201d1e] tracking-tight italic">Dashboard</h1>
+        <h1 className="text-4xl font-black text-[#201d1e] tracking-tight">Dashboard</h1>
         <p className="text-gray-500 font-medium mt-2 text-lg">
           Welcome back! Here&apos;s a quick overview of your store&apos;s performance.
         </p>
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                <p className="text-3xl font-black text-[#201d1e] italic tracking-tighter">{stat.value}</p>
+                <p className="text-3xl font-black text-[#201d1e] tracking-tighter">{stat.value}</p>
               </div>
               <div className={`p-4 rounded-3xl bg-${stat.color}-50 group-hover:rotate-12 transition-transform duration-500`}>
                 <stat.icon className={`w-8 h-8 text-${stat.color}-600`} />
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
         ].map((cat, i) => (
           <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-black text-[#201d1e] italic tracking-tight">{cat.title}</h3>
+              <h3 className="text-xl font-black text-[#201d1e] tracking-tight">{cat.title}</h3>
               <div className={`p-3 rounded-2xl bg-${cat.lightColor}-50`}>
                 <cat.icon className={`w-6 h-6 text-${cat.color}-600`} />
               </div>
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         {/* Recent Orders */}
         <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden">
           <div className="p-8 border-b border-gray-50 flex items-center justify-between">
-            <h3 className="text-2xl font-black text-[#201d1e] italic tracking-tight">Recent Activity</h3>
+            <h3 className="text-2xl font-black text-[#201d1e] tracking-tight">Recent Activity</h3>
             <button className="text-xs font-black uppercase tracking-widest text-purple-600 hover:text-purple-700 bg-purple-50 px-4 py-2 rounded-xl transition-all cursor-pointer">View All Orders</button>
           </div>
           <div className="p-8">
@@ -237,7 +237,7 @@ export default function AdminDashboard() {
         {/* Top Products */}
         <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden">
           <div className="p-8 border-b border-gray-50 flex items-center justify-between">
-            <h3 className="text-2xl font-black text-[#201d1e] italic tracking-tight">Top Sellers</h3>
+            <h3 className="text-2xl font-black text-[#201d1e] tracking-tight">Top Sellers</h3>
             <button className="text-xs font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-xl transition-all cursor-pointer">View Analytics</button>
           </div>
           <div className="p-8">

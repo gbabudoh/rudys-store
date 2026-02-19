@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate role
-    const validRoles = ['super_admin', 'admin', 'staff'];
+    const validRoles = ['super_admin', 'admin', 'staff', 'store_manager', 'sales_manager', 'customer_service', 'other'];
     if (role && !validRoles.includes(role)) {
       return NextResponse.json(
         { error: 'Invalid role' },
@@ -142,18 +142,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Role restrictions
-    const finalRole = role || 'staff';
-    if (currentUser.role === 'admin' && finalRole !== 'staff') {
-      return NextResponse.json(
-        { error: 'You can only create staff users' },
-        { status: 403 }
-      );
-    }
+    const finalRole = role || 'store_manager';
 
-    // Only super admin can create super admin
-    if (finalRole === 'super_admin' && currentUser.role !== 'super_admin') {
+    // Only super admin can create super_admin or admin
+    if ((finalRole === 'super_admin' || finalRole === 'admin') && currentUser.role !== 'super_admin') {
       return NextResponse.json(
-        { error: 'Only super admin can create super admin users' },
+        { error: 'Only super admin can create admin-level users' },
         { status: 403 }
       );
     }

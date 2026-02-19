@@ -5,6 +5,7 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
 ## 🚀 Features
 
 ### Customer-Facing Features
+
 - **Multi-Collection Storefront**: Three distinct collections (Rudy Collections, Rudy Luxury, Slide & Sole)
 - **Product Browsing**: Advanced filtering (gender, brand, size, subcategory, price range)
 - **Product Views**: Grid and list view modes
@@ -16,6 +17,7 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
 - **Legal Pages**: Privacy Policy, Terms of Service, FAQ, Support, Shipping, Returns, Size Guide
 
 ### Admin Panel Features
+
 - **Role-Based Access Control**: Super Admin, Admin, and Staff roles
 - **Product Management**: CRUD operations for all three collections
 - **Banner Management**: Dynamic homepage banner slider
@@ -27,6 +29,7 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
 - **Shipping & Tracking**: Manage shipping methods and order tracking
 
 ### Technical Features
+
 - **Payment Integration**: Paystack payment gateway
 - **Image Management**: Cloudinary integration for image uploads
 - **Analytics**: Google Analytics 4 (GA4) integration
@@ -37,7 +40,7 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
 
 ## 📋 Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - MySQL 8.0+
 - npm, yarn, pnpm, or bun
 - Paystack account (for payments)
@@ -47,12 +50,14 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
 ## 🛠️ Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/gbabudoh/rudys-store.git
    cd rudys-store
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -62,11 +67,13 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp env.example.txt .env.local
    ```
-   
+
    Edit `.env.local` with your configuration:
+
    ```env
    # Database
    DB_HOST=localhost
@@ -99,6 +106,7 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
    ```
 
 4. **Set up the database**
+
    ```bash
    # Create database
    mysql -u root -p
@@ -113,6 +121,7 @@ A modern, full-featured e-commerce platform built with Next.js 16, featuring thr
    ```
 
 5. **Run the development server**
+
    ```bash
    npm run dev
    # or
@@ -170,13 +179,16 @@ rudy-store/
 ## 🔐 Admin Access
 
 ### Default Credentials
+
 After running `create-super-admin.js`, you can login at `/admin/login` with:
-- **Email**: admin@rudystore.com
+
+- **Email**: admin@ruddysstore.com
 - **Password**: admin123
 
 ⚠️ **Important**: Change these credentials in production!
 
 ### Admin Roles
+
 - **Super Admin**: Full access to all features
 - **Admin**: Can manage products, orders, and staff
 - **Staff**: Basic access with limited permissions
@@ -193,12 +205,14 @@ After running `create-super-admin.js`, you can login at `/admin/login` with:
 ## 🧪 Testing
 
 ### Test Database Connection
+
 ```bash
 node scripts/test-db.js
 # or visit: http://localhost:3000/api/db/test
 ```
 
 ### Test Cloudinary Connection
+
 ```bash
 node scripts/test-cloudinary.js
 # or visit: http://localhost:3000/api/cloudinary/test
@@ -209,6 +223,7 @@ node scripts/test-cloudinary.js
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
 ### Quick Deploy to Vercel
+
 1. Push your code to GitHub
 2. Import project in Vercel
 3. Add environment variables
@@ -217,17 +232,21 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 ## 🛒 Collections
 
 ### Rudy Collections
+
 General fashion and lifestyle products including clothing, accessories, and more.
 
 ### Rudy Luxury
+
 Premium luxury items including designer bags, glasses, dresses, and high-end accessories.
 
 ### Slide & Sole
+
 Comfortable and stylish footwear collection featuring Crocs and other comfortable shoe options.
 
 ## 💳 Payment Integration
 
 The platform uses Paystack for payment processing:
+
 - Supports Nigerian Naira (NGN)
 - Secure payment gateway
 - Transaction verification
@@ -258,7 +277,7 @@ This project is private and proprietary.
 
 ## 👥 Support
 
-For support, email support@rudystore.com or visit the [Support Page](http://localhost:3000/support).
+For support, email support@ruddysstore.com or visit the [Support Page](http://localhost:3000/support).
 
 ## 🙏 Acknowledgments
 

@@ -145,7 +145,7 @@ export default function BrandsManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-sm">
         <div>
-          <h1 className="text-sm font-bold text-gray-900 leading-tight italic">Brands</h1>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight">Brands</h1>
           <p className="mt-0.5 text-gray-500 text-[13px] leading-relaxed">Manage product brands and designers</p>
         </div>
         <button

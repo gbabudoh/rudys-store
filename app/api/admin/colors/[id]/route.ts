@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 interface AdminJWTPayload {
   id: number;
   email: string;
-  role: 'super_admin' | 'admin' | 'staff';
+  role: 'super_admin' | 'admin' | 'staff' | 'store_manager' | 'sales_manager' | 'customer_service' | 'other';
 }
 
 async function checkAuth(request: Request): Promise<AdminJWTPayload | null> {

@@ -79,7 +79,7 @@ export default function HeroSection() {
                     <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-4xl font-bold">R</span>
                     </div>
-                    <p className="text-lg font-medium">Rudy Store</p>
+                    <p className="text-lg font-medium">Ruddy&apos;s Store</p>
                     <p className="text-sm opacity-80">Fashion & Luxury</p>
                   </div>
                 </div>

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rudy's Store - Fashion & Luxury Collections",
-  description: "Discover premium fashion collections, luxury items, and exclusive products at Rudy's Store. Shop men's, women's, and children's clothing, footwear, bags, and accessories.",
+  title: "Ruddy's Store - Fashion & Luxury Collections",
+  description: "Discover premium fashion collections, luxury items, and exclusive products at Ruddy's Store. Shop men's, women's, and children's clothing, footwear, bags, and accessories.",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -48,7 +48,7 @@ export default function RootLayout({
         {/* iOS PWA support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Rudy Store" />
+        <meta name="apple-mobile-web-app-title" content="Ruddy's Store" />
         <meta name="mobile-web-app-capable" content="yes" />
         
         {/* Explicit favicon links for better Firefox support */}

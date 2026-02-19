@@ -66,13 +66,13 @@ export default function ShippingPage() {
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-gray-900 mb-2">Standard Shipping</h3>
                         <p className="text-gray-600 mb-3">
-                          Our standard shipping option delivers your order within 5-7 business days. 
+                          Our standard shipping option delivers your order within 2-3 business days. 
                           Perfect for non-urgent purchases.
                         </p>
                         <div className="flex items-center space-x-6 text-sm text-gray-600">
                           <div className="flex items-center space-x-2">
                             <Clock className="w-4 h-4" />
-                            <span>5-7 business days</span>
+                            <span>2-3 business days</span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Package className="w-4 h-4" />
@@ -131,7 +131,7 @@ export default function ShippingPage() {
                         <div className="flex items-center space-x-6 text-sm text-gray-600">
                           <div className="flex items-center space-x-2">
                             <Clock className="w-4 h-4" />
-                            <span>5-7 business days</span>
+                            <span>2-3 business days</span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Package className="w-4 h-4" />
@@ -247,7 +247,7 @@ export default function ShippingPage() {
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">How long does shipping take?</h3>
                   <p className="text-gray-600 text-sm">
-                    Standard shipping takes 5-7 business days, while express shipping takes 2-3 business days. 
+                    Standard shipping takes 2-3 business days, while express shipping takes 2-3 business days. 
                     Processing time is additional 1-2 business days.
                   </p>
                 </div>

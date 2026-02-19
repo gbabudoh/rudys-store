@@ -186,7 +186,7 @@ export default function Header() {
               {/* Page Title */}
               <div className="absolute left-1/2 -translate-x-1/2">
                 <h1 className="text-[17px] font-bold tracking-tight text-gray-900 capitalize">
-                  {pathname.split('/').pop()?.replace(/-/g, ' ') || 'Rudy Store'}
+                  {pathname.split('/').pop()?.replace(/-/g, ' ') || "Ruddy's Store"}
                 </h1>
               </div>
               {/* Cart - Far Right */}
@@ -227,7 +227,7 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8" suppressHydrationWarning>
             <Link href="/store" className="text-gray-700 hover:transition-colors font-medium cursor-pointer" style={{ '--hover-color': '#cfa224' } as React.CSSProperties & { '--hover-color': string }} onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}>
-              Ruddys Store
+              Ruddy&apos;s Store
             </Link>
             <Link href="/luxury" className="text-gray-700 hover:transition-colors font-medium cursor-pointer" onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}>
               Rudy Luxury
@@ -307,7 +307,7 @@ export default function Header() {
                 onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}
               >
-                Ruddys Store
+                Ruddy&apos;s Store
               </Link>
               <Link 
                 href="/luxury" 

@@ -60,7 +60,7 @@ const faqData: FAQItem[] = [
   {
     category: 'shipping',
     question: 'How long does shipping take?',
-    answer: 'Standard shipping typically takes 5-7 business days, while express shipping delivers within 2-3 business days. These times are in addition to 1-2 business days for order processing. You can find detailed shipping information on our Shipping page.',
+    answer: 'Standard shipping typically takes 2-3 business days, while express shipping delivers within 2-3 business days. These times are in addition to 1-2 business days for order processing. You can find detailed shipping information on our Shipping page.',
   },
   {
     category: 'shipping',
@@ -75,7 +75,7 @@ const faqData: FAQItem[] = [
   {
     category: 'returns',
     question: 'How do I return an item?',
-    answer: 'Log into your account or contact customer service to request a return authorization. Package the item in its original packaging with tags attached, and ship it back using the provided return label. Once we receive and inspect the item, we\'ll process your refund within 5-7 business days.',
+    answer: 'Log into your account or contact customer service to request a return authorization. Package the item in its original packaging with tags attached, and ship it back using the provided return label. Once we receive and inspect the item, we\'ll process your refund within 2-3 business days.',
   },
   {
     category: 'returns',
@@ -95,7 +95,7 @@ const faqData: FAQItem[] = [
   {
     category: 'payments',
     question: 'When will I be charged?',
-    answer: 'Your payment method will be charged immediately when you place your order. If your order is cancelled or cannot be fulfilled, you\'ll receive a full refund to your original payment method within 5-7 business days.',
+    answer: 'Your payment method will be charged immediately when you place your order. If your order is cancelled or cannot be fulfilled, you\'ll receive a full refund to your original payment method within 2-3 business days.',
   },
   {
     category: 'products',

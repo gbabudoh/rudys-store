@@ -171,7 +171,7 @@ export default function Settings() {
                   value={formData.store_name}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
-                  placeholder="Rudy Store"
+                  placeholder="Ruddy's Store"
                 />
               </div>
               <div>
@@ -209,7 +209,7 @@ export default function Settings() {
                   value={formData.social_instagram}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
-                  placeholder="https://instagram.com/rudystore"
+                  placeholder="https://instagram.com/ruddysstore"
                 />
               </div>
               <div>
@@ -222,7 +222,7 @@ export default function Settings() {
                   value={formData.social_facebook}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
-                  placeholder="https://facebook.com/rudystore"
+                  placeholder="https://facebook.com/ruddysstore"
                 />
               </div>
               <div>
@@ -235,7 +235,7 @@ export default function Settings() {
                   value={formData.social_tiktok}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
-                  placeholder="https://tiktok.com/@rudystore"
+                  placeholder="https://tiktok.com/@ruddysstore"
                 />
               </div>
               <div>
@@ -248,7 +248,7 @@ export default function Settings() {
                   value={formData.social_twitter}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
-                  placeholder="https://twitter.com/rudystore"
+                  placeholder="https://twitter.com/ruddysstore"
                 />
               </div>
               <div>

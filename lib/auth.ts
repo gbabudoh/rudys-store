@@ -11,7 +11,7 @@ export interface AdminUser {
   email: string;
   first_name: string | null;
   last_name: string | null;
-  role: 'super_admin' | 'admin' | 'staff';
+  role: 'super_admin' | 'admin' | 'staff' | 'store_manager' | 'sales_manager' | 'customer_service' | 'other';
   permissions: string[] | null;
   is_active: boolean;
   last_login: Date | null;

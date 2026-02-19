@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
     password_hash VARCHAR(255) NOT NULL,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
-    role ENUM('super_admin', 'admin', 'staff') DEFAULT 'staff',
+    role ENUM('super_admin', 'admin', 'staff', 'store_manager', 'sales_manager', 'customer_service', 'other') DEFAULT 'staff',
     permissions JSON,
     is_active BOOLEAN DEFAULT TRUE,
     last_login TIMESTAMP NULL,

@@ -209,7 +209,7 @@ export default function CustomerManagement() {
       {/* Header */}
       <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-sm">
         <div>
-          <h1 className="text-sm font-bold text-gray-900 leading-tight italic">Customer Base</h1>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight">Customer Base</h1>
           <p className="mt-0.5 text-gray-500 text-[13px] leading-relaxed">Manage your storefront community and permissions</p>
         </div>
       </div>
@@ -266,7 +266,7 @@ export default function CustomerManagement() {
                     <td className="px-8 py-6">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-12 w-12 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg group-hover:bg-purple-600 transition-colors">
-                          <span className="text-lg font-black text-white italic">
+                          <span className="text-lg font-black text-white">
                             {(customer.firstName || customer.email).charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -278,7 +278,7 @@ export default function CustomerManagement() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-[13px] font-bold text-gray-500 italic">
+                    <td className="px-8 py-6 text-[13px] font-bold text-gray-500">
                       {customer.location || 'Unknown'}
                     </td>
                     <td className="px-8 py-6">

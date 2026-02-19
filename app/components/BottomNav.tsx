@@ -86,7 +86,7 @@ export default function BottomNav() {
           {/* Menu */}
           <div className="fixed bottom-16 left-4 right-4 z-50 bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-up">
             <div className="p-4 border-b border-gray-100">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Rudy Store Categories</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ruddy&apos;s Store Categories</p>
             </div>
             <button 
               onClick={() => handleNavigate('/store')}

@@ -31,7 +31,7 @@ async function createSuperAdmin() {
     // Check if super admin already exists
     const [existing] = await connection.execute<AdminUser[]>(
       'SELECT id FROM admin_users WHERE email = ?',
-      ['admin@rudystore.com']
+      ['admin@ruddysstore.com']
     );
 
     if (existing.length > 0) {
@@ -46,16 +46,16 @@ async function createSuperAdmin() {
           passwordHash,
           'super_admin',
           JSON.stringify(['all']),
-          'admin@rudystore.com'
+          'admin@ruddysstore.com'
         ]
       );
 
       console.log('Super admin password updated successfully!');
-      console.log('Email: admin@rudystore.com');
+      console.log('Email: admin@ruddysstore.com');
       console.log('Password:', password);
     } else {
       // Create super admin
-      const email = process.env.SUPER_ADMIN_EMAIL || 'admin@rudystore.com';
+      const email = process.env.SUPER_ADMIN_EMAIL || 'admin@ruddysstore.com';
       const password = process.env.SUPER_ADMIN_PASSWORD || 'admin123';
       const firstName = process.env.SUPER_ADMIN_FIRST_NAME || 'Super';
       const lastName = process.env.SUPER_ADMIN_LAST_NAME || 'Admin';
@@ -85,7 +85,7 @@ async function createSuperAdmin() {
     // Also create a basic admin for testing
     const [existingAdmin] = await connection.execute<AdminUser[]>(
       'SELECT id FROM admin_users WHERE email = ?',
-      ['staff@rudystore.com']
+      ['staff@ruddysstore.com']
     );
 
     if (existingAdmin.length === 0) {
@@ -95,7 +95,7 @@ async function createSuperAdmin() {
       // Get super admin ID for created_by
       const [superAdmin] = await connection.execute<AdminUser[]>(
         'SELECT id FROM admin_users WHERE email = ?',
-        ['admin@rudystore.com']
+        ['admin@ruddysstore.com']
       );
 
       await connection.execute(
@@ -103,7 +103,7 @@ async function createSuperAdmin() {
           (email, password_hash, first_name, last_name, role, permissions, is_active, created_by)
         VALUES (?, ?, ?, ?, ?, ?, TRUE, ?)`,
         [
-          'staff@rudystore.com',
+          'staff@ruddysstore.com',
           adminPasswordHash,
           'Store',
           'Staff',
@@ -114,7 +114,7 @@ async function createSuperAdmin() {
       );
 
       console.log('\nBasic admin created successfully!');
-      console.log('Email: staff@rudystore.com');
+      console.log('Email: staff@ruddysstore.com');
       console.log('Password:', adminPassword);
     }
 

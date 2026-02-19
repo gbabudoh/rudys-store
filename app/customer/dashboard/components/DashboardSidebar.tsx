@@ -83,7 +83,7 @@ export default function DashboardSidebar() {
                 <span className="text-white font-black text-lg">R</span>
               </div>
               <div>
-                <h2 className="text-white font-bold text-lg">Rudy Store</h2>
+                <h2 className="text-white font-bold text-lg">Ruddy&apos;s Store</h2>
                 <p className="text-white/50 text-xs">Customer Portal</p>
               </div>
             </Link>

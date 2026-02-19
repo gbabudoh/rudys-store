@@ -191,7 +191,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     };
   }, []);
 
-  const navigation: NavItem[] = [
+  const fullNavigation: NavItem[] = [
     { name: 'Dashboard', href: '/admin', icon: Dashboard, category: 'Overview' },
     { name: 'Customer Service', href: '/admin/customer-service', icon: Mail, category: 'Overview', badge: unreadCount > 0 ? unreadCount : undefined },
     { name: 'Banners', href: '/admin/banners', icon: ImageIcon, category: 'Content' },
@@ -216,6 +216,48 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Settings', href: '/admin/settings', icon: Settings, category: 'Management' },
   ];
 
+  // Filter navigation based on role
+  const isBasicRole = adminUser?.role && adminUser.role !== 'super_admin';
+  const navigation = fullNavigation.filter(item => {
+    if (adminUser?.role === 'super_admin') return true;
+    
+    // Restricted access for basic roles (admin, staff, store_manager, sales_manager, customer_service, other)
+    const allowedForBasic = [
+      'Ruddys Store',
+      'Ruddy Luxury',
+      'Slide & Sole',
+      'Orders',
+      'Shipping',
+      'Tracking',
+      'Payments',
+      'Analytics',
+      'Google Analytics',
+      'Categories',
+      'Sub-Categories',
+      'Product Types',
+      'Brands',
+      'Colors',
+      'Customers'
+    ];
+    
+    return allowedForBasic.includes(item.name);
+  }).map(item => {
+    // Rename categories for basic roles
+    if (isBasicRole) {
+      const categoryMap: Record<string, string> = {
+        'Products': 'PRODUCT - region',
+        'Sales': 'SALES - region',
+        'Insights': 'INSIGHTS - region',
+        'Management': 'MANAGEMENT - region',
+      };
+      return {
+        ...item,
+        category: categoryMap[item.category || ''] || item.category
+      };
+    }
+    return item;
+  });
+
   // Group navigation by category
   const groupedNav = navigation.reduce((acc, item) => {
     const category = item.category || 'Other';
@@ -239,7 +281,9 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     return pathname.startsWith(href);
   };
 
-  const categoryOrder = ['Overview', 'Content', 'Products', 'Sales', 'Insights', 'Management'];
+  const superAdminOrder = ['Overview', 'Content', 'Products', 'Sales', 'Insights', 'Management'];
+  const basicAdminOrder = ['PRODUCT - region', 'SALES - region', 'MANAGEMENT - region'];
+  const categoryOrder = adminUser?.role === 'super_admin' ? superAdminOrder : basicAdminOrder;
 
   return (
     <>
@@ -263,7 +307,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
             <div className="relative h-10 w-10">
               <Image
                 src="/pwa-icon.png"
-                alt="Rudy Store Icon"
+                alt="Ruddy's Store Icon"
                 fill
                 className="object-contain"
                 priority

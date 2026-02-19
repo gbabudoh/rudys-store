@@ -9,7 +9,7 @@ interface AdminUser {
   firstName?: string;
   lastName?: string;
   email: string;
-  role: 'super_admin' | 'admin' | 'staff';
+  role: 'super_admin' | 'admin' | 'staff' | 'store_manager' | 'sales_manager' | 'customer_service' | 'other';
   permissions: string[];
   lastLogin?: string;
 }

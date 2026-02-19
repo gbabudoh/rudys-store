@@ -146,7 +146,7 @@ export default function PWAInstallPrompt() {
             <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
               <Image 
                 src="/pwa-icon.png" 
-                alt="Rudy Store App" 
+                alt="Ruddy's Store App" 
                 fill 
                 className="object-cover"
               />
@@ -154,7 +154,7 @@ export default function PWAInstallPrompt() {
           </div>
 
           <div className="flex-1 pt-1">
-            <h3 className="text-lg font-black text-gray-900 leading-tight">Install Rudy App</h3>
+            <h3 className="text-lg font-black text-gray-900 leading-tight">Install Ruddy&apos;s Store App</h3>
             <p className="text-sm text-gray-500 font-medium mt-1">Get the full luxury experience on your home screen.</p>
           </div>
         </div>

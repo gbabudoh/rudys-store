@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { query, queryMany } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function ensureProductsTable() {
   await query(`
     CREATE TABLE IF NOT EXISTS products (

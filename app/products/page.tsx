@@ -25,7 +25,7 @@ const SlidersHorizontal = ({ className }: { className?: string }) => (
 );
 
 // Main collections
-const mainCollections = ['All', 'Rudy Collections', 'Rudy Luxury', 'Slide & Sole'];
+const mainCollections = ['All', 'Ruddy Collections', 'Ruddy Luxury', 'Slide & Sole'];
 
 export default function AllProductsPage() {
   const [selectedCollection, setSelectedCollection] = useState('All');
@@ -45,7 +45,7 @@ export default function AllProductsPage() {
   
   // Map products with collection information
   const productsWithCollection = allProducts.map(product => {
-    let collection = 'Rudy Collections'; // Default
+    let collection = 'Ruddy Collections'; // Default
     
     // Determine collection based on product type and category
     if (product.productType === 'shoe') {
@@ -53,14 +53,14 @@ export default function AllProductsPage() {
     } else if (['Bags', 'Glasses', 'Dresses'].includes(product.category) || product.productType === 'accessory') {
       collection = 'Rudy Luxury';
     } else if (product.productType === 'clothing') {
-      collection = 'Rudy Collections';
+      collection = 'Ruddy Collections';
     }
 
     return {
       ...product,
       collection: collection,
       gender: product.gender || 'Unisex',
-      brand: product.brand || 'Rudy Store',
+      brand: product.brand || "Ruddy's Store",
       subcategory: product.subcategory || product.category,
     };
   });

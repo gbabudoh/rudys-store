@@ -117,7 +117,7 @@ export default function ReturnsPage() {
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Receive Your Refund</h3>
                     <p className="text-gray-600">
-                      Once we receive and inspect your return, we&apos;ll process your refund within 5-7 
+                      Once we receive and inspect your return, we&apos;ll process your refund within 2-3 
                       business days. You&apos;ll receive an email confirmation when it&apos;s complete.
                     </p>
                   </div>
@@ -208,7 +208,7 @@ export default function ReturnsPage() {
                   <h3 className="font-semibold text-gray-900 mb-2">Refund Method</h3>
                   <p className="text-gray-600 text-sm mb-4">
                     Refunds will be issued to the original payment method used for the purchase. 
-                    Processing time is 5-7 business days after we receive your return.
+                    Processing time is 2-3 business days after we receive your return.
                   </p>
                 </div>
                 <div>

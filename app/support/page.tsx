@@ -157,8 +157,8 @@ export default function SupportPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600 text-sm mb-1">support@rudystore.com</p>
-                    <p className="text-gray-600 text-sm">info@rudystore.com</p>
+                    <p className="text-gray-600 text-sm mb-1">support@ruddysstore.com</p>
+                    <p className="text-gray-600 text-sm">info@ruddysstore.com</p>
                   </div>
                 </div>
 
@@ -170,8 +170,8 @@ export default function SupportPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                    <p className="text-gray-600 text-sm mb-1">+234 (0) 800 123 4567</p>
-                    <p className="text-gray-600 text-sm">+234 (0) 800 987 6543</p>
+                    <p className="text-gray-600 text-sm mb-1">Phone Only: (+234) 9137785395</p>
+                    <p className="text-gray-600 text-sm">WhatsApp Only: (+234) 8134307973</p>
                   </div>
                 </div>
 
