@@ -1,7 +1,5 @@
 'use client';
-
 import Link from 'next/link';
-
 const HelpCircle = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -133,16 +131,16 @@ export default function SupportPage() {
                 <p className="text-gray-600 text-sm">Find your perfect fit with our size guide</p>
               </Link>
 
-              <Link
-                href="/contact"
-                className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 group"
+              <button
+                onClick={() => window.dispatchEvent(new Event('open-chatbot'))}
+                className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 group text-left cursor-pointer w-full"
               >
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(207, 162, 36, 0.1)' }}>
                   <MessageSquare className="w-6 h-6" style={{ color: '#cfa224' }} />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#cfa224] transition-colors">Live Chat</h3>
-                <p className="text-gray-600 text-sm">Chat with our support team in real-time</p>
-              </Link>
+                <p className="text-gray-600 text-sm">Chat with Ruddy&apos;s Store Assistant in real-time</p>
+              </button>
             </div>
 
             {/* Contact Information */}

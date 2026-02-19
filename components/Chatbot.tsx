@@ -13,7 +13,7 @@ export default function Chatbot() {
     return [
       {
         id: '1',
-        text: "Hi! 👋 Welcome to Rudy Store. I'm your shopping assistant. How can I help you today?",
+        text: "Hi! 👋 Welcome to Ruddy's Store. I'm your shopping assistant. How can I help you today?",
         sender: 'bot',
         timestamp: new Date(),
         quickReplies: ['Show me products', 'Size guide', 'Shipping info', 'Track my order']
@@ -32,6 +32,16 @@ export default function Chatbot() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Listen for external open-chat events
+  useEffect(() => {
+    const handleOpenChat = () => {
+      setIsOpen(true);
+      setIsMinimized(false);
+    };
+    window.addEventListener('open-chatbot', handleOpenChat);
+    return () => window.removeEventListener('open-chatbot', handleOpenChat);
+  }, []);
 
   const handleSendMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -103,7 +113,7 @@ export default function Chatbot() {
         <div className="flex items-center gap-2">
           <MessageCircle className="w-5 h-5 cursor-pointer" />
           <div>
-            <h3 className="font-semibold">Rudy Store Assistant</h3>
+            <h3 className="font-semibold">Ruddy&apos;s Store Assistant</h3>
             <p className="text-xs text-gray-300">Always here to help</p>
           </div>
         </div>
@@ -207,7 +217,7 @@ export default function Chatbot() {
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">
-              Powered by Rudy Store AI Assistant
+              Powered by Ruddy&apos;s Store AI Assistant
             </p>
           </div>
         </>

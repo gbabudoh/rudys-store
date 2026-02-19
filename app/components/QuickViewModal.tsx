@@ -46,14 +46,17 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState('');
+  const [displayImages, setDisplayImages] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
     if (product) {
-      const img = product.images?.[0] || '/placeholder-image.svg';
+      const imgs = product.images || [];
+      const img = imgs[0] || '/placeholder-image.svg';
       const frame = requestAnimationFrame(() => {
         setMainImage(img);
+        setDisplayImages(imgs);
         setSelectedSize('');
         setSelectedColor('');
         setQuantity(1);
@@ -61,6 +64,28 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
       return () => cancelAnimationFrame(frame);
     }
   }, [product]);
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
+    if (product?.color_images) {
+      const normalizeColor = (c: string) => c.toLowerCase().trim();
+      const targetColor = normalizeColor(color);
+      
+      const variation = product.color_images.find((v: { color: string; images: string[] }) => 
+        normalizeColor(v.color) === targetColor
+      );
+      
+      if (variation && variation.images.length > 0) {
+        setMainImage(variation.images[0]);
+        setDisplayImages(variation.images);
+      } else {
+        // Fall back to default images if no color-specific images
+        const imgs = product.images || [];
+        setMainImage(imgs[0] || '/placeholder-image.svg');
+        setDisplayImages(imgs);
+      }
+    }
+  };
 
   if (!isOpen || !product) return null;
 
@@ -73,11 +98,26 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
       return;
     }
     
+    // Use color-specific image if available, otherwise fall back to default
+    let cartImage = product.images?.[0] || '/placeholder-image.svg';
+    if (selectedColor && product.color_images) {
+      const normalizeColor = (c: string) => c.toLowerCase().trim();
+      const targetColor = normalizeColor(selectedColor);
+      
+      const variation = product.color_images.find((v: { color: string; images: string[] }) => 
+        normalizeColor(v.color) === targetColor
+      );
+      
+      if (variation && variation.images.length > 0) {
+        cartImage = variation.images[0];
+      }
+    }
+    
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0] || '/placeholder-image.svg',
+      image: cartImage,
       quantity: quantity,
       size: selectedSize,
       color: selectedColor
@@ -121,9 +161,9 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                 priority
               />
             </div>
-            {product.images && product.images.length > 1 && (
+            {displayImages.length > 1 && (
               <div className="flex gap-3 overflow-x-auto py-2 scrollbar-hide">
-                {product.images.map((img, idx) => (
+                {displayImages.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setMainImage(img)}
@@ -201,19 +241,41 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                 <div className="mb-8">
                   <h4 className="text-sm font-bold text-[#201d1e] uppercase tracking-wider mb-3">Select Colour</h4>
                   <div className="flex flex-wrap gap-3">
-                    {product.colors.map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
-                        className={`px-4 py-2 rounded-xl border-2 transition-all text-sm font-semibold cursor-pointer ${
-                          selectedColor === color
-                            ? 'bg-[#201d1e] border-[#201d1e] text-white shadow-lg'
-                            : 'bg-white border-gray-100 text-gray-700 hover:border-[#201d1e]'
-                        }`}
-                      >
-                        {color}
-                      </button>
-                    ))}
+                    {product.colorDetails ? (
+                      product.colorDetails.map((color) => (
+                        <button
+                          key={color.name}
+                          onClick={() => handleColorChange(color.name)}
+                          className={`group flex items-center gap-3 px-4 py-2 border-2 rounded-xl transition-all cursor-pointer ${
+                            selectedColor === color.name
+                              ? 'border-[#cfa224] bg-[#cfa224]/5 text-[#cfa224]'
+                              : 'border-gray-100 bg-white hover:border-[#cfa224]/30'
+                          }`}
+                        >
+                          {color.hex_code && (
+                            <span 
+                              className="w-5 h-5 rounded-full border border-gray-100 shadow-sm"
+                              style={{ backgroundColor: color.hex_code }}
+                            />
+                          )}
+                          <span className="font-bold text-sm uppercase tracking-wide">{color.name}</span>
+                        </button>
+                      ))
+                    ) : (
+                      product.colors.map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => handleColorChange(color)}
+                          className={`px-6 py-2 border-2 rounded-xl font-bold transition-all text-sm cursor-pointer ${
+                            selectedColor === color
+                              ? 'border-[#cfa224] bg-[#cfa224]/5 text-[#cfa224]'
+                              : 'border-gray-100 bg-white hover:border-[#cfa224]/30'
+                          }`}
+                        >
+                          {color}
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
               )}

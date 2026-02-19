@@ -87,6 +87,13 @@ export async function GET(request: Request) {
     }
     
     const products = await queryMany(sql, params);
+
+    // Fetch color hex codes for swatches
+    const allColors = await queryMany('SELECT name, hex_code FROM colors');
+    const colorMap = (allColors || []).reduce((acc: Record<string, string>, curr: { name: string; hex_code: string }) => {
+      acc[curr.name] = curr.hex_code;
+      return acc;
+    }, {} as Record<string, string>);
     
     // Parse JSON fields and transform to frontend format
     interface ProductRow {
@@ -154,6 +161,10 @@ export async function GET(request: Request) {
       isBestSeller: !!p.is_best_seller,
       discount: p.discount || 0,
       color_images: typeof p.color_images === 'string' ? JSON.parse(p.color_images || '[]') : p.color_images || [],
+      colorDetails: (typeof p.colors === 'string' ? JSON.parse(p.colors || '[]') : p.colors || []).map((c: string) => ({
+        name: c,
+        hex_code: colorMap[c] || ''
+      })),
     }));
 
     return NextResponse.json({ products: parsedProducts });

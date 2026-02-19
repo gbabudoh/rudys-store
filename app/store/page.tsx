@@ -108,7 +108,7 @@ export default function CollectionsPage() {
     new Set(collectionsProducts.map((p) => p.gender)),
   ).filter((g): g is string => Boolean(g));
   const brands = Array.from(new Set(collectionsProducts.map((p) => p.brand))).filter(
-    (brand): brand is string => Boolean(brand),
+    (brand): brand is string => Boolean(brand) && brand !== 'Rudy Store',
   ).sort();
   const allSizes = Array.from(
     new Set(collectionsProducts.flatMap((p) => p.sizes)),

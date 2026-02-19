@@ -106,7 +106,7 @@ export default function LuxuryPage() {
     new Set(luxuryProducts.map((p) => p.gender)),
   ).filter((g): g is string => Boolean(g));
   const brands = Array.from(new Set(luxuryProducts.map((p) => p.brand))).filter(
-    (brand): brand is string => Boolean(brand)
+    (brand): brand is string => Boolean(brand) && brand !== 'Rudy Store'
   ).sort();
   const allSizes = Array.from(new Set(luxuryProducts.flatMap((p) => p.sizes)))
     .filter((s): s is string => Boolean(s))
