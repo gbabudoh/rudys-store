@@ -68,7 +68,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
   const handleAddToCart = () => {
     if ((product.sizes?.length > 0 && !selectedSize) || (product.colors?.length > 0 && !selectedColor)) {
-      setModalMessage('Please select your preferred size and color to add this item to your cart.');
+      setModalMessage('Please select your preferred size and colour to add this item to your cart.');
       setIsModalOpen(true);
       return;
     }
@@ -199,7 +199,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
               {/* Colors */}
               {product.colors && product.colors.length > 0 && (
                 <div className="mb-8">
-                  <h4 className="text-sm font-bold text-[#201d1e] uppercase tracking-wider mb-3">Select Color</h4>
+                  <h4 className="text-sm font-bold text-[#201d1e] uppercase tracking-wider mb-3">Select Colour</h4>
                   <div className="flex flex-wrap gap-3">
                     {product.colors.map((color) => (
                       <button

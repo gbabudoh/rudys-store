@@ -505,8 +505,8 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                   {/* Colors and Variations */}
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <label className="block text-sm font-medium text-gray-700">Available Colors & Variations</label>
-                      <a href="/admin/colors" className="text-xs text-purple-600 hover:text-purple-700 font-medium">Manage Colors</a>
+                      <label className="block text-sm font-medium text-gray-700">Available Colours & Variations</label>
+                      <a href="/admin/colors" className="text-xs text-purple-600 hover:text-purple-700 font-medium">Manage Colours</a>
                     </div>
                     {/* Color Selection */}
                     <div className="flex flex-wrap gap-2 mb-4">

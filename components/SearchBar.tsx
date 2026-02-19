@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { getAllProducts, Product } from '@/lib/products';
+import ProductImage from '@/app/components/ProductImage';
 
 const Search = ({ className }: { className?: string }) => (
   <svg className={className || "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,6 +17,21 @@ const XIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+interface SearchProduct {
+  id: string;
+  slug: string;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  description: string;
+  images: string[];
+  category: string;
+  colors: string[];
+  features: string[];
+  inStock: boolean;
+  discount?: number;
+}
+
 interface SearchBarProps {
   isMobile?: boolean;
 }
@@ -25,10 +39,27 @@ interface SearchBarProps {
 export default function SearchBar({ isMobile = false }: SearchBarProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<SearchProduct[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [productsLoaded, setProductsLoaded] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Fetch all products from the API once (on first focus/interaction)
+  const loadProducts = useCallback(async () => {
+    if (productsLoaded) return;
+    try {
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        setAllProducts(data.products || []);
+        setProductsLoaded(true);
+      }
+    } catch (error) {
+      console.error('Failed to load products for search:', error);
+    }
+  }, [productsLoaded]);
 
   // Close results when clicking outside
   useEffect(() => {
@@ -55,7 +86,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
     }
   };
 
-  // Search products
+  // Search products locally after fetching
   useEffect(() => {
     const query = searchQuery.trim();
     if (query.length < 2) {
@@ -63,15 +94,14 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
     }
 
     const timer = setTimeout(() => {
-      const products = getAllProducts();
       const lowerQuery = query.toLowerCase();
       
-      const results = products.filter(product => 
+      const results = allProducts.filter(product => 
         product.name.toLowerCase().includes(lowerQuery) ||
         product.description.toLowerCase().includes(lowerQuery) ||
         product.category.toLowerCase().includes(lowerQuery) ||
-        product.colors.some(color => color.toLowerCase().includes(lowerQuery)) ||
-        product.features.some(feature => feature.toLowerCase().includes(lowerQuery))
+        (product.colors && product.colors.some(color => color.toLowerCase().includes(lowerQuery))) ||
+        (product.features && product.features.some(feature => feature.toLowerCase().includes(lowerQuery)))
       );
 
       setSearchResults(results);
@@ -80,7 +110,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
     }, 300); // Debounce search
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, allProducts]);
 
   const handleClearSearch = () => {
     setSearchQuery('');
@@ -116,15 +146,14 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
           type="text"
           value={searchQuery}
           onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
+          onFocus={() => {
+            loadProducts();
+            if (searchResults.length > 0) setShowResults(true);
+          }}
           placeholder="Search products..."
           className="w-full pl-10 pr-24 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:border-transparent transition-all"
           style={{ '--tw-ring-color': '#cfa224' } as React.CSSProperties & { '--tw-ring-color': string }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = '#cfa224';
-            if (searchResults.length > 0) setShowResults(true);
-          }}
-          onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
         />
         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
           {searchQuery && (
@@ -163,7 +192,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
                 </p>
               </div>
               <div className="divide-y divide-gray-100">
-                {searchResults.map((product) => (
+                {searchResults.slice(0, 8).map((product) => (
                   <Link
                     key={product.id}
                     href={`/product/${product.slug}`}
@@ -172,7 +201,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
                   >
                     {/* Product Image */}
                     <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                      <Image
+                      <ProductImage
                         src={product.images[0]}
                         alt={product.name}
                         fill
@@ -191,12 +220,12 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-lg font-bold text-gray-900">
-                          ${product.price.toFixed(2)}
+                          ₦{product.price.toLocaleString()}
                         </span>
                         {product.originalPrice && (
                           <>
                             <span className="text-sm text-gray-400 line-through">
-                              ${product.originalPrice.toFixed(2)}
+                              ₦{product.originalPrice.toLocaleString()}
                             </span>
                             {product.discount && (
                               <span className="text-xs font-semibold text-white bg-red-500 px-2 py-0.5 rounded">
@@ -225,7 +254,7 @@ export default function SearchBar({ isMobile = false }: SearchBarProps) {
               </div>
               
               {/* View All Results Link */}
-              {searchResults.length > 5 && (
+              {searchResults.length > 8 && (
                 <div className="p-3 border-t border-gray-100 bg-gray-50">
                   <Link
                     href={`/products?search=${encodeURIComponent(searchQuery)}`}

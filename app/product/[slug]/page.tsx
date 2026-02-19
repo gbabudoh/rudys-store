@@ -99,7 +99,7 @@ function ProductContent({ product }: { product: Product }) {
   const handleAddToCart = () => {
     const size = sizeSystem === 'eu' ? selectedEuSize : selectedSize;
     if (!size || !selectedColor) {
-      setModalMessage('Please select your preferred size and color to add this item to your cart.');
+      setModalMessage('Please select your preferred size and colour to add this item to your cart.');
       setIsModalOpen(true);
       return;
     }
@@ -391,7 +391,7 @@ function ProductContent({ product }: { product: Product }) {
             {/* Color Selection */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">
-                Select Color
+                Select Colour
               </label>
               <div className="flex flex-wrap gap-3">
                 {product.colorDetails ? (

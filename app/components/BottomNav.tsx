@@ -108,7 +108,7 @@ export default function BottomNav() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" />
                 </svg>
               </span>
-              <span>Rudy Luxury</span>
+              <span>Ruddy Luxury</span>
             </button>
             <button 
               onClick={() => handleNavigate('/crocs')}

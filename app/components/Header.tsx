@@ -230,7 +230,7 @@ export default function Header() {
               Ruddy&apos;s Store
             </Link>
             <Link href="/luxury" className="text-gray-700 hover:transition-colors font-medium cursor-pointer" onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}>
-              Rudy Luxury
+              Ruddy Luxury
             </Link>
             <Link href="/crocs" className="text-gray-700 hover:transition-colors font-medium cursor-pointer" onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'} onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}>
               Slide & Sole
@@ -316,7 +316,7 @@ export default function Header() {
                 onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}
               >
-                Rudy Luxury
+                Ruddy Luxury
               </Link>
               <Link 
                 href="/crocs" 

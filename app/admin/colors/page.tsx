@@ -141,15 +141,15 @@ export default function ColorsManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-sm">
         <div>
-          <h1 className="text-sm font-bold text-gray-900 leading-tight">Colors</h1>
-          <p className="mt-0.5 text-gray-500 text-xs leading-relaxed">Manage product color options and swatches</p>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight">Colours</h1>
+          <p className="mt-0.5 text-gray-500 text-xs leading-relaxed">Manage product colour options and swatches</p>
         </div>
         <button
           onClick={handleAddColor}
           className="bg-[#201d1e] text-white px-3.5 py-1.5 rounded-lg hover:bg-black transition-all flex items-center gap-1.5 cursor-pointer text-xs font-semibold shadow-sm active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          Add Color
+          Add Colour
         </button>
       </div>
 
@@ -158,7 +158,7 @@ export default function ColorsManagement() {
           <table className="w-full text-left">
             <thead className="bg-gray-50/50 border-b border-gray-100">
               <tr>
-                <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight">Color</th>
+                <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight">Colour</th>
                 <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight text-center">Swatch</th>
                 <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight">Hex Code</th>
                 <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight text-right">Actions</th>
@@ -200,8 +200,8 @@ export default function ColorsManagement() {
                       <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
                         <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-dashed" />
                       </div>
-                      <p className="text-xs font-bold text-gray-900">No colors found</p>
-                      <p className="text-gray-500 text-xs mt-0.5">Click &quot;Add Color&quot; to define your first product swatch.</p>
+                      <p className="text-xs font-bold text-gray-900">No colours found</p>
+                      <p className="text-gray-500 text-xs mt-0.5">Click &quot;Add Colour&quot; to define your first product swatch.</p>
                     </div>
                   </td>
                 </tr>
@@ -226,9 +226,9 @@ export default function ColorsManagement() {
           setColorToDelete(null);
         }}
         onConfirm={confirmDelete}
-        title="Delete Color"
-        message={`Are you sure you want to delete this color? This will remove the color option from all associated products.`}
-        confirmText="Delete Color"
+        title="Delete Colour"
+        message={`Are you sure you want to delete this colour? This will remove the color option from all associated products.`}
+        confirmText="Delete Colour"
         loading={isDeleting}
         type="danger"
       />
@@ -257,12 +257,12 @@ function ColorModal({ onClose, onSave, color }: {
     <Modal
       isOpen={true}
       onClose={onClose}
-      title={color ? 'Edit Color' : 'Add New Color'}
+      title={color ? 'Edit Colour' : 'Add New Colour'}
       width="max-w-md"
     >
       <form onSubmit={handleSubmit} className="space-y-8">
         <div>
-          <label className="block text-xs font-black text-gray-900 mb-3 uppercase tracking-wider">Color Name</label>
+          <label className="block text-xs font-black text-gray-900 mb-3 uppercase tracking-wider">Colour Name</label>
           <input
             type="text"
             required
@@ -273,7 +273,7 @@ function ColorModal({ onClose, onSave, color }: {
           />
         </div>
         <div>
-          <label className="block text-xs font-black text-gray-900 mb-3 uppercase tracking-wider">Color Swatch</label>
+          <label className="block text-xs font-black text-gray-900 mb-3 uppercase tracking-wider">Colour Swatch</label>
           <div className="flex flex-col gap-6 p-6 border border-gray-200 rounded-3xl bg-gray-50/30 transition-all focus-within:ring-4 focus-within:ring-purple-500/10 focus-within:border-purple-500">
              <div className="flex items-center gap-6">
                 <div className="relative group">

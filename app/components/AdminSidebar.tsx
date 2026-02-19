@@ -210,7 +210,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Sub-Categories', href: '/admin/sub-categories', icon: Folder, category: 'Management' },
     { name: 'Product Types', href: '/admin/product-types', icon: Tag, category: 'Management' },
     { name: 'Brands', href: '/admin/brands', icon: Crown, category: 'Management' },
-    { name: 'Colors', href: '/admin/colors', icon: ColorSwatch, category: 'Management' },
+    { name: 'Colours', href: '/admin/colors', icon: ColorSwatch, category: 'Management' },
     { name: 'Customers', href: '/admin/customers', icon: Users, category: 'Management' },
     { name: 'Admin Users', href: '/admin/users', icon: Users, category: 'Management' },
     { name: 'Settings', href: '/admin/settings', icon: Settings, category: 'Management' },
@@ -236,7 +236,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
       'Sub-Categories',
       'Product Types',
       'Brands',
-      'Colors',
+      'Colours',
       'Customers'
     ];
     

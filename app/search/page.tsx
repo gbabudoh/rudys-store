@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
-import { getAllProducts, Product } from '@/lib/products';
+import type { Product } from '@/lib/products';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -20,19 +20,33 @@ function SearchContent() {
     }
 
     setIsLoading(true);
-    const products = getAllProducts();
-    const searchQuery = query.toLowerCase();
     
-    const filteredResults = products.filter(product => 
-      product.name.toLowerCase().includes(searchQuery) ||
-      product.description.toLowerCase().includes(searchQuery) ||
-      product.category.toLowerCase().includes(searchQuery) ||
-      product.colors.some(color => color.toLowerCase().includes(searchQuery)) ||
-      product.features.some(feature => feature.toLowerCase().includes(searchQuery))
-    );
+    const fetchAndSearch = async () => {
+      try {
+        const response = await fetch('/api/products');
+        if (!response.ok) throw new Error('Failed to fetch products');
+        const data = await response.json();
+        const products: Product[] = data.products || [];
+        const searchQuery = query.toLowerCase();
+        
+        const filteredResults = products.filter(product => 
+          product.name.toLowerCase().includes(searchQuery) ||
+          product.description.toLowerCase().includes(searchQuery) ||
+          product.category.toLowerCase().includes(searchQuery) ||
+          (product.colors && product.colors.some(color => color.toLowerCase().includes(searchQuery))) ||
+          (product.features && product.features.some(feature => feature.toLowerCase().includes(searchQuery)))
+        );
 
-    setResults(filteredResults);
-    setIsLoading(false);
+        setResults(filteredResults);
+      } catch (error) {
+        console.error('Search error:', error);
+        setResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAndSearch();
   }, [query]);
 
   return (
@@ -45,7 +59,7 @@ function SearchContent() {
           </h1>
           {query && (
             <p className="text-gray-600">
-              Showing results for: <span className="font-semibold">"{query}"</span>
+              Showing results for: <span className="font-semibold">&quot;{query}&quot;</span>
             </p>
           )}
         </div>
@@ -108,7 +122,7 @@ function SearchContent() {
               No products found
             </h2>
             <p className="text-gray-600 mb-6">
-              We couldn't find any products matching "{query}"
+              We couldn&apos;t find any products matching &quot;{query}&quot;
             </p>
             <div className="space-y-2 text-sm text-gray-600 mb-6">
               <p>Try:</p>
