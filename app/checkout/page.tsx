@@ -213,7 +213,7 @@ export default function CheckoutPage() {
                   <div className="p-5 space-y-4 max-h-60 overflow-y-auto">
                     {cart.map((item) => (
                       <div key={`mobile-${item.id}-${item.size}-${item.color}`} className="flex items-center gap-4">
-                        <div className="relative flex-shrink-0">
+                        <div className="relative flex-shrink-0 mt-2 mr-2">
                           <div className="h-16 w-16 bg-gray-50 rounded-2xl overflow-hidden border border-gray-400 shadow-sm">
                             <Image
                               src={item.image}
@@ -504,7 +504,7 @@ export default function CheckoutPage() {
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-hide">
                 {cart.map((item) => (
                   <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-4">
-                    <div className="relative flex-shrink-0">
+                    <div className="relative flex-shrink-0 mt-2 mr-2">
                       <div className="h-20 w-20 bg-gray-50 rounded-2xl overflow-hidden border border-gray-400 shadow-sm transition-all group-hover:scale-105">
                         <Image
                           src={item.image}

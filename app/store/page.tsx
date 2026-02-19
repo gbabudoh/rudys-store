@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import ProductCard from "../components/ProductCard";
 import { type Product } from "@/lib/products";
 // Simple icon components to replace lucide-react
@@ -227,26 +228,19 @@ export default function CollectionsPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div
-              className="inline-block mb-4 px-4 py-2 rounded-full backdrop-blur-sm border"
-              style={{
-                backgroundColor: "rgba(207, 162, 36, 0.2)",
-                borderColor: "#cfa224",
-              }}
-            >
-              <span
-                className="text-sm font-semibold"
-                style={{ color: "#cfa224" }}
-              >
-                Premium Fashion
-              </span>
+             <div className="mb-6 flex flex-col items-center justify-center gap-4">
+                <Image 
+                  src="/rudy-store-logo.png" 
+                  alt="Ruddys Store" 
+                  width={300} 
+                  height={120} 
+                  className="h-24 w-auto object-contain"
+                  priority
+                />
+                <h1 className="text-4xl font-black tracking-[0.2em] uppercase italic" style={{ color: "#cfa224" }}>
+                  Ruddys Store
+                </h1>
             </div>
-            <h1
-              className="text-5xl lg:text-7xl font-bold mb-6"
-              style={{ color: "#cfa224" }}
-            >
-              Ruddys Store
-            </h1>
             <p
               className="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed"
               style={{ color: "rgba(255, 255, 255, 0.9)" }}

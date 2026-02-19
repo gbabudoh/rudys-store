@@ -59,6 +59,14 @@ async function ensureProductsTable() {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `);
+
+  // Check if color_images column exists, if not add it
+  try {
+    await query('SELECT color_images FROM products LIMIT 1');
+  } catch {
+    console.log('Adding color_images column to products table...');
+    await query('ALTER TABLE products ADD COLUMN color_images JSON AFTER colors');
+  }
 }
 
 export async function GET(request: Request) {
@@ -104,6 +112,7 @@ export async function GET(request: Request) {
       colors: typeof p.colors === 'string' ? JSON.parse(p.colors || '[]') : p.colors || [],
       features: typeof p.features === 'string' ? JSON.parse(p.features || '[]') : p.features || [],
       additional_info: typeof p.additional_info === 'string' ? JSON.parse(p.additional_info || '{}') : p.additional_info || {},
+      color_images: typeof p.color_images === 'string' ? JSON.parse(p.color_images || '[]') : p.color_images || [],
     }));
 
     return NextResponse.json({ products: parsedProducts });
@@ -136,8 +145,10 @@ export async function POST(request: Request) {
       store_section,
       images,
       sizes,
+
       eu_sizes,
       colors,
+      color_images,
       features,
       additional_info,
       gender,
@@ -168,9 +179,9 @@ export async function POST(request: Request) {
       `INSERT INTO products (
         name, slug, description, full_description, price, original_price, sku,
         category, subcategory, product_type, store_section, images, sizes, eu_sizes,
-        colors, features, additional_info, gender, brand, stock, is_new, is_on_sale,
+        colors, color_images, features, additional_info, gender, brand, stock, is_new, is_on_sale,
         is_featured, is_best_seller, discount, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
         slug,
@@ -187,6 +198,7 @@ export async function POST(request: Request) {
         JSON.stringify(sizes || []),
         JSON.stringify(eu_sizes || []),
         JSON.stringify(colors || []),
+        JSON.stringify(color_images || []),
         JSON.stringify(features || []),
         JSON.stringify(additional_info || {}),
         gender || 'Unisex',

@@ -225,16 +225,19 @@ export default function LuxuryPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-block mb-6">
-              <div className="relative h-20 w-64 mx-auto">
+            <div className="mb-6 flex flex-col items-center justify-center gap-4">
+              <div className="relative h-24 w-72 mx-auto">
                 <Image
                   src="/ruddy-lux-logo.png"
-                  alt="Rudy Luxury Logo"
+                  alt="Ruddy Luxury Logo"
                   fill
                   className="object-contain"
                   priority
                 />
               </div>
+              <h2 className="text-4xl font-black tracking-[0.2em] uppercase italic" style={{ color: "#cfa224" }}>
+                Ruddy Luxury
+              </h2>
             </div>
             <p
               className="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed"

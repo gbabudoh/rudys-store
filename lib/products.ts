@@ -10,6 +10,7 @@ export interface Product {
   reviews: number;
   isNew?: boolean;
   isOnSale?: boolean;
+  isFeatured?: boolean;
   isBestSeller?: boolean;
   discount?: number;
   category: string;
@@ -18,6 +19,7 @@ export interface Product {
   euSizes?: string[];
   colors: string[];
   colorDetails?: { name: string; hex_code: string }[];
+  color_images?: { color: string; images: string[] }[];
   inStock: boolean;
   sku: string;
   features: string[];

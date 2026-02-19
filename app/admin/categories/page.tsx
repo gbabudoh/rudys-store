@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ConfirmationModal from '@/app/components/ConfirmationModal';
+
 // Standard icons
 const Plus = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,6 +46,11 @@ export default function CategoriesManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem('admin_token');
@@ -75,17 +82,29 @@ export default function CategoriesManagement() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteCategory = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+  const handleDeleteCategory = (id: number) => {
+    setCategoryToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (categoryToDelete === null) return;
+    setIsDeleting(true);
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/categories/${id}`, {
+      const response = await fetch(`/api/admin/categories/${categoryToDelete}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (response.ok) fetchCategories();
+      if (response.ok) {
+        await fetchCategories();
+        setIsDeleteModalOpen(false);
+        setCategoryToDelete(null);
+      }
     } catch (error) {
       console.error('Error deleting category:', error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -117,60 +136,68 @@ export default function CategoriesManagement() {
     }
   };
 
+  const getSubcategories = (parentId: number) => {
+    return categories.filter(c => c.parent_id === parentId);
+  };
+
+  const rootCategories = categories.filter(c => !c.parent_id);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
-  // Hierarchical display
-  const rootCategories = categories.filter(c => !c.parent_id);
-  const getSubcategories = (parentId: number) => categories.filter(c => c.parent_id === parentId);
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories Management</h1>
-          <p className="text-gray-600">Manage product categories and subcategories</p>
+          <h1 className="text-lg font-semibold text-gray-900">Categories</h1>
+          <p className="text-gray-500 text-[13px] mt-0.5">Manage product categories and subcategories</p>
         </div>
         <button
           onClick={handleAddCategory}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 cursor-pointer"
+          className="bg-[#201d1e] text-white px-3.5 py-1.5 rounded-lg hover:bg-black transition-all flex items-center gap-1.5 cursor-pointer text-[13px] font-semibold shadow-sm active:scale-95"
         >
           <Plus className="w-4 h-4" />
           Add Category
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50/50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Slug</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Slug</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Order</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {rootCategories.map(category => (
                 <CategoryRow 
-                  key={category.id} 
-                  category={category} 
-                  subcategories={getSubcategories(category.id)}
-                  onEdit={handleEditCategory}
-                  onDelete={handleDeleteCategory}
+                   key={category.id} 
+                   category={category} 
+                   subcategories={getSubcategories(category.id)}
+                   onEdit={handleEditCategory}
+                   onDelete={handleDeleteCategory}
                 />
               ))}
               {rootCategories.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
-          <p className="text-red-800">No categories found. Click &quot;Add Category&quot; to create one.</p>
+                  <td colSpan={5} className="px-4 py-12 text-center text-gray-500">
+                     <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                        <Folder className="w-6 h-6 text-gray-300" />
+                      </div>
+                      <p className="text-[13px] font-semibold text-gray-900">No categories found</p>
+                      <p className="text-gray-500 text-[13px] mt-0.5">Click &quot;Add Category&quot; to create one.</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -187,6 +214,20 @@ export default function CategoriesManagement() {
           parentOptions={categories.filter(c => !c.parent_id && c.id !== editingCategory?.id)}
         />
       )}
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setCategoryToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Category"
+        message="Are you sure you want to delete this category? This will also affect any subcategories or products linked to it."
+        confirmText="Delete Category"
+        loading={isDeleting}
+        type="danger"
+      />
     </div>
   );
 }
@@ -201,68 +242,70 @@ function CategoryRow({ category, subcategories, onEdit, onDelete }: {
 
   return (
     <>
-      <tr className="hover:bg-gray-50 transition-colors group">
-        <td className="px-6 py-4">
+      <tr className="hover:bg-gray-50/50 transition-colors group">
+        <td className="px-4 py-2.5">
           <div className="flex items-center">
             {subcategories.length > 0 && (
               <button 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mr-2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="mr-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
               >
-                <svg className={`w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg className={`w-3.5 h-3.5 transform transition-transform ${isExpanded ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
             )}
-            {!subcategories.length && <div className="w-6" />}
-            <Folder className="w-5 h-5 text-purple-600 mr-3" />
-            <span className="font-medium text-gray-900">{category.name}</span>
+            {!subcategories.length && <div className="w-5.5" />}
+            <div className="w-7 h-7 rounded-md bg-purple-50 flex items-center justify-center mr-3 group-hover:bg-purple-100 transition-colors border border-purple-100">
+              <Folder className="w-3.5 h-3.5 text-purple-600" />
+            </div>
+            <span className="text-[13px] font-semibold text-gray-900">{category.name}</span>
           </div>
         </td>
-        <td className="px-6 py-4 text-sm text-gray-500">{category.slug}</td>
-        <td className="px-6 py-4 text-sm text-gray-500">{category.display_order}</td>
-        <td className="px-6 py-4">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            category.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+        <td className="px-4 py-2.5 text-[13px] text-gray-500">{category.slug}</td>
+        <td className="px-4 py-2.5 text-[13px] font-semibold text-gray-900">{category.display_order}</td>
+        <td className="px-4 py-2.5">
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[13px] font-semibold uppercase tracking-wider ${
+            category.is_active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'
           }`}>
             {category.is_active ? 'Active' : 'Inactive'}
           </span>
         </td>
-        <td className="px-6 py-4 text-right">
-          <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onClick={() => onEdit(category)} className="p-2 text-gray-400 hover:text-purple-600 cursor-pointer">
-              <Edit className="w-4 h-4" />
+        <td className="px-4 py-2.5 text-right">
+          <div className="flex justify-end gap-1.5">
+            <button onClick={() => onEdit(category)} className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-purple-600 hover:bg-purple-50 cursor-pointer transition-all active:scale-90">
+              <Edit className="w-3.5 h-3.5" />
             </button>
-            <button onClick={() => onDelete(category.id)} className="p-2 text-gray-400 hover:text-red-600 cursor-pointer">
-              <Trash2 className="w-4 h-4" />
+            <button onClick={() => onDelete(category.id)} className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 cursor-pointer transition-all active:scale-90">
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
         </td>
       </tr>
       {isExpanded && subcategories.map(sub => (
-        <tr key={sub.id} className="hover:bg-gray-50 transition-colors group bg-gray-50/30">
-          <td className="px-6 py-4 pl-14">
+        <tr key={sub.id} className="hover:bg-gray-50/50 transition-colors group bg-gray-50/20">
+          <td className="px-4 py-2.5 pl-16">
             <div className="flex items-center">
-              <div className="w-4 h-[2px] bg-gray-200 mr-3" />
-              <span className="text-gray-700">{sub.name}</span>
+              <div className="w-4 h-[2px] bg-gray-100 mr-3 rounded-full" />
+              <span className="text-gray-700 font-semibold text-[13px]">{sub.name}</span>
             </div>
           </td>
-          <td className="px-6 py-4 text-sm text-gray-500">{sub.slug}</td>
-          <td className="px-6 py-4 text-sm text-gray-500">{sub.display_order}</td>
-          <td className="px-6 py-4">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              sub.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          <td className="px-4 py-2.5 text-[13px] text-gray-500">{sub.slug}</td>
+          <td className="px-4 py-2.5 text-[13px] font-semibold text-gray-900">{sub.display_order}</td>
+          <td className="px-4 py-2.5">
+             <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[13px] font-semibold uppercase tracking-wider ${
+              sub.is_active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'
             }`}>
               {sub.is_active ? 'Active' : 'Inactive'}
             </span>
           </td>
-          <td className="px-6 py-4 text-right">
-            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button onClick={() => onEdit(sub)} className="p-2 text-gray-400 hover:text-purple-600 cursor-pointer">
-                <Edit className="w-4 h-4" />
+          <td className="px-4 py-2.5 text-right">
+            <div className="flex justify-end gap-1.5">
+              <button onClick={() => onEdit(sub)} className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-purple-600 hover:bg-purple-50 cursor-pointer transition-all active:scale-90">
+                <Edit className="w-3.5 h-3.5" />
               </button>
-              <button onClick={() => onDelete(sub.id)} className="p-2 text-gray-400 hover:text-red-600 cursor-pointer">
-                <Trash2 className="w-4 h-4" />
+              <button onClick={() => onDelete(sub.id)} className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 cursor-pointer transition-all active:scale-90">
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           </td>
@@ -272,6 +315,8 @@ function CategoryRow({ category, subcategories, onEdit, onDelete }: {
   );
 }
 
+import Modal from '@/app/components/Modal';
+
 function CategoryModal({ onClose, onSave, category, parentOptions }: {
   onClose: () => void;
   onSave: (data: Partial<Category>) => void;
@@ -280,11 +325,10 @@ function CategoryModal({ onClose, onSave, category, parentOptions }: {
 }) {
   const [formData, setFormData] = useState({
     name: category?.name || '',
-    description: category?.description || '',
     parent_id: category?.parent_id || '',
+    description: category?.description || '',
     display_order: category?.display_order || 0,
     is_active: category?.is_active ?? true,
-    image: category?.image || ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -296,89 +340,104 @@ function CategoryModal({ onClose, onSave, category, parentOptions }: {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-          <h2 className="text-lg font-bold text-gray-900">{category ? 'Edit Category' : 'Add New Category'}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 cursor-pointer">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title={category ? 'Edit Category' : 'Add New Category'}
+      width="max-w-lg"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Category Name</label>
+          <input
+            type="text"
+            required
+            className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all font-bold text-[#201d1e] placeholder:text-gray-400 bg-gray-50/30"
+            value={formData.name}
+            onChange={e => setFormData({ ...formData, name: e.target.value })}
+            placeholder="e.g. Footwear, Apparel"
+          />
+        </div>
+
+        <div>
+           <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Parent Category (Optional)</label>
+           <div className="relative">
+             <select
+               className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none cursor-pointer appearance-none bg-gray-50/30 font-bold text-[#201d1e]"
+               value={formData.parent_id}
+               onChange={e => setFormData({ ...formData, parent_id: e.target.value })}
+             >
+               <option value="">None (Top Level)</option>
+               {parentOptions.map(cat => (
+                 <option key={cat.id} value={cat.id}>{cat.name}</option>
+               ))}
+             </select>
+             <div className="absolute inset-y-0 right-0 flex items-center px-5 pointer-events-none text-gray-500">
+               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+               </svg>
+             </div>
+           </div>
+        </div>
+
+        <div>
+          <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Description</label>
+          <textarea
+            className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all h-32 resize-none font-medium text-[#201d1e] placeholder:text-gray-400 bg-gray-50/30"
+            value={formData.description || ''}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Briefly describe this category..."
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Display Order</label>
+            <input
+              type="number"
+              className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all font-bold text-[#201d1e] bg-gray-50/30"
+              value={formData.display_order}
+              onChange={e => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+            />
+          </div>
+          <div className="flex items-end pb-1">
+             <label className="flex items-center gap-4 cursor-pointer group w-full bg-gray-50/30 border border-gray-200 p-4 rounded-2xl hover:border-purple-500 transition-all">
+              <div className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${
+                formData.is_active 
+                  ? 'bg-purple-600 border-purple-600 shadow-lg shadow-purple-200' 
+                  : 'bg-white border-gray-300 group-hover:border-purple-400'
+              }`}>
+                {formData.is_active && (
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <input
+                type="checkbox"
+                className="hidden"
+                checked={formData.is_active}
+                onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
+              />
+              <span className="text-[13px] font-black text-gray-900 uppercase tracking-widest">Active</span>
+            </label>
+          </div>
+        </div>
+        <div className="flex justify-end gap-4 pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-8 py-4 text-gray-600 font-bold hover:bg-gray-100 rounded-2xl transition-all cursor-pointer active:scale-95"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-10 py-4 bg-[#201d1e] text-white font-black rounded-2xl hover:shadow-2xl hover:scale-[1.02] transform transition-all cursor-pointer shadow-xl active:scale-95 uppercase tracking-widest"
+          >
+            {category ? 'Update' : 'Create'}
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input
-              type="text"
-              required
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none h-24 resize-none"
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Parent Category</label>
-            <select
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer"
-              value={formData.parent_id || ''}
-              onChange={e => setFormData({ ...formData, parent_id: e.target.value })}
-            >
-              <option value="">None (Root Category)</option>
-              {parentOptions.map(opt => (
-                <option key={opt.id} value={opt.id}>{opt.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
-              <input
-                type="number"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
-                value={formData.display_order}
-                onChange={e => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
-              />
-            </div>
-            <div className="flex items-end pb-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.is_active}
-                  onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Active</span>
-              </label>
-            </div>
-          </div>
-          <div className="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all cursor-pointer"
-            >
-              {category ? 'Update Category' : 'Create Category'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }
-

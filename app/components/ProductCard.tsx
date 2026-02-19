@@ -112,7 +112,7 @@ export default function ProductCard({
                   New
                 </span>
               )}
-              {product.isOnSale && product.discount && (
+              {product.isOnSale && (product.discount ?? 0) > 0 && (
                 <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
                   -{product.discount}%
                 </span>
@@ -233,7 +233,7 @@ export default function ProductCard({
               New
             </span>
           )}
-          {product.isOnSale && product.discount && (
+          {product.isOnSale && (product.discount ?? 0) > 0 && (
             <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
               -{product.discount}%
             </span>

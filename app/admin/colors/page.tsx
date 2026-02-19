@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ConfirmationModal from '@/app/components/ConfirmationModal';
 
 // Icons
 const Plus = ({ className }: { className?: string }) => (
@@ -33,6 +34,11 @@ export default function ColorsManagement() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingColor, setEditingColor] = useState<Color | null>(null);
+  
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [colorToDelete, setColorToDelete] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchColors = async () => {
     try {
@@ -65,17 +71,33 @@ export default function ColorsManagement() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteColor = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this color?')) return;
+  const handleDeleteColor = (id: number) => {
+    setColorToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (colorToDelete === null) return;
+    
+    setIsDeleting(true);
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/colors/${id}`, {
+      const response = await fetch(`/api/admin/colors/${colorToDelete}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (response.ok) fetchColors();
+      if (response.ok) {
+        await fetchColors();
+        setIsDeleteModalOpen(false);
+        setColorToDelete(null);
+      } else {
+        alert('Failed to delete color');
+      }
     } catch (error) {
       console.error('Error deleting color:', error);
+      alert('An error occurred during deletion');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -110,58 +132,62 @@ export default function ColorsManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Colors Management</h1>
-          <p className="text-gray-600">Manage product color options</p>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight italic">Colors</h1>
+          <p className="mt-0.5 text-gray-500 text-xs leading-relaxed">Manage product color options and swatches</p>
         </div>
         <button
           onClick={handleAddColor}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 cursor-pointer"
+          className="bg-[#201d1e] text-white px-3.5 py-1.5 rounded-lg hover:bg-black transition-all flex items-center gap-1.5 cursor-pointer text-xs font-semibold shadow-sm active:scale-95"
         >
           <Plus className="w-4 h-4" />
           Add Color
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50/50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Color</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hex Code</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Preview</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight">Color</th>
+                <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight text-center">Swatch</th>
+                <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight">Hex Code</th>
+                <th className="px-8 py-5 text-xs font-bold text-gray-900 uppercase tracking-tight text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {colors.map(color => (
-                <tr key={color.id} className="hover:bg-gray-50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <span className="font-medium text-gray-900">{color.name}</span>
+                <tr key={color.id} className="hover:bg-gray-50/50 transition-colors group">
+                  <td className="px-8 py-6">
+                    <span className="font-bold text-[#201d1e] text-xs">{color.name}</span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{color.hex_code}</td>
-                  <td className="px-6 py-4">
-                    <div 
-                      className="w-10 h-10 rounded-full border border-gray-200 shadow-sm"
-                      style={{ backgroundColor: color.hex_code }}
-                    />
+                  <td className="px-8 py-6">
+                    <div className="flex justify-center">
+                      <div 
+                        className="w-8 h-8 rounded-lg border-2 border-white shadow-lg transform group-hover:scale-110 transition-transform duration-300"
+                        style={{ backgroundColor: color.hex_code }}
+                      />
+                    </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2 transition-opacity">
-                      <button onClick={() => handleEditColor(color)} className="p-2 text-gray-400 hover:text-purple-600 cursor-pointer">
-                        <Edit className="w-4 h-4" />
+                  <td className="px-8 py-6 text-xs font-black text-gray-500 font-mono tracking-widest bg-gray-50/30">
+                    {color.hex_code.toUpperCase()}
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <div className="flex justify-end gap-3 transition-opacity">
+                      <button onClick={() => handleEditColor(color)} className="p-3 bg-gray-50 rounded-xl text-gray-400 hover:text-purple-600 hover:bg-purple-50 cursor-pointer transition-all active:scale-90">
+                        <Edit className="w-5 h-5" />
                       </button>
-                      <button onClick={() => handleDeleteColor(color.id)} className="p-2 text-gray-400 hover:text-red-600 cursor-pointer">
-                        <Trash2 className="w-4 h-4" />
+                      <button onClick={() => handleDeleteColor(color.id)} className="p-3 bg-gray-50 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 cursor-pointer transition-all active:scale-90">
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
                   </td>
@@ -169,8 +195,14 @@ export default function ColorsManagement() {
               ))}
               {colors.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-10 text-center text-gray-500">
-                    No colors found. Click &quot;Add Color&quot; to create one.
+                  <td colSpan={4} className="px-8 py-20 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                        <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-dashed" />
+                      </div>
+                      <p className="text-xs font-bold text-gray-900">No colors found</p>
+                      <p className="text-gray-500 text-xs mt-0.5">Click &quot;Add Color&quot; to define your first product swatch.</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -186,15 +218,25 @@ export default function ColorsManagement() {
           color={editingColor}
         />
       )}
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setColorToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Color"
+        message={`Are you sure you want to delete this color? This will remove the color option from all associated products.`}
+        confirmText="Delete Color"
+        loading={isDeleting}
+        type="danger"
+      />
     </div>
   );
 }
 
 import Modal from '@/app/components/Modal';
-
-// ... (existing imports, icons and Color interface)
-
-// ... (ColorsManagement component logic)
 
 function ColorModal({ onClose, onSave, color }: {
   onClose: () => void;
@@ -203,7 +245,7 @@ function ColorModal({ onClose, onSave, color }: {
 }) {
   const [formData, setFormData] = useState({
     name: color?.name || '',
-    hex_code: color?.hex_code || '#000000'
+    hex_code: color?.hex_code || '#201d1e'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -216,52 +258,61 @@ function ColorModal({ onClose, onSave, color }: {
       isOpen={true}
       onClose={onClose}
       title={color ? 'Edit Color' : 'Add New Color'}
+      width="max-w-md"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Color Name</label>
+          <label className="block text-xs font-black text-gray-900 mb-3 uppercase tracking-wider">Color Name</label>
           <input
             type="text"
             required
             placeholder="e.g. Royal Blue"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400"
+            className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all font-bold text-[#201d1e] placeholder:text-gray-400 bg-gray-50/30"
             value={formData.name}
             onChange={e => setFormData({ ...formData, name: e.target.value })}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Color Hex Code</label>
-          <div className="flex gap-4 items-center p-1 border border-gray-200 rounded-xl bg-white focus-within:ring-2 focus-within:ring-purple-500/20 focus-within:border-purple-500 transition-all">
-            <input
-              type="color"
-              className="w-12 h-12 rounded-lg cursor-pointer border-none p-0 bg-transparent"
-              value={formData.hex_code}
-              onChange={e => setFormData({ ...formData, hex_code: e.target.value })}
-            />
-            <input
-              type="text"
-              required
-              pattern="^#[0-9A-Fa-f]{6}$"
-              placeholder="#000000"
-              className="flex-1 px-4 py-2 border-none outline-none uppercase font-mono text-gray-600 bg-transparent"
-              value={formData.hex_code}
-              onChange={e => setFormData({ ...formData, hex_code: e.target.value })}
-            />
+          <label className="block text-xs font-black text-gray-900 mb-3 uppercase tracking-wider">Color Swatch</label>
+          <div className="flex flex-col gap-6 p-6 border border-gray-200 rounded-3xl bg-gray-50/30 transition-all focus-within:ring-4 focus-within:ring-purple-500/10 focus-within:border-purple-500">
+             <div className="flex items-center gap-6">
+                <div className="relative group">
+                  <input
+                    type="color"
+                    className="w-20 h-20 rounded-2xl cursor-pointer border-4 border-white shadow-xl p-0 bg-transparent block"
+                    value={formData.hex_code}
+                    onChange={e => setFormData({ ...formData, hex_code: e.target.value })}
+                  />
+                  <div className="absolute -inset-2 bg-purple-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity -z-1" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">HEX Code</p>
+                  <input
+                    type="text"
+                    required
+                    pattern="^#[0-9A-Fa-f]{6}$"
+                    placeholder="#201D1E"
+                    className="w-full bg-transparent border-none outline-none uppercase font-black text-2xl text-[#201d1e] tracking-tighter"
+                    value={formData.hex_code}
+                    onChange={e => setFormData({ ...formData, hex_code: e.target.value })}
+                  />
+                </div>
+             </div>
           </div>
         </div>
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex justify-end gap-4 pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 text-gray-700 font-semibold hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+            className="px-8 py-4 text-gray-600 font-bold hover:bg-gray-100 rounded-2xl transition-all cursor-pointer active:scale-95"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-8 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] transform transition-all cursor-pointer shadow-purple-500/25"
+            className="px-10 py-4 bg-[#201d1e] text-white font-black rounded-2xl hover:shadow-2xl hover:scale-[1.02] transform transition-all cursor-pointer shadow-xl active:scale-95 uppercase tracking-widest"
           >
-            {color ? 'Update Color' : 'Create Color'}
+            {color ? 'Update' : 'Create'}
           </button>
         </div>
       </form>

@@ -143,35 +143,35 @@ export default function ShippingManagement() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Shipping Management</h1>
-          <p className="mt-1 text-sm text-gray-500 font-medium">
+          <h1 className="text-lg font-semibold text-gray-900">Shipping Management</h1>
+          <p className="mt-0.5 text-[13px] text-gray-500">
             Configure shipping methods, rates, and carrier information.
           </p>
         </div>
         <button 
           onClick={() => handleOpenModal()}
-          className="inline-flex items-center px-5 py-2.5 rounded-2xl shadow-lg shadow-purple-600/20 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          className="inline-flex items-center px-3.5 py-1.5 rounded-lg shadow-sm text-[13px] font-semibold text-white bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all cursor-pointer"
         >
-          <Plus className="w-5 h-5 mr-2" />
+          <Plus className="w-4 h-4 mr-1.5" />
           Add Shipping Method
         </button>
       </div>
 
       {/* Shipping Methods Table */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50/50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Carrier & Method</th>
-                <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Delivery</th>
-                <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Price</th>
-                <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-right text-xs font-black text-gray-400 uppercase tracking-widest">Actions</th>
+                <th className="px-4 py-2.5 text-left text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Carrier & Method</th>
+                <th className="px-4 py-2.5 text-left text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Delivery</th>
+                <th className="px-4 py-2.5 text-left text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Price</th>
+                <th className="px-4 py-2.5 text-left text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-2.5 text-right text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -190,49 +190,49 @@ export default function ShippingManagement() {
               ) : (
                 shippingMethods.map((method) => (
                   <tr key={method.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2.5">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 font-bold shrink-0">
+                        <div className="w-7 h-7 rounded-md bg-purple-50 flex items-center justify-center text-purple-600 text-[13px] font-semibold shrink-0">
                           {method.carrier.substring(0, 1).toUpperCase()}
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-bold text-gray-900">{method.name}</div>
-                          <div className="text-xs text-gray-500 font-medium">{method.carrier}</div>
+                        <div className="ml-3">
+                          <div className="text-[13px] font-semibold text-gray-900">{method.name}</div>
+                          <div className="text-[13px] text-gray-400">{method.carrier}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-gray-600">{method.estimated_days}</span>
+                    <td className="px-4 py-2.5">
+                      <span className="text-[13px] text-gray-600">{method.estimated_days}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-black text-gray-900">₦{method.price.toLocaleString()}</div>
+                    <td className="px-4 py-2.5">
+                      <div className="text-[13px] font-semibold text-gray-900">₦{method.price.toLocaleString()}</div>
                       {method.free_shipping_threshold && (
-                        <div className="text-[10px] text-green-600 font-bold">Free over ₦{method.free_shipping_threshold.toLocaleString()}</div>
+                        <div className="text-[13px] text-green-600 font-medium">Free over ₦{method.free_shipping_threshold.toLocaleString()}</div>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2.5">
                       <button 
                         onClick={() => toggleStatus(method)}
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-tighter cursor-pointer ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[13px] font-semibold uppercase tracking-tight cursor-pointer ${
                           method.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
                         }`}
                       >
                         {method.is_active ? 'Active' : 'Inactive'}
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end space-x-2">
+                    <td className="px-4 py-2.5 text-right">
+                      <div className="flex items-center justify-end space-x-1">
                         <button 
                           onClick={() => handleOpenModal(method)}
-                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all cursor-pointer"
+                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all cursor-pointer"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button 
                           onClick={() => handleDelete(method.id)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all cursor-pointer"
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all cursor-pointer"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>
@@ -245,37 +245,37 @@ export default function ShippingManagement() {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a0a0b]/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg rounded-xl shadow-lg border border-gray-100 overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="px-8 py-6 bg-gray-50/50 border-b border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-600/20">
-                  <Truck className="w-6 h-6" />
+            <div className="px-5 py-3.5 bg-gray-50/50 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white shadow-sm">
+                  <Truck className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-gray-900 uppercase tracking-tight">
+                  <h2 className="text-[13px] font-semibold text-gray-900">
                     {editingMethod ? 'Edit Method' : 'Add New Method'}
                   </h2>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Shipping Configuration</p>
+                  <p className="text-[13px] text-gray-400 uppercase tracking-wider">Shipping Configuration</p>
                 </div>
               </div>
               <button 
                 onClick={() => setModalOpen(false)}
-                className="p-3 text-gray-400 hover:text-gray-900 rounded-2xl hover:bg-gray-100 transition-all cursor-pointer group"
+                className="p-1.5 text-gray-400 hover:text-gray-900 rounded-lg hover:bg-gray-100 transition-all cursor-pointer"
               >
-                <X className="w-5 h-5 group-active:scale-90" />
+                <X className="w-4 h-4" />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
-              <div className="space-y-5">
+            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+              <div className="space-y-3.5">
                 {/* Method Name */}
                 <div className="group">
-                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Method Name</label>
+                  <label className="block text-[13px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-0.5">Method Name</label>
                   <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors">
-                      <Type className="w-5 h-5" />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                      <Type className="w-4 h-4" />
                     </div>
                     <input 
                       type="text"
@@ -283,7 +283,7 @@ export default function ShippingManagement() {
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       placeholder="e.g., Premium Express"
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-purple-500 focus:ring-[6px] focus:ring-purple-500/5 outline-none transition-all font-semibold text-gray-900 placeholder:text-gray-300"
+                      className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all text-[13px] text-gray-900 placeholder:text-gray-300"
                     />
                   </div>
                 </div>
@@ -291,7 +291,7 @@ export default function ShippingManagement() {
                 <div className="grid grid-cols-2 gap-5">
                   {/* Carrier */}
                   <div className="group">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Carrier</label>
+                    <label className="block text-[13px] font-black text-gray-400 uppercase tracking-wider mb-1.5 ml-0.5">Carrier</label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors">
                         <Truck className="w-4 h-4" />
@@ -302,14 +302,14 @@ export default function ShippingManagement() {
                         value={formData.carrier}
                         onChange={(e) => setFormData({...formData, carrier: e.target.value})}
                         placeholder="DHL, FedEx..."
-                        className="w-full pl-11 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-purple-500 focus:ring-[6px] focus:ring-purple-500/5 outline-none transition-all font-semibold text-gray-900 placeholder:text-gray-300"
+                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all text-[13px] text-gray-900 placeholder:text-gray-300"
                       />
                     </div>
                   </div>
 
                   {/* Delivery Time */}
                   <div className="group">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Delivery Time</label>
+                    <label className="block text-[13px] font-black text-gray-400 uppercase tracking-wider mb-1.5 ml-0.5">Delivery Time</label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors">
                         <Clock className="w-4 h-4" />
@@ -320,7 +320,7 @@ export default function ShippingManagement() {
                         value={formData.estimated_days}
                         onChange={(e) => setFormData({...formData, estimated_days: e.target.value})}
                         placeholder="1-2 days"
-                        className="w-full pl-11 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-purple-500 focus:ring-[6px] focus:ring-purple-500/5 outline-none transition-all font-semibold text-gray-900 placeholder:text-gray-300"
+                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all text-[13px] text-gray-900 placeholder:text-gray-300"
                       />
                     </div>
                   </div>
@@ -329,7 +329,7 @@ export default function ShippingManagement() {
                 <div className="grid grid-cols-2 gap-5">
                   {/* Price */}
                   <div className="group">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Price (₦)</label>
+                    <label className="block text-[13px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Price (₦)</label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors">
                         <Banknote className="w-5 h-5" />
@@ -341,14 +341,14 @@ export default function ShippingManagement() {
                         value={formData.price}
                         onChange={(e) => setFormData({...formData, price: e.target.value})}
                         placeholder="0.00"
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-purple-500 focus:ring-[6px] focus:ring-purple-500/5 outline-none transition-all font-black text-gray-900 placeholder:text-gray-300"
+                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all text-[13px] text-gray-900 placeholder:text-gray-300"
                       />
                     </div>
                   </div>
 
                   {/* Free Over */}
                   <div className="group">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Free Over (₦)</label>
+                    <label className="block text-[13px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Free Over (₦)</label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors">
                         <Package className="w-5 h-5" />
@@ -359,7 +359,7 @@ export default function ShippingManagement() {
                         value={formData.free_shipping_threshold}
                         onChange={(e) => setFormData({...formData, free_shipping_threshold: e.target.value})}
                         placeholder="None"
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-purple-500 focus:ring-[6px] focus:ring-purple-500/5 outline-none transition-all font-black text-gray-900 placeholder:text-gray-300"
+                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all text-[13px] text-gray-900 placeholder:text-gray-300"
                       />
                     </div>
                   </div>
@@ -367,14 +367,14 @@ export default function ShippingManagement() {
               </div>
 
               {/* Status Switch */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${formData.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                    <CheckCircle2 className="w-5 h-5" />
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex items-center gap-2">
+                  <div className={`w-7 h-7 rounded-md flex items-center justify-center transition-colors ${formData.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
+                    <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-900">Active Status</p>
-                    <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Enable this method</p>
+                    <p className="text-[13px] font-semibold text-gray-900">Active Status</p>
+                    <p className="text-[13px] text-gray-500">Enable this method</p>
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -389,18 +389,18 @@ export default function ShippingManagement() {
               </div>
 
               {/* Footer Actions */}
-              <div className="flex gap-4 pt-2">
+              <div className="flex gap-3 pt-1">
                 <button 
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="flex-1 py-4 text-xs font-black text-gray-400 uppercase tracking-[0.2em] hover:text-gray-900 transition-colors cursor-pointer"
+                  className="flex-1 py-2 text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
                   disabled={submitting}
-                  className="flex-[2] py-4 bg-gray-900 text-white font-black rounded-2xl shadow-xl shadow-gray-900/10 hover:bg-black hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
+                  className="flex-[2] py-2 bg-gray-900 text-white text-[13px] font-semibold rounded-lg shadow-sm hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />

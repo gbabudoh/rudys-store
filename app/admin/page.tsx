@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// Simple icon components to replace lucide-react
+
+// Icons
 const Package = ({ className }: { className?: string }) => (
   <svg className={className || "w-6 h-6"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -85,7 +86,6 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call to fetch dashboard data
     const fetchDashboardData = () => {
       setTimeout(() => {
         setStats({
@@ -115,191 +115,164 @@ export default function AdminDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'shipped': return 'bg-blue-100 text-blue-800';
-      case 'processing': return 'bg-purple-100 text-purple-800';
+      case 'completed': return 'bg-green-50 text-green-700';
+      case 'pending': return 'bg-amber-50 text-amber-700';
+      case 'shipped': return 'bg-blue-50 text-blue-700';
+      case 'processing': return 'bg-purple-50 text-purple-700';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening with your store.</p>
+      <div className="bg-white/50 backdrop-blur-md p-8 rounded-3xl border border-white/20 shadow-sm">
+        <h1 className="text-4xl font-black text-[#201d1e] tracking-tight italic">Dashboard</h1>
+        <p className="text-gray-500 font-medium mt-2 text-lg">
+          Welcome back! Here&apos;s a quick overview of your store&apos;s performance.
+        </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Package className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Products</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalProducts.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <ShoppingBag className="w-6 h-6 text-green-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Orders</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalOrders.toLocaleString()}</p>
+        {[
+          { label: 'Total Products', value: stats.totalProducts.toLocaleString(), icon: Package, color: 'blue' },
+          { label: 'Total Orders', value: stats.totalOrders.toLocaleString(), icon: ShoppingBag, color: 'green' },
+          { label: 'Total Revenue', value: formatCurrency(stats.totalRevenue), icon: DollarSign, color: 'purple' },
+          { label: 'Total Customers', value: stats.totalCustomers.toLocaleString(), icon: Users, color: 'orange' },
+        ].map((stat, i) => (
+          <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100 group hover:scale-[1.02] transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-3xl font-black text-[#201d1e] italic tracking-tighter">{stat.value}</p>
+              </div>
+              <div className={`p-4 rounded-3xl bg-${stat.color}-50 group-hover:rotate-12 transition-transform duration-500`}>
+                <stat.icon className={`w-8 h-8 text-${stat.color}-600`} />
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <DollarSign className="w-6 h-6 text-purple-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalRevenue)}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Users className="w-6 h-6 text-orange-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Customers</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalCustomers.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Category Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Rudy Collections</h3>
-            <Package className="w-5 h-5 text-purple-600" />
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Products</span>
-              <span className="font-semibold">{stats.collectionsProducts}</span>
+        {[
+          { title: 'Rudy Collections', count: stats.collectionsProducts, icon: Package, color: 'purple', lightColor: 'purple' },
+          { title: 'Rudy Luxury', count: stats.luxuryProducts, icon: Crown, color: 'amber', lightColor: 'amber' },
+          { title: 'Slide & Sole', count: stats.crocsProducts, icon: Footprints, color: 'green', lightColor: 'green' },
+        ].map((cat, i) => (
+          <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-black text-[#201d1e] italic tracking-tight">{cat.title}</h3>
+              <div className={`p-3 rounded-2xl bg-${cat.lightColor}-50`}>
+                <cat.icon className={`w-6 h-6 text-${cat.color}-600`} />
+              </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-purple-600 h-2 rounded-full" style={{ width: '0%' }}></div>
+            <div className="space-y-4">
+              <div className="flex justify-between items-end">
+                <span className="text-sm font-black text-gray-400 uppercase tracking-widest">Inventory</span>
+                <span className="text-2xl font-black text-[#201d1e]">{cat.count} <span className="text-xs text-gray-400">Items</span></span>
+              </div>
+              <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
+                <div className={`bg-${cat.color}-600 h-full rounded-full transition-all duration-1000`} style={{ width: '0%' }}></div>
+              </div>
+              <p className="text-xs font-bold text-gray-400 tracking-wide">0% of absolute total stock</p>
             </div>
-            <p className="text-xs text-gray-500">0% of total products</p>
           </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Rudy Luxury</h3>
-            <Crown className="w-5 h-5 text-amber-600" />
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Products</span>
-              <span className="font-semibold">{stats.luxuryProducts}</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-amber-600 h-2 rounded-full" style={{ width: '0%' }}></div>
-            </div>
-            <p className="text-xs text-gray-500">0% of total products</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Slide & Sole</h3>
-            <Footprints className="w-5 h-5 text-green-600" />
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Products</span>
-              <span className="font-semibold">{stats.crocsProducts}</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-green-600 h-2 rounded-full" style={{ width: '0%' }}></div>
-            </div>
-            <p className="text-xs text-gray-500">0% of total products</p>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Recent Orders and Top Products */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Orders */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
-              <button className="text-sm text-purple-600 hover:text-purple-700">View all</button>
-            </div>
+        <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden">
+          <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+            <h3 className="text-2xl font-black text-[#201d1e] italic tracking-tight">Recent Activity</h3>
+            <button className="text-xs font-black uppercase tracking-widest text-purple-600 hover:text-purple-700 bg-purple-50 px-4 py-2 rounded-xl transition-all cursor-pointer">View All Orders</button>
           </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {stats.recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{order.customer}</p>
-                    <p className="text-sm text-gray-500">#{order.id}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900">{formatCurrency(order.amount)}</p>
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </div>
+          <div className="p-8">
+            {stats.recentOrders.length === 0 ? (
+              <div className="flex flex-col items-center py-12 text-center">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <ShoppingBag className="w-8 h-8 text-gray-200" />
                 </div>
-              ))}
-            </div>
+                <p className="text-lg font-bold text-gray-900">No recent orders</p>
+                <p className="text-gray-400 mt-1">Activity will appear here as customers shop.</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {stats.recentOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center font-black text-gray-400 text-sm">
+                        {order.customer.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-black text-[#201d1e]">{order.customer}</p>
+                        <p className="text-xs font-bold text-gray-400">Order #{order.id}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-[#201d1e] mb-1">{formatCurrency(order.amount)}</p>
+                      <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Top Products */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Top Products</h3>
-              <button className="text-sm text-purple-600 hover:text-purple-700">View all</button>
-            </div>
+        <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden">
+          <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+            <h3 className="text-2xl font-black text-[#201d1e] italic tracking-tight">Top Sellers</h3>
+            <button className="text-xs font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-xl transition-all cursor-pointer">View Analytics</button>
           </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {stats.topProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{product.name}</p>
-                    <p className="text-sm text-gray-500">{product.sales} sales</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900">{formatCurrency(product.revenue)}</p>
-                    <div className="flex items-center text-sm text-green-600">
-                      <TrendingUp className="w-4 h-4 mr-1" />
-                      <span>+0%</span>
+          <div className="p-8">
+            {stats.topProducts.length === 0 ? (
+              <div className="flex flex-col items-center py-12 text-center">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <TrendingUp className="w-8 h-8 text-gray-200" />
+                </div>
+                <p className="text-lg font-bold text-gray-900">No product data yet</p>
+                <p className="text-gray-400 mt-1">High-selling items will be highlighted here.</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {stats.topProducts.map((product, index) => (
+                  <div key={index} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center font-black text-[#201d1e]">
+                        #{index + 1}
+                      </div>
+                      <div>
+                        <p className="font-black text-[#201d1e]">{product.name}</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{product.sales} Sales this month</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-[#201d1e] mb-1">{formatCurrency(product.revenue)}</p>
+                      <div className="flex items-center justify-end text-[10px] font-black text-green-600 uppercase tracking-widest">
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                        <span>Trend Up</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -52,7 +52,7 @@ const defaultProduct: Product = {
   colors: [],
   features: [],
   gender: 'Unisex',
-  brand: 'Rudy Store',
+  brand: '',
   stock: 0,
   is_new: false,
   is_on_sale: false,
@@ -502,13 +502,14 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                     </div>
                   </div>
 
-                  {/* Colors */}
+                  {/* Colors and Variations */}
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <label className="block text-sm font-medium text-gray-700">Available Colors</label>
+                      <label className="block text-sm font-medium text-gray-700">Available Colors & Variations</label>
                       <a href="/admin/colors" className="text-xs text-purple-600 hover:text-purple-700 font-medium">Manage Colors</a>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    {/* Color Selection */}
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {(dbColors.length > 0 ? dbColors : COLORS.map(c => ({ name: c, hex_code: '' }))).map(color => {
                         const colorName = typeof color === 'string' ? color : color.name;
                         const isSelected = formData.colors.includes(colorName);
@@ -534,6 +535,90 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                         );
                       })}
                     </div>
+
+                    {/* Color Variation Images */}
+                    {formData.colors.length > 0 && (
+                      <div className="space-y-4 mt-6 border-t pt-4">
+                        <h4 className="text-sm font-bold text-gray-900">Color Variations (Specific Images)</h4>
+                        <p className="text-xs text-gray-500 mb-4">Upload specific images for each selected color. These will be shown when the customer selects the color.</p>
+                        
+                        {formData.colors.map(color => {
+                          const colorData = dbColors.find(c => c.name === color);
+                          const variationImages = formData.color_images?.find(ci => ci.color === color)?.images || [];
+                          
+                          return (
+                            <div key={color} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                              <div className="flex items-center gap-2 mb-3">
+                                {colorData?.hex_code && (
+                                  <span 
+                                    className="w-4 h-4 rounded-full border border-gray-300" 
+                                    style={{ backgroundColor: colorData.hex_code }}
+                                  />
+                                )}
+                                <span className="font-bold text-sm text-gray-800">{color} Images</span>
+                              </div>
+                              
+                              <div className="mb-3">
+                                <ImageUpload 
+                                  onUploadSuccess={(url) => {
+                                    setFormData(prev => {
+                                      const existing = prev.color_images || [];
+                                      const colorEntry = existing.find(ci => ci.color === color);
+                                      let newColorImages;
+                                      
+                                      if (colorEntry) {
+                                        newColorImages = existing.map(ci => 
+                                          ci.color === color 
+                                            ? { ...ci, images: [...ci.images, url] }
+                                            : ci
+                                        );
+                                      } else {
+                                        newColorImages = [...existing, { color, images: [url] }];
+                                      }
+                                      
+                                      return { ...prev, color_images: newColorImages };
+                                    });
+                                  }}
+                                  accept="image/*"
+                                  label={`Add ${color} Image`}
+                                />
+                              </div>
+                              
+                              <div className="grid grid-cols-6 gap-2">
+                                {variationImages.map((img, idx) => (
+                                  <div key={idx} className="relative group aspect-square bg-white rounded-md overflow-hidden border border-gray-200">
+                                    <Image src={img} alt="" fill className="object-cover" />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData(prev => {
+                                          const existing = prev.color_images || [];
+                                          const newColorImages = existing.map(ci => 
+                                            ci.color === color 
+                                              ? { ...ci, images: ci.images.filter((_, i) => i !== idx) }
+                                              : ci
+                                          ).filter(ci => ci.images.length > 0);
+                                          
+                                          return { ...prev, color_images: newColorImages };
+                                        });
+                                      }}
+                                      className="absolute top-1 right-1 p-0.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                ))}
+                                {variationImages.length === 0 && (
+                                  <div className="col-span-6 text-xs text-gray-400 italic">
+                                    No specific images for {color} (will use default images)
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
 
                   {/* Features */}
@@ -644,7 +729,7 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
                         onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer"
                       >
-                        <option value="Rudy Store">Rudy Store</option>
+                        <option value="">None</option>
                         {dbBrands.map(brand => (
                           <option key={brand.id} value={brand.name}>{brand.name}</option>
                         ))}

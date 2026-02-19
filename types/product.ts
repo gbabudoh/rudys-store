@@ -16,6 +16,7 @@ export interface Product {
   eu_sizes?: string[];
   colors: string[];
   color_details?: { name: string; hex_code: string }[];
+  color_images?: { color: string; images: string[] }[];
   features: string[];
   gender: 'Men' | 'Women' | 'Unisex' | 'Kids';
   brand: string;

@@ -37,6 +37,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     fetchProduct();
   }, [slug]);
 
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -58,7 +60,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     );
   }
 
-  return <ProductContent product={product} />;
+  return <ProductContent key={product.id} product={product} />;
 }
 
 function ProductContent({ product }: { product: Product }) {
@@ -73,8 +75,23 @@ function ProductContent({ product }: { product: Product }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
+
+
   // Transform images for react-image-gallery
-  const galleryImages = product.images.map((image: string) => ({
+  const getDisplayImages = () => {
+    if (selectedColor && product.color_images) {
+      const variation = product.color_images.find((v: { color: string; images: string[] }) => v.color === selectedColor);
+      if (variation && variation.images.length > 0) {
+        return variation.images;
+      }
+    }
+    // Fallback to default images if no color selected or no specific images for color
+    return product.images;
+  };
+
+  const currentImages = getDisplayImages();
+
+  const galleryImages = currentImages.map((image: string) => ({
     original: image,
     thumbnail: image,
   }));
@@ -86,12 +103,21 @@ function ProductContent({ product }: { product: Product }) {
       setIsModalOpen(true);
       return;
     }
+
+    // Use color-specific image if available, otherwise fall back to default
+    let cartImage = product.images[0] || '/placeholder-image.svg';
+    if (selectedColor && product.color_images) {
+      const variation = product.color_images.find((v: { color: string; images: string[] }) => v.color === selectedColor);
+      if (variation && variation.images.length > 0) {
+        cartImage = variation.images[0];
+      }
+    }
     
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images[0] || '/placeholder-image.svg',
+      image: cartImage,
       quantity: quantity,
       size: `${size} ${product.productType === 'shoe' ? `(${sizeSystem.toUpperCase()})` : ''}`,
       color: selectedColor,
@@ -237,13 +263,14 @@ function ProductContent({ product }: { product: Product }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
           <div className="relative">
-            {product.isOnSale && product.discount && (
+            {product.isOnSale && (product.discount ?? 0) > 0 && (
               <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold z-10 shadow-lg">
                 -{product.discount}% OFF
               </div>
             )}
             <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100">
               <ImageGallery
+                key={selectedColor || 'default'}
                 items={galleryImages}
                 renderItem={renderItem}
                 showPlayButton={false}

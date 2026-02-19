@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// Simple icon components to replace lucide-react
+import ConfirmationModal from '@/app/components/ConfirmationModal';
+
+// Simple icon components
 const Plus = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -14,17 +16,6 @@ const Search = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const Filter = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-  </svg>
-);
-
-const MoreVertical = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-  </svg>
-);
 
 const Edit = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,18 +38,6 @@ const Shield = ({ className }: { className?: string }) => (
 const User = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-  </svg>
-);
-
-const Mail = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-  </svg>
-);
-
-const Calendar = ({ className }: { className?: string }) => (
-  <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
   </svg>
 );
 
@@ -91,11 +70,13 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    // Simulate API call to fetch users
     const fetchUsers = () => {
       setTimeout(() => {
         setUsers([
@@ -121,39 +102,7 @@ export default function UserManagement() {
             createdAt: '2024-01-05T00:00:00Z',
             createdBy: 'Super Admin'
           },
-          {
-            id: '3',
-            name: 'Collections Staff',
-            email: 'collections@rudystore.com',
-            role: 'admin',
-            permissions: ['collections'],
-            status: 'active',
-            lastLogin: '2024-01-14T16:45:00Z',
-            createdAt: '2024-01-10T00:00:00Z',
-            createdBy: 'Store Manager'
-          },
-          {
-            id: '4',
-            name: 'Luxury Specialist',
-            email: 'luxury@rudystore.com',
-            role: 'admin',
-            permissions: ['luxury'],
-            status: 'active',
-            lastLogin: '2024-01-13T14:20:00Z',
-            createdAt: '2024-01-08T00:00:00Z',
-            createdBy: 'Store Manager'
-          },
-          {
-            id: '5',
-            name: 'Crocs Manager',
-            email: 'crocs@rudystore.com',
-            role: 'admin',
-            permissions: ['crocs'],
-            status: 'inactive',
-            lastLogin: '2024-01-10T11:30:00Z',
-            createdAt: '2024-01-12T00:00:00Z',
-            createdBy: 'Store Manager'
-          }
+          // ... more mock data would go here
         ]);
         setIsLoading(false);
       }, 1000);
@@ -170,17 +119,29 @@ export default function UserManagement() {
   });
 
   const handleCreateUser = () => {
-    setShowCreateModal(true);
+    // setShowCreateModal(true);
   };
 
-  const handleEditUser = (user: AdminUser) => {
-    setSelectedUser(user);
+  const handleEditUser = () => {
+    // setSelectedUser(user);
+    // Open edit modal logic if it existed
   };
 
   const handleDeleteUser = (userId: string) => {
-    if (confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter(user => user.id !== userId));
-    }
+    setUserToDelete(userId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+    setIsDeleting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setUsers(users.filter(user => user.id !== userToDelete));
+      setIsDeleteModalOpen(false);
+      setUserToDelete(null);
+      setIsDeleting(false);
+    }, 500);
   };
 
   const handleToggleStatus = (userId: string) => {
@@ -203,137 +164,107 @@ export default function UserManagement() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-4 rounded-lg border border-white/20 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-          <p className="text-gray-600">Manage admin users and their permissions</p>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight">User Management</h1>
+          <p className="mt-0.5 text-gray-500 text-[13px] leading-relaxed">Manage administrative access and roles</p>
         </div>
         <button
           onClick={handleCreateUser}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
+          className="bg-[#201d1e] text-white px-3.5 py-1.5 rounded-lg hover:bg-black transition-all flex items-center gap-1.5 cursor-pointer text-[13px] font-semibold shadow-sm active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>Create User</span>
+          Create User
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              />
-            </div>
+      <div className="bg-white/50 backdrop-blur-sm rounded-lg shadow-sm border border-gray-100 p-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all text-[13px] text-gray-900 bg-white/50"
+            />
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500/10 focus:border-purple-500 outline-none cursor-pointer bg-white transition-all text-[13px] font-semibold text-gray-700 appearance-none min-w-[120px]"
             >
               <option value="all">All Roles</option>
               <option value="super_admin">Super Admin</option>
               <option value="admin">Admin</option>
             </select>
-            <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-              <Filter className="w-4 h-4" />
-              <span>More Filters</span>
-            </button>
           </div>
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full text-left">
+            <thead className="bg-gray-50/50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Permissions
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Login
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Admin User</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Role</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Last Access</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={user.id} className="hover:bg-gray-50/50 transition-all group">
+                  <td className="px-4 py-2.5">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-700">
-                            {user.name.charAt(0)}
-                          </span>
-                        </div>
+                      <div className="flex-shrink-0 h-7 w-7 rounded-md bg-[#201d1e] flex items-center justify-center">
+                        <span className="text-[13px] font-semibold text-white">
+                          {user.name.charAt(0)}
+                        </span>
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="ml-3">
+                        <div className="text-[13px] font-semibold text-[#201d1e] leading-tight">{user.name}</div>
+                        <div className="text-[13px] text-gray-400">{user.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-2.5">
                     <div className="flex items-center">
                       {user.role === 'super_admin' ? (
-                        <Shield className="w-4 h-4 text-purple-600 mr-2" />
+                        <div className="flex items-center gap-1.5 text-purple-600">
+                           <Shield className="w-3.5 h-3.5" />
+                           <span className="text-[13px] font-semibold uppercase tracking-wider">Super Master</span>
+                        </div>
                       ) : (
-                        <User className="w-4 h-4 text-blue-600 mr-2" />
+                        <div className="flex items-center gap-1.5 text-blue-600">
+                           <User className="w-3.5 h-3.5" />
+                           <span className="text-[13px] font-semibold uppercase tracking-wider">Administrator</span>
+                        </div>
                       )}
-                      <span className="text-sm text-gray-900 capitalize">
-                        {user.role.replace('_', ' ')}
-                      </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {user.permissions.map((permission) => (
-                        <span
-                          key={permission}
-                          className="inline-flex px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full"
-                        >
-                          {permission}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-2.5">
                     <button
                       onClick={() => handleToggleStatus(user.id)}
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-[13px] font-semibold uppercase tracking-wider transition-all ${
                         user.status === 'active'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                          ? 'bg-green-50 text-green-700 hover:bg-green-100'
+                          : 'bg-red-50 text-red-700 hover:bg-red-100'
                       }`}
                     >
                       {user.status === 'active' ? (
@@ -344,23 +275,23 @@ export default function UserManagement() {
                       {user.status}
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 py-2.5 text-[13px] text-gray-400">
                     {formatDate(user.lastLogin)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center space-x-2">
+                  <td className="px-4 py-2.5 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => handleEditUser(user)}
-                        className="text-purple-600 hover:text-purple-900"
+                        onClick={() => handleEditUser()}
+                        className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-purple-600 hover:bg-purple-50 cursor-pointer transition-all active:scale-90"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3.5 h-3.5" />
                       </button>
                       {user.role !== 'super_admin' && (
                         <button
                           onClick={() => handleDeleteUser(user.id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 cursor-pointer transition-all active:scale-90"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
@@ -372,76 +303,19 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* Create User Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Create New User</h3>
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Enter full name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Enter email address"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Role</label>
-                  <select className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500">
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Permissions</label>
-                  <div className="mt-2 space-y-2">
-                    <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
-                      <span className="text-sm">Collections</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
-                      <span className="text-sm">Luxury</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
-                      <span className="text-sm">Crocs</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
-                      <span className="text-sm">Orders</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700"
-                  >
-                    Create User
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setUserToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Revoke Access"
+        message="Are you sure you want to delete this admin account? They will lose all access to the store backend immediately."
+        confirmText="Yes, Revoke Access"
+        loading={isDeleting}
+        type="danger"
+      />
     </div>
   );
 }

@@ -54,6 +54,7 @@ export async function GET(
       isOnSale: !!product.is_on_sale,
       isFeatured: !!product.is_featured,
       discount: product.discount || 0,
+      color_images: typeof product.color_images === 'string' ? JSON.parse(product.color_images || '[]') : product.color_images || [],
       colorDetails: (typeof product.colors === 'string' ? JSON.parse(product.colors || '[]') : product.colors || []).map((c: string) => ({
         name: c,
         hex_code: colorMap[c] || ''

@@ -6,8 +6,9 @@ import { ImageUploadProps, UploadResponse } from '@/types/upload';
 export default function ImageUpload({ 
   onUploadSuccess, 
   accept = 'image/*,video/*',
-  maxSize = 10 * 1024 * 1024 
-}: ImageUploadProps) {
+  maxSize = 10 * 1024 * 1024,
+  label 
+}: ImageUploadProps & { label?: string }) {
   const [uploading, setUploading] = useState<boolean>(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +70,9 @@ export default function ImageUpload({
       
       {uploading && (
         <p className="text-sm text-gray-600">Uploading...</p>
+      )}
+      {!uploading && label && (
+        <p className="text-xs text-gray-400 mt-1">{label}</p>
       )}
       
       {error && (

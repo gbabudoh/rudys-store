@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 
 import ProductCard from "../components/ProductCard";
 import { type Product } from "@/lib/products";
@@ -203,9 +204,18 @@ export default function CrocsPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             {/* Crocs Logo or customized header */}
-            <div className="mb-6 flex justify-center">
-                {/* Fallback text if no logo image */}
-                <h2 className="text-4xl font-bold tracking-wider" style={{ color: "#cfa224" }}>CROCS</h2>
+            <div className="mb-6 flex flex-col items-center justify-center gap-4">
+                <Image 
+                  src="/ss-logo.png" 
+                  alt="Slide & Sole" 
+                  width={300} 
+                  height={120} 
+                  className="h-24 w-auto object-contain"
+                  priority
+                />
+                <h2 className="text-4xl font-black tracking-[0.2em] uppercase italic" style={{ color: "#cfa224" }}>
+                  Slide & Sole
+                </h2>
             </div>
             <p
               className="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed"

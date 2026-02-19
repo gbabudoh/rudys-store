@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ConfirmationModal from '@/app/components/ConfirmationModal';
 
 // Simple icon components
 const Search = ({ className }: { className?: string }) => (
@@ -56,6 +57,25 @@ export default function CustomerManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    type: 'danger' | 'warning' | 'info';
+    title: string;
+    message: string;
+    confirmText: string;
+    action: 'delete' | 'restrict' | 'activate';
+    targetId: number | null;
+  }>({
+    type: 'danger',
+    title: '',
+    message: '',
+    confirmText: '',
+    action: 'delete',
+    targetId: null,
+  });
+  const [isProcessing, setIsProcessing] = useState(false);
   
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -71,27 +91,15 @@ export default function CustomerManagement() {
 
       try {
         const response = await fetch('/api/admin/customers', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-        
         const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch customers');
-        }
-
-        if (data.success) {
+        if (response.ok && data.success) {
           setCustomers(data.customers);
         }
       } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        } else {
-            setError('An error occurred');
-        }
         console.error(err);
+        setError('Failed to load customers');
       } finally {
         setIsLoading(false);
       }
@@ -100,70 +108,84 @@ export default function CustomerManagement() {
     fetchCustomers();
   }, []);
 
-  const handleToggleStatus = async (customerId: number, currentStatus: boolean) => {
-    const action = currentStatus ? 'restrict' : 'activate';
-    if (!confirm(`Are you sure you want to ${action} this customer?`)) return;
-
-    const token = localStorage.getItem('admin_token');
-    if (!token) return;
-
-    try {
-      const response = await fetch(`/api/admin/customers/${customerId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ isActive: !currentStatus })
-      });
-
-      if (response.ok) {
-        setCustomers(customers.map(c => 
-          c.id === customerId ? { ...c, isActive: !currentStatus } : c
-        ));
-      } else {
-        alert('Failed to update status');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('An error occurred');
+  const openConfirmModal = (action: 'delete' | 'restrict' | 'activate', id: number) => {
+    let config = { ...modalConfig, targetId: id, action };
+    
+    if (action === 'delete') {
+      config = {
+        ...config,
+        type: 'danger',
+        title: 'Delete Customer',
+        message: 'Are you sure you want to permanently delete this customer account? This action cannot be undone and will remove all their order history records.',
+        confirmText: 'Yes, Delete Account',
+      };
+    } else if (action === 'restrict') {
+      config = {
+        ...config,
+        type: 'warning',
+        title: 'Restrict Access',
+        message: 'This will prevent the customer from logging in or placing new orders. You can reactivate them later.',
+        confirmText: 'Restrict Customer',
+      };
+    } else {
+      config = {
+        ...config,
+        type: 'info',
+        title: 'Reactivate Customer',
+        message: 'This will restore full shopping privileges to the customer account.',
+        confirmText: 'Activate Account',
+      };
     }
+    
+    setModalConfig(config);
+    setIsModalOpen(true);
   };
 
-  const handleDelete = async (customerId: number) => {
-    if (!confirm('Are you sure you want to DELETE this customer? This action cannot be undone.')) return;
-
+  const handleConfirmAction = async () => {
+    if (!modalConfig.targetId) return;
+    setIsProcessing(true);
+    
     const token = localStorage.getItem('admin_token');
     if (!token) return;
 
     try {
-      const response = await fetch(`/api/admin/customers/${customerId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
+      if (modalConfig.action === 'delete') {
+        const response = await fetch(`/api/admin/customers/${modalConfig.targetId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          setCustomers(customers.filter(c => c.id !== modalConfig.targetId));
         }
-      });
-
-      if (response.ok) {
-        setCustomers(customers.filter(c => c.id !== customerId));
       } else {
-        alert('Failed to delete customer');
+        const newStatus = modalConfig.action === 'activate';
+        const response = await fetch(`/api/admin/customers/${modalConfig.targetId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ isActive: newStatus })
+        });
+        if (response.ok) {
+          setCustomers(customers.map(c => 
+            c.id === modalConfig.targetId ? { ...c, isActive: newStatus } : c
+          ));
+        }
       }
     } catch (err) {
       console.error(err);
-      alert('An error occurred');
+      alert('Action failed');
+    } finally {
+      setIsProcessing(false);
+      setIsModalOpen(false);
     }
   };
 
   const filteredCustomers = customers.filter(customer => {
     const searchLower = searchTerm.toLowerCase();
     const fullName = `${customer.firstName || ''} ${customer.lastName || ''}`.toLowerCase();
-    
-    return (
-      fullName.includes(searchLower) ||
-      customer.email.toLowerCase().includes(searchLower) ||
-      (customer.phone && customer.phone.includes(searchLower))
-    );
+    return fullName.includes(searchLower) || customer.email.toLowerCase().includes(searchLower);
   });
 
   const formatDate = (dateString: string) => {
@@ -176,7 +198,7 @@ export default function CustomerManagement() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
@@ -185,124 +207,114 @@ export default function CustomerManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Customer Management</h1>
-          <p className="text-gray-600">Manage customer accounts, status, and restrictions</p>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight italic">Customer Base</h1>
+          <p className="mt-0.5 text-gray-500 text-[13px] leading-relaxed">Manage your storefront community and permissions</p>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg">
+        <div className="bg-red-50 text-red-700 px-6 py-4 rounded-2xl border border-red-100 font-bold">
           {error}
         </div>
       )}
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-white/50 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 p-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Search customers by name, email, or phone..."
+            placeholder="Search by name, email, or contact details..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all font-medium text-gray-900 bg-white/50"
           />
         </div>
       </div>
 
       {/* Customers Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full text-left">
+            <thead className="bg-gray-50/50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Joined
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-8 py-5 text-[13px] font-bold text-gray-900 uppercase tracking-tight">Customer Profile</th>
+                <th className="px-8 py-5 text-[13px] font-bold text-gray-900 uppercase tracking-tight">Geo Location</th>
+                <th className="px-8 py-5 text-[13px] font-bold text-gray-900 uppercase tracking-tight">Status</th>
+                <th className="px-8 py-5 text-[13px] font-bold text-gray-900 uppercase tracking-tight">Joined On</th>
+                <th className="px-8 py-5 text-[13px] font-bold text-gray-900 uppercase tracking-tight text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                    No customers found matching your search.
+                  <td colSpan={5} className="px-8 py-20 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-200">
+                        <Search className="w-10 h-10" />
+                      </div>
+                      <p className="text-xl font-bold text-gray-900">No customers found</p>
+                      <p className="text-gray-500 mt-1">Your community will grow as customers visit.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredCustomers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={customer.id} className="hover:bg-gray-50/50 transition-all group">
+                    <td className="px-8 py-6">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                            <span className="text-sm font-bold text-purple-700">
-                              {(customer.firstName || customer.email).charAt(0).toUpperCase()}
-                            </span>
-                          </div>
+                        <div className="flex-shrink-0 h-12 w-12 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg group-hover:bg-purple-600 transition-colors">
+                          <span className="text-lg font-black text-white italic">
+                            {(customer.firstName || customer.email).charAt(0).toUpperCase()}
+                          </span>
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {customer.firstName} {customer.lastName}
+                        <div className="ml-5">
+                          <div className="text-[13px] font-bold text-[#201d1e] leading-tight">
+                            {customer.firstName} {customer.lastName || 'Guest'}
                           </div>
-                          <div className="text-sm text-gray-500">{customer.email}</div>
-                          {customer.phone && <div className="text-xs text-gray-400">{customer.phone}</div>}
+                          <div className="text-[13px] font-medium text-gray-400">{customer.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {customer.location}
+                    <td className="px-8 py-6 text-[13px] font-bold text-gray-500 italic">
+                      {customer.location || 'Unknown'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    <td className="px-8 py-6">
+                      <span className={`inline-flex items-center px-4 py-1.5 rounded-xl text-[13px] font-black uppercase tracking-widest ${
                         customer.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                          ? 'bg-green-50 text-green-700'
+                          : 'bg-red-50 text-red-700'
                       }`}>
                         {customer.isActive ? (
-                          <CheckCircle className="w-3 h-3 mr-1" />
+                          <CheckCircle className="w-4 h-4 mr-2" />
                         ) : (
-                          <XCircle className="w-3 h-3 mr-1" />
+                          <XCircle className="w-4 h-4 mr-2" />
                         )}
-                        {customer.isActive ? 'Active' : 'Restricted'}
+                        {customer.isActive ? 'Verified' : 'Flagged'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-8 py-6 text-[13px] font-bold text-gray-400">
                       {formatDate(customer.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center space-x-3">
+                    <td className="px-8 py-6 text-right">
+                      <div className="flex items-center justify-end gap-3 transition-opacity">
                         <button
-                          onClick={() => handleToggleStatus(customer.id, customer.isActive)}
-                          className={`flex items-center space-x-1 cursor-pointer ${
-                            customer.isActive ? 'text-orange-600 hover:text-orange-900' : 'text-green-600 hover:text-green-900'
+                          onClick={() => openConfirmModal(customer.isActive ? 'restrict' : 'activate', customer.id)}
+                          className={`p-3 rounded-xl transition-all active:scale-90 cursor-pointer ${
+                            customer.isActive 
+                              ? 'bg-gray-50 text-gray-400 hover:text-orange-600 hover:bg-orange-50' 
+                              : 'bg-green-50 text-green-600 hover:bg-green-100'
                           }`}
-                          title={customer.isActive ? 'Restrict Account' : 'Activate Account'}
                         >
-                          {customer.isActive ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-                          <span className="text-sm">{customer.isActive ? 'Restrict' : 'Activate'}</span>
+                          {customer.isActive ? <Lock className="w-5 h-5" /> : <Unlock className="w-5 h-5" />}
                         </button>
-                        
                         <button
-                          onClick={() => handleDelete(customer.id)}
-                          className="text-red-600 hover:text-red-900 flex items-center space-x-1 cursor-pointer"
-                          title="Delete Account"
+                          onClick={() => openConfirmModal('delete', customer.id)}
+                          className="p-3 bg-gray-50 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 cursor-pointer transition-all active:scale-90"
                         >
-                          <Trash2 className="w-4 h-4" />
-                          <span className="text-sm">Delete</span>
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
                     </td>
@@ -313,6 +325,17 @@ export default function CustomerManagement() {
           </table>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmAction}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        loading={isProcessing}
+        type={modalConfig.type}
+      />
     </div>
   );
 }

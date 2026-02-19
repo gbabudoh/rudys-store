@@ -118,6 +118,7 @@ export async function GET(request: Request) {
       status: string;
       created_at: string;
       updated_at: string;
+      color_images: string | null;
     }
     const parsedProducts = (products as ProductRow[]).map((p) => ({
       id: p.id.toString(),
@@ -149,6 +150,7 @@ export async function GET(request: Request) {
       isFeatured: !!p.is_featured,
       isBestSeller: !!p.is_best_seller,
       discount: p.discount || 0,
+      color_images: typeof p.color_images === 'string' ? JSON.parse(p.color_images || '[]') : p.color_images || [],
     }));
 
     return NextResponse.json({ products: parsedProducts });

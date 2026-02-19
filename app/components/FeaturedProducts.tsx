@@ -34,21 +34,15 @@ export default function FeaturedProducts({
 
   // Filter products based on active tab
   const getFilteredProducts = () => {
-    let filtered = [];
     switch (activeTab) {
       case 'sale':
-        filtered = products.filter(product => product.isOnSale);
-        break;
+        return products.filter(product => product.isOnSale);
       case 'bestseller':
-        filtered = products.filter(product => product.isBestSeller);
-        break;
+        return products.filter(product => product.isBestSeller);
       case 'featured':
       default:
-        filtered = products;
-        break;
+        return products.filter(product => product.isFeatured);
     }
-    console.log(`Active tab: ${activeTab}, Filtered products: ${filtered.length}`);
-    return filtered;
   };
 
   const filteredProducts = getFilteredProducts();

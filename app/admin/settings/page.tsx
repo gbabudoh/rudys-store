@@ -130,39 +130,39 @@ export default function Settings() {
   }
 
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-4 max-w-5xl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Store Settings</h1>
-          <p className="mt-1 text-slate-500">
-            Configure your store identity, contact information, and social presence
+          <h1 className="text-lg font-semibold text-slate-900">Store Settings</h1>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Configure store identity, contact information, and social presence
           </p>
         </div>
         
         {message && (
-          <div className={`flex items-center px-4 py-2 rounded-xl text-sm font-medium animate-in fade-in slide-in-from-top-2 ${
+          <div className={`flex items-center px-3 py-1.5 rounded-lg text-xs font-medium animate-in fade-in slide-in-from-top-2 ${
             message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
           }`}>
-            {message.type === 'success' ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <AlertCircle className="w-4 h-4 mr-2" />}
+            {message.type === 'success' ? <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> : <AlertCircle className="w-3.5 h-3.5 mr-1.5" />}
             {message.text}
           </div>
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Store Identity */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center">
-                <Package className="w-5 h-5 mr-2 text-purple-600" />
+          <section className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+              <h2 className="text-sm font-semibold text-slate-900 flex items-center">
+                <Package className="w-4 h-4 mr-1.5 text-purple-600" />
                 Store Identity
               </h2>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Store Name
                 </label>
                 <input
@@ -170,20 +170,20 @@ export default function Settings() {
                   name="store_name"
                   value={formData.store_name}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   placeholder="Rudy Store"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Store Address
                 </label>
                 <textarea
                   name="store_address"
                   value={formData.store_address}
                   onChange={handleChange}
-                  rows={3}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all resize-none"
+                  rows={2}
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all resize-none text-sm"
                   placeholder="Street address..."
                 />
               </div>
@@ -191,16 +191,16 @@ export default function Settings() {
           </section>
 
           {/* Social Media */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center">
+          <section className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+              <h2 className="text-sm font-semibold text-slate-900 flex items-center">
                 <Share2 className="w-5 h-5 mr-2 text-purple-600" />
                 Social Presence
               </h2>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-3">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                   <Instagram className="w-3.5 h-3.5 mr-2" /> Instagram
                 </label>
                 <input
@@ -208,12 +208,12 @@ export default function Settings() {
                   name="social_instagram"
                   value={formData.social_instagram}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   placeholder="https://instagram.com/rudystore"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                   <Facebook className="w-3.5 h-3.5 mr-2" /> Facebook
                 </label>
                 <input
@@ -221,12 +221,12 @@ export default function Settings() {
                   name="social_facebook"
                   value={formData.social_facebook}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   placeholder="https://facebook.com/rudystore"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                   <TikTokIcon className="w-3.5 h-3.5 mr-2" /> TikTok
                 </label>
                 <input
@@ -234,12 +234,12 @@ export default function Settings() {
                   name="social_tiktok"
                   value={formData.social_tiktok}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   placeholder="https://tiktok.com/@rudystore"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                   <Twitter className="w-3.5 h-3.5 mr-2" /> X (Twitter)
                 </label>
                 <input
@@ -247,12 +247,12 @@ export default function Settings() {
                   name="social_twitter"
                   value={formData.social_twitter}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   placeholder="https://twitter.com/rudystore"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                   <MessageCircle className="w-3.5 h-3.5 mr-2" /> WhatsApp
                 </label>
                 <input
@@ -260,7 +260,7 @@ export default function Settings() {
                   name="social_whatsapp"
                   value={formData.social_whatsapp}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   placeholder="https://wa.me/234..."
                 />
               </div>
@@ -268,17 +268,17 @@ export default function Settings() {
           </section>
 
           {/* Contact Details */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden lg:col-span-2">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center">
-                <Phone className="w-5 h-5 mr-2 text-purple-600" />
+          <section className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden lg:col-span-2">
+            <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+              <h2 className="text-sm font-semibold text-slate-900 flex items-center">
+                <Phone className="w-4 h-4 mr-1.5 text-purple-600" />
                 Contact Details
               </h2>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-4 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                     <Mail className="w-3.5 h-3.5 mr-2" /> Primary Email
                   </label>
                   <input
@@ -286,11 +286,11 @@ export default function Settings() {
                     name="store_email"
                     value={formData.store_email}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                    className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                     <Mail className="w-3.5 h-3.5 mr-2" /> Support Email
                   </label>
                   <input
@@ -298,11 +298,11 @@ export default function Settings() {
                     name="store_email_support"
                     value={formData.store_email_support}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                    className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                     <Phone className="w-3.5 h-3.5 mr-2" /> Primary Phone
                   </label>
                   <input
@@ -310,11 +310,11 @@ export default function Settings() {
                     name="store_phone"
                     value={formData.store_phone}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                    className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                     <Phone className="w-3.5 h-3.5 mr-2" /> Secondary Phone
                   </label>
                   <input
@@ -322,11 +322,11 @@ export default function Settings() {
                     name="store_phone_secondary"
                     value={formData.store_phone_secondary}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                    className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center">
                     <MessageCircle className="w-3.5 h-3.5 mr-2" /> WhatsApp Number
                   </label>
                   <input
@@ -334,7 +334,7 @@ export default function Settings() {
                     name="store_whatsapp"
                     value={formData.store_whatsapp}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                    className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                     placeholder="(+234) ..."
                   />
                 </div>
@@ -343,60 +343,60 @@ export default function Settings() {
           </section>
 
           {/* Business Hours */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-purple-600" />
+          <section className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+              <h2 className="text-sm font-semibold text-slate-900 flex items-center">
+                <Clock className="w-4 h-4 mr-1.5 text-purple-600" />
                 Business Hours
               </h2>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-3">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Weekday (Mon-Fri)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Weekday (Mon-Fri)</label>
                 <input
                   type="text"
                   name="store_hours_weekday"
                   value={formData.store_hours_weekday}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Saturday</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Saturday</label>
                 <input
                   type="text"
                   name="store_hours_saturday"
                   value={formData.store_hours_saturday}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Sunday</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Sunday</label>
                 <input
                   type="text"
                   name="store_hours_sunday"
                   value={formData.store_hours_sunday}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"
+                  className="block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm"
                 />
               </div>
             </div>
           </section>
 
           {/* General Controls */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-purple-600" />
+          <section className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+              <h2 className="text-sm font-semibold text-slate-900 flex items-center">
+                <Shield className="w-4 h-4 mr-1.5 text-purple-600" />
                 General Controls
               </h2>
             </div>
-            <div className="p-6 divide-y divide-slate-100">
-              <div className="flex items-center justify-between py-4 first:pt-0">
+            <div className="p-4 divide-y divide-slate-100">
+              <div className="flex items-center justify-between py-2.5 first:pt-0">
                 <div>
-                  <label className="text-sm font-bold text-slate-900">Maintenance Mode</label>
-                  <p className="text-sm text-slate-500">Temporarily disable storefront</p>
+                  <label className="text-xs font-semibold text-slate-900">Maintenance Mode</label>
+                  <p className="text-[11px] text-slate-500">Temporarily disable storefront</p>
                 </div>
                 <button 
                   type="button"
@@ -411,10 +411,10 @@ export default function Settings() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between py-4">
+              <div className="flex items-center justify-between py-2.5">
                 <div>
-                  <label className="text-sm font-bold text-slate-900">Email Notifications</label>
-                  <p className="text-sm text-slate-500">Alerts for new orders</p>
+                  <label className="text-xs font-semibold text-slate-900">Email Notifications</label>
+                  <p className="text-[11px] text-slate-500">Alerts for new orders</p>
                 </div>
                 <button 
                   type="button"
@@ -429,10 +429,10 @@ export default function Settings() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between py-4 last:pb-0">
+              <div className="flex items-center justify-between py-2.5 last:pb-0">
                 <div>
-                  <label className="text-sm font-bold text-slate-900">Low Stock Alerts</label>
-                  <p className="text-sm text-slate-500">Notify when inventory is low</p>
+                  <label className="text-xs font-semibold text-slate-900">Low Stock Alerts</label>
+                  <p className="text-[11px] text-slate-500">Notify when inventory is low</p>
                 </div>
                 <button 
                   type="button"
@@ -450,16 +450,16 @@ export default function Settings() {
           </section>
         </div>
 
-        <div className="flex justify-end pt-4 pb-12">
+        <div className="flex justify-end pt-2 pb-8">
           <button 
             type="submit"
             disabled={saving}
-            className="inline-flex items-center px-10 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 font-bold shadow-xl shadow-purple-500/30 transition-all active:scale-95 disabled:opacity-50 cursor-pointer text-lg"
+            className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 text-xs font-semibold shadow-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {saving ? (
-              <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+              <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
             ) : (
-              <Save className="w-6 h-6 mr-3" />
+              <Save className="w-4 h-4 mr-1.5" />
             )}
             Update All Settings
           </button>

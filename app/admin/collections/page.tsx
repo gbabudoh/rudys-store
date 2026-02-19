@@ -3,15 +3,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import ProductManagement from '../../components/ProductManagement';
 import ProductFormModal from '../../components/ProductFormModal';
+import ConfirmationModal from '../../components/ConfirmationModal';
 import { Product, DisplayProduct, RawProduct } from '@/types/product';
-
-// Product interface moved to @/types/product
 
 export default function CollectionsManagement() {
   const [products, setProducts] = useState<DisplayProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -25,7 +27,6 @@ export default function CollectionsManagement() {
       
       if (response.ok) {
         const data = await response.json();
-        // Transform to match ProductManagement interface
         const transformedProducts = data.products.map((p: RawProduct) => ({
           id: p.id.toString(),
           name: p.name,
@@ -37,7 +38,6 @@ export default function CollectionsManagement() {
           category: p.category,
           sku: p.sku,
           createdAt: p.created_at,
-          // Keep full data for editing
           _fullData: {
             ...p,
             price: typeof p.price === 'string' ? parseFloat(p.price) : p.price,
@@ -76,12 +76,18 @@ export default function CollectionsManagement() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteProduct = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+  const handleDeleteProduct = (productId: string) => {
+    setProductToDelete(productId);
+    setIsDeleteModalOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
+    
+    setIsDeleting(true);
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/products/${productId}`, {
+      const response = await fetch(`/api/admin/products/${productToDelete}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -90,17 +96,20 @@ export default function CollectionsManagement() {
 
       if (response.ok) {
         await fetchProducts();
+        setIsDeleteModalOpen(false);
+        setProductToDelete(null);
       } else {
         alert('Failed to delete product');
       }
     } catch (error) {
       console.error('Error deleting product:', error);
       alert('Failed to delete product');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const handleViewProduct = (product: DisplayProduct) => {
-    // Open in new tab
     window.open(`/product/${product._fullData?.slug || product.id}`, '_blank');
   };
 
@@ -155,6 +164,20 @@ export default function CollectionsManagement() {
         onSave={handleSaveProduct}
         product={editingProduct}
         storeSection="collections"
+      />
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setProductToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Product"
+        message="Are you sure you want to delete this product? This action cannot be undone."
+        confirmText="Delete Product"
+        loading={isDeleting}
+        type="danger"
       />
     </>
   );

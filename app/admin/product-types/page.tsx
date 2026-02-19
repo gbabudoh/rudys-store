@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ConfirmationModal from '@/app/components/ConfirmationModal';
 
 // Icons
 const Plus = ({ className }: { className?: string }) => (
@@ -50,6 +51,11 @@ export default function ProductTypesManagement() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingType, setEditingType] = useState<ProductType | null>(null);
+  
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [typeToDelete, setTypeToDelete] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -86,17 +92,33 @@ export default function ProductTypesManagement() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteType = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this product type?')) return;
+  const handleDeleteType = (id: number) => {
+    setTypeToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (typeToDelete === null) return;
+    
+    setIsDeleting(true);
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/product-types/${id}`, {
+      const response = await fetch(`/api/admin/product-types/${typeToDelete}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (response.ok) fetchData();
+      if (response.ok) {
+        await fetchData();
+        setIsDeleteModalOpen(false);
+        setTypeToDelete(null);
+      } else {
+        alert('Failed to delete product type');
+      }
     } catch (error) {
       console.error('Error deleting product type:', error);
+      alert('An error occurred during deletion');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -116,7 +138,7 @@ export default function ProductTypesManagement() {
       });
 
       if (response.ok) {
-        fetchData(); // Refresh all data
+        fetchData();
         setIsModalOpen(false);
       } else {
         const err = await response.json();
@@ -131,72 +153,72 @@ export default function ProductTypesManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Product Types Management</h1>
-          <p className="text-gray-600">Manage available product types and assign them to sub-categories</p>
+          <h1 className="text-sm font-bold text-gray-900 leading-tight">Product Types</h1>
+          <p className="mt-0.5 text-gray-500 text-[13px] leading-relaxed">Manage categories and classifications for your products</p>
         </div>
         <button
           onClick={handleAddType}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 cursor-pointer"
+          className="bg-[#201d1e] text-white px-3.5 py-1.5 rounded-lg hover:bg-black transition-all flex items-center gap-1.5 cursor-pointer text-[13px] font-semibold shadow-sm active:scale-95"
         >
           <Plus className="w-4 h-4" />
           Add Product Type
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50/50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sub-Category</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Slug</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Sub-Category</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Slug</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Order</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-2.5 text-[13px] font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {productTypes.map(type => (
-                <tr key={type.id} className="hover:bg-gray-50 transition-colors group">
-                  <td className="px-6 py-4">
+                <tr key={type.id} className="hover:bg-gray-50/50 transition-colors group">
+                  <td className="px-4 py-2.5">
                     <div className="flex items-center">
-                      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3 text-purple-600">
-                        <Tag className="w-4 h-4" />
+                      <div className="w-7 h-7 rounded-md bg-purple-50 flex items-center justify-center mr-3 group-hover:bg-purple-100 transition-colors">
+                        <Tag className="w-3.5 h-3.5 text-purple-600" />
                       </div>
-                      <span className="font-medium text-gray-900">{type.name}</span>
+                      <span className="text-[13px] font-semibold text-gray-900">{type.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                  <td className="px-4 py-2.5">
+                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[13px] font-semibold bg-blue-50 text-blue-700 uppercase tracking-wider">
                       {type.sub_category_name || 'Unassigned'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{type.slug}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{type.display_order}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      type.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  <td className="px-4 py-2.5 text-[13px] text-gray-500">{type.slug}</td>
+                  <td className="px-4 py-2.5 text-[13px] font-semibold text-gray-900">{type.display_order}</td>
+                  <td className="px-4 py-2.5">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[13px] font-semibold uppercase tracking-wider ${
+                      type.is_active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'
                     }`}>
                       {type.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2 transition-opacity">
-                      <button onClick={() => handleEditType(type)} className="p-2 text-gray-400 hover:text-purple-600 cursor-pointer">
-                        <Edit className="w-4 h-4" />
+                  <td className="px-4 py-2.5 text-right">
+                    <div className="flex justify-end gap-1.5">
+                      <button onClick={() => handleEditType(type)} className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-purple-600 hover:bg-purple-50 cursor-pointer transition-all active:scale-90">
+                        <Edit className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleDeleteType(type.id)} className="p-2 text-gray-400 hover:text-red-600 cursor-pointer">
-                        <Trash2 className="w-4 h-4" />
+                      <button onClick={() => handleDeleteType(type.id)} className="p-1.5 bg-gray-50 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 cursor-pointer transition-all active:scale-90">
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>
@@ -204,8 +226,14 @@ export default function ProductTypesManagement() {
               ))}
               {productTypes.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
-                    No product types found. Click &quot;Add Product Type&quot; to create one.
+                  <td colSpan={6} className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                        <Tag className="w-6 h-6 text-gray-300" />
+                      </div>
+                      <p className="text-[13px] font-semibold text-gray-900">No product types found</p>
+                      <p className="text-gray-500 text-[13px] mt-0.5">Click &quot;Add Product Type&quot; to create your first one.</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -222,6 +250,20 @@ export default function ProductTypesManagement() {
           subCategories={subCategories}
         />
       )}
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setTypeToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Product Type"
+        message="Are you sure you want to delete this product type? This action cannot be undone and will affect any products using this type."
+        confirmText="Delete Type"
+        loading={isDeleting}
+        type="danger"
+      />
     </div>
   );
 }
@@ -259,11 +301,11 @@ function ProductTypeModal({ onClose, onSave, type, subCategories }: {
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+          <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Type Name</label>
           <input
             type="text"
             required
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400"
+            className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all font-bold text-[#201d1e] placeholder:text-gray-400 bg-gray-50/30"
             value={formData.name}
             onChange={e => setFormData({ ...formData, name: e.target.value })}
             placeholder="e.g. Shoes, Shirt, Accessory"
@@ -271,10 +313,10 @@ function ProductTypeModal({ onClose, onSave, type, subCategories }: {
         </div>
 
         <div>
-           <label className="block text-sm font-medium text-gray-700 mb-2">Sub-Category</label>
+           <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Sub-Category</label>
            <div className="relative">
              <select
-               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none cursor-pointer appearance-none bg-white font-medium text-gray-900"
+               className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none cursor-pointer appearance-none bg-gray-50/30 font-bold text-[#201d1e]"
                value={formData.sub_category_id}
                onChange={e => setFormData({ ...formData, sub_category_id: e.target.value })}
              >
@@ -283,42 +325,43 @@ function ProductTypeModal({ onClose, onSave, type, subCategories }: {
                  <option key={sub.id} value={sub.id}>{sub.name}</option>
                ))}
              </select>
-             <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
-               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+             <div className="absolute inset-y-0 right-0 flex items-center px-5 pointer-events-none text-gray-500">
+               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                </svg>
              </div>
            </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+          <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Description</label>
           <textarea
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all h-24 resize-none text-gray-700 placeholder:text-gray-400"
-            value={formData.description}
+            className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all h-32 resize-none font-medium text-[#201d1e] placeholder:text-gray-400 bg-gray-50/30"
+            value={formData.description || ''}
             onChange={e => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Briefly describe this product type..."
           />
         </div>
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
+            <label className="block text-[13px] font-black text-gray-900 mb-2 uppercase tracking-wider">Display Order</label>
             <input
               type="number"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-medium text-gray-900"
+              className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all font-bold text-[#201d1e] bg-gray-50/30"
               value={formData.display_order}
               onChange={e => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
             />
           </div>
-          <div className="flex items-end pb-3">
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all ${
+          <div className="flex items-end pb-1">
+             <label className="flex items-center gap-4 cursor-pointer group w-full bg-gray-50/30 border border-gray-200 p-4 rounded-2xl hover:border-purple-500 transition-all">
+              <div className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${
                 formData.is_active 
-                  ? 'bg-purple-600 border-purple-600' 
+                  ? 'bg-purple-600 border-purple-600 shadow-lg shadow-purple-200' 
                   : 'bg-white border-gray-300 group-hover:border-purple-400'
               }`}>
                 {formData.is_active && (
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
               </div>
@@ -328,23 +371,23 @@ function ProductTypeModal({ onClose, onSave, type, subCategories }: {
                 checked={formData.is_active}
                 onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
               />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700 transition-colors">Active Status</span>
+              <span className="text-[13px] font-black text-gray-900 uppercase tracking-widest">Active</span>
             </label>
           </div>
         </div>
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex justify-end gap-4 pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 text-gray-700 font-semibold hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+            className="px-8 py-4 text-gray-600 font-bold hover:bg-gray-100 rounded-2xl transition-all cursor-pointer active:scale-95"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-8 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] transform transition-all cursor-pointer shadow-purple-500/25"
+            className="px-10 py-4 bg-[#201d1e] text-white font-black rounded-2xl hover:shadow-2xl hover:scale-[1.02] transform transition-all cursor-pointer shadow-xl active:scale-95 uppercase tracking-widest"
           >
-            {type ? 'Update Type' : 'Create Type'}
+            {type ? 'Update' : 'Create'}
           </button>
         </div>
       </form>

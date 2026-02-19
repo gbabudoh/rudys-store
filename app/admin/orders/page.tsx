@@ -115,7 +115,7 @@ export default function OrdersPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Orders Management</h1>
-        <p className="text-gray-500 text-xs">Manage and track customer orders</p>
+        <p className="text-gray-500 text-[13px]">Manage and track customer orders</p>
       </div>
 
         {/* Filters */}
@@ -156,22 +156,22 @@ export default function OrdersPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[13px] font-medium text-gray-500 uppercase tracking-wider">
                     Order
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[13px] font-medium text-gray-500 uppercase tracking-wider">
                     Customer
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[13px] font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[13px] font-medium text-gray-500 uppercase tracking-wider">
                     Total
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[13px] font-medium text-gray-500 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[13px] font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -192,7 +192,7 @@ export default function OrdersPage() {
                       </div>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[order.status]}`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium ${statusColors[order.status]}`}>
                         {getStatusIcon(order.status)}
                         <span className="ml-1 capitalize">{order.status}</span>
                       </span>
@@ -215,7 +215,7 @@ export default function OrdersPage() {
                         <select
                           value={order.status}
                           onChange={(e) => handleUpdateStatus(order.id, e.target.value as Order['status'])}
-                          className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-purple-500 focus:border-transparent cursor-pointer"
+                          className="text-[13px] border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-purple-500 focus:border-transparent cursor-pointer"
                         >
                           <option value="pending">Pending</option>
                           <option value="processing">Processing</option>
@@ -256,7 +256,7 @@ export default function OrdersPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Status</label>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[selectedOrder.status]}`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium ${statusColors[selectedOrder.status]}`}>
                       {getStatusIcon(selectedOrder.status)}
                       <span className="ml-1 capitalize">{selectedOrder.status}</span>
                     </span>

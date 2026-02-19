@@ -603,7 +603,7 @@ function HomepageSectionModal({
           </button>
           <button
             type="submit"
-            className="px-8 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] transform transition-all cursor-pointer shadow-purple-500/25"
+            className="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-all cursor-pointer shadow-sm"
           >
             {section ? 'Update Section' : 'Create Section'}
           </button>

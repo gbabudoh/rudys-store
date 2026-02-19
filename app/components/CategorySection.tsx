@@ -11,11 +11,11 @@ export interface Category {
   productCount: number;
 }
 
-// Map category IDs to their respective logos
+// Map category section keys to their respective logos
 const categoryLogos: Record<string, string> = {
-  'ruddy_collections': '/rudy-store-logo.png',
-  'ruddy_luxury': '/ruddy-lux-logo.png',
-  'slide_and_sole': '/ss-logo.png',
+  'ruddys-store': '/rudy-store-logo.png',
+  'ruddy-luxury': '/ruddy-lux-logo.png',
+  'slide-sole': '/ss-logo.png',
 };
 
 interface CategorySectionProps {
@@ -52,9 +52,9 @@ export default function CategorySection({ categories }: CategorySectionProps) {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 
-                {/* Logo Overlay - Top Right */}
+                {/* Logo Overlay - Bottom Left */}
                 {categoryLogos[category.id] && (
-                  <div className="absolute top-4 right-4 z-10">
+                  <div className="absolute bottom-4 left-4 z-10">
                     <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm border border-slate-100">
                       <div className="relative w-12 h-12">
                         <ProductImage

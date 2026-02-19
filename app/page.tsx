@@ -19,7 +19,7 @@ export default function Home() {
         const [bannersRes, sectionsRes, productsRes] = await Promise.all([
           fetch('/api/banners'),
           fetch('/api/homepage-sections'),
-          fetch('/api/products?featured=true&limit=8')
+          fetch('/api/products?limit=24')
         ]);
 
         if (bannersRes.ok && sectionsRes.ok && productsRes.ok) {
@@ -41,8 +41,8 @@ export default function Home() {
           }
 
           // Map homepage sections to Category interface
-          const mappedCategories = (sectionsData.sections || []).map((section: SectionData) => ({
-            id: section.id,
+          const mappedCategories = (sectionsData.sections || []).map((section: SectionData & { key: string }) => ({
+            id: section.key || section.id,
             name: section.title, // Map title to name
             description: section.description,
             image: section.image,
