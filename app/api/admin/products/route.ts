@@ -166,11 +166,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name, price, and category are required' }, { status: 400 });
     }
 
-    // Generate slug from name
-    const slug = name.toLowerCase()
+    // Generate clean slug from name
+    let slug = name.toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-      + '-' + Date.now().toString(36);
+      .replace(/(^-|-$)/g, '');
+
+    // Check for duplicate slugs and append number if needed
+    const existing = await queryMany('SELECT slug FROM products WHERE slug = ? OR slug LIKE ?', [slug, `${slug}-%`]);
+    if (existing.length > 0) {
+      const existingSlugs = new Set(existing.map((r: { slug: string }) => r.slug));
+      if (existingSlugs.has(slug)) {
+        let counter = 2;
+        while (existingSlugs.has(`${slug}-${counter}`)) {
+          counter++;
+        }
+        slug = `${slug}-${counter}`;
+      }
+    }
 
     // Generate SKU if not provided
     const finalSku = sku || `${store_section?.toUpperCase().slice(0, 2) || 'PR'}-${category.toUpperCase().slice(0, 2)}-${Date.now().toString(36).toUpperCase()}`;

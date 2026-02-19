@@ -134,7 +134,7 @@ export default function ProductCard({
 
           {/* Details Section */}
           <div className="flex-1 flex flex-col sm:flex-row justify-between gap-4">
-            <Link href={`/product/${product.id}`} className="flex-1">
+            <Link href={`/product/${product.slug || product.id}`} className="flex-1">
               <div className="flex-1 cursor-pointer">
                 {/* Product Name */}
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">

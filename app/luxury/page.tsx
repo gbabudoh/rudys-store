@@ -281,7 +281,7 @@ export default function LuxuryPage() {
                         setSelectedSizes([]);
                         setSelectedSubcategories([]);
                       }}
-                      className="text-xs px-2 py-1 rounded text-white transition-all hover:opacity-90"
+                      className="text-xs px-2 py-1 rounded text-white transition-all hover:opacity-90 cursor-pointer"
                       style={{ backgroundColor: "#cfa224" }}
                     >
                       Clear All
@@ -289,7 +289,7 @@ export default function LuxuryPage() {
                   )}
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="lg:hidden transition-colors hover:opacity-70 text-xl"
+                    className="lg:hidden transition-colors hover:opacity-70 text-xl cursor-pointer"
                     style={{ color: "#cfa224" }}
                   >
                     ×
@@ -625,7 +625,7 @@ export default function LuxuryPage() {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-all shadow-md hover:opacity-90"
+                  className="lg:hidden flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-all shadow-md hover:opacity-90 cursor-pointer"
                   style={{ backgroundColor: "#cfa224" }}
                 >
                   <SlidersHorizontal className="w-4 h-4" />
@@ -648,7 +648,7 @@ export default function LuxuryPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 border-2 rounded-lg focus:ring-2 bg-white text-gray-700 font-medium transition-all"
+                  className="px-4 py-2 border-2 rounded-lg focus:ring-2 bg-white text-gray-700 font-medium transition-all cursor-pointer"
                   style={
                     {
                       borderColor: "#cfa224",
@@ -669,7 +669,7 @@ export default function LuxuryPage() {
                 >
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 transition-all ${
+                    className={`p-2 transition-all cursor-pointer ${
                       viewMode === "grid"
                         ? "text-white"
                         : "text-gray-600 hover:bg-gray-50"
@@ -682,7 +682,7 @@ export default function LuxuryPage() {
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 transition-all ${
+                    className={`p-2 transition-all cursor-pointer ${
                       viewMode === "list"
                         ? "text-white"
                         : "text-gray-600 hover:bg-gray-50"
@@ -728,7 +728,7 @@ export default function LuxuryPage() {
               <div className="text-center mt-12">
                 <button
                   onClick={handleLoadMore}
-                  className="text-white px-10 py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform"
+                  className="text-white px-10 py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform cursor-pointer"
                   style={{ backgroundColor: "#cfa224" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = "#b8901f";
