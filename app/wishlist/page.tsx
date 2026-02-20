@@ -1,7 +1,8 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import { useWishlist } from '@/context/WishlistContext';
-import { getAllProducts } from '@/lib/products';
+import { type Product } from '@/lib/products';
 import ProductCard from '@/app/components/ProductCard';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,8 +23,28 @@ const X = ({ className }: { className?: string }) => (
 
 export default function WishlistPage() {
   const { wishlist, wishlistCount, removeFromWishlist } = useWishlist();
-  const allProducts = getAllProducts();
   const router = useRouter();
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        setAllProducts(data.products || []);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   // Get full product data for wishlisted items
   const wishlistedProducts = allProducts.filter(product => 
@@ -32,19 +53,19 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 md:pt-12 pb-24">
-      {/* Mobile Header - Sleek & Native */}
+      {/* Mobile Header */}
       <div className="md:hidden sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100/50">
         <div className="flex items-center h-14 px-4">
           <button 
             onClick={() => router.push('/')}
-            className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200"
+            className="flex items-center text-gray-900 active:scale-95 transition-transform duration-200 cursor-pointer"
           >
             <span className="text-2xl font-bold text-[#201d1e] -ml-1">&lt;</span>
           </button>
           <div className="absolute left-1/2 -translate-x-1/2">
             <h1 className="text-[17px] font-bold tracking-tight text-gray-900">Wishlist</h1>
           </div>
-          <div className="ml-auto w-7 h-7" /> {/* Balance spacer */}
+          <div className="ml-auto w-7 h-7" />
         </div>
       </div>
 
@@ -64,13 +85,15 @@ export default function WishlistPage() {
           </p>
         </div>
 
-        {wishlistCount > 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[300px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#cfa224]"></div>
+          </div>
+        ) : wishlistedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {wishlistedProducts.map((product) => (
               <div key={product.id} className="flex flex-col gap-3 group">
-                <ProductCard 
-                  product={product} 
-                />
+                <ProductCard product={product} />
                 <button 
                   onClick={() => removeFromWishlist(product.id)}
                   className="w-full py-2.5 text-sm font-bold text-red-600 hover:text-white hover:bg-red-500 rounded-xl transition-all flex items-center justify-center gap-2 border border-red-100 hover:border-red-500 shadow-sm cursor-pointer"
@@ -80,6 +103,14 @@ export default function WishlistPage() {
                 </button>
               </div>
             ))}
+          </div>
+        ) : wishlistCount > 0 ? (
+          /* Wishlist has items but no matching products found in DB */
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold text-[#201d1e] mb-4">Items unavailable</h2>
+            <p className="text-gray-500 mb-8">
+              Some items in your wishlist may no longer be available.
+            </p>
           </div>
         ) : (
           <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center max-w-2xl mx-auto">
@@ -93,7 +124,7 @@ export default function WishlistPage() {
               Start exploring our collections and save your favorite items!
             </p>
             <Link 
-              href="/collections" 
+              href="/store" 
               className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-lg font-bold rounded-xl text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl cursor-pointer"
               style={{ backgroundColor: '#cfa224' }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b8901f'}
@@ -104,12 +135,12 @@ export default function WishlistPage() {
           </div>
         )}
 
-        {/* Featured Section for empty state suggestions */}
-        {wishlistCount === 0 && (
+        {/* Recommended section for empty state */}
+        {wishlistCount === 0 && allProducts.length > 0 && (
           <div className="mt-24">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-2xl font-bold text-[#201d1e]">Recommended for You</h3>
-              <Link href="/collections" className="text-[#cfa224] font-bold hover:underline">
+              <Link href="/store" className="text-[#cfa224] font-bold hover:underline cursor-pointer">
                 View All
               </Link>
             </div>
