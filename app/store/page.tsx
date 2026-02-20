@@ -56,8 +56,6 @@ const List = ({ className }: { className?: string }) => (
 
 // Sample products for Rudy Collections
 
-const categories = ["All", "Clothing", "Footwear", "Accessories"];
-
 export default function CollectionsPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "All",
@@ -116,19 +114,13 @@ export default function CollectionsPage() {
   const subcategories = Array.from(
     new Set(collectionsProducts.map((p) => p.subcategory)),
   ).filter((s): s is string => Boolean(s));
+  const categories = ["All", ...Array.from(
+    new Set(collectionsProducts.map((p) => p.category)),
+  ).filter((c): c is string => Boolean(c)).sort()];
 
   const filteredProducts = collectionsProducts.filter((product) => {
-    // Category mapping to productType
-    let categoryMatch = selectedCategories.includes("All");
-    if (!categoryMatch) {
-      categoryMatch = selectedCategories.some((cat) => {
-        const type = (product.productType || "").toLowerCase();
-        if (cat === "Clothing") return ["clothing", "shirt", "t-shirt", "dress", "pants"].some(t => type.includes(t));
-        if (cat === "Footwear") return ["shoe", "footwear", "sneaker", "boot", "sandal"].some(t => type.includes(t));
-        if (cat === "Accessories") return ["accessory", "accessories", "bag", "glasses", "watch", "belt", "hat"].some(t => type.includes(t));
-        return false;
-      });
-    }
+    const categoryMatch = selectedCategories.includes("All") || 
+      (product.category ? selectedCategories.includes(product.category) : false);
 
     const priceMatch =
       product.price >= priceRange[0] && product.price <= priceRange[1];
@@ -522,6 +514,7 @@ export default function CollectionsPage() {
               </div>
 
               {/* Subcategories Filter */}
+              {subcategories.length > 0 && (
               <div className="mb-6">
                 <h4
                   className="font-semibold mb-4 flex items-center"
@@ -577,6 +570,7 @@ export default function CollectionsPage() {
                   ))}
                 </div>
               </div>
+              )}
 
               {/* Price Range */}
               <div className="mb-6">

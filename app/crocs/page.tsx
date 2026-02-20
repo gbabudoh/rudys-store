@@ -57,14 +57,14 @@ const SlidersHorizontal = ({ className }: { className?: string }) => (
 
 // Sample Crocs products
 
-const categories = ["All", "Clothing", "Footwear", "Accessories"];
-
 export default function CrocsPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "All",
   ]);
   const [selectedGender, setSelectedGender] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 1000000]);
   const [sortBy, setSortBy] = useState("featured");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -85,6 +85,7 @@ export default function CrocsPage() {
           gender: p.gender || "Unisex",
           brand: p.brand || "Crocs",
           sizes: p.sizes || [],
+          subcategory: p.subcategory || p.category,
         }));
         setCrocsProducts(mapped);
       }
@@ -106,30 +107,37 @@ export default function CrocsPage() {
   const allSizes = Array.from(
     new Set(crocsProducts.flatMap((p) => p.sizes)),
   ).filter((s): s is string => Boolean(s)).sort();
+  const brands = Array.from(new Set(crocsProducts.map((p) => p.brand))).filter(
+    (brand): brand is string => Boolean(brand) && brand !== 'Rudy Store',
+  ).sort();
+  const subcategories = Array.from(
+    new Set(crocsProducts.map((p) => p.subcategory)),
+  ).filter((s): s is string => Boolean(s));
+
+  const categories = ["All", ...Array.from(
+    new Set(crocsProducts.map((p) => p.category)),
+  ).filter((c): c is string => Boolean(c)).sort()];
 
   const filteredProducts = crocsProducts.filter((product) => {
-    // Category mapping
-    let categoryMatch = selectedCategories.includes("All");
-    if (!categoryMatch) {
-      categoryMatch = selectedCategories.some((cat) => {
-        const type = (product.productType || "").toLowerCase();
-        if (cat === "Clothing") return ["clothing", "shirt", "t-shirt", "dress", "pants"].some(t => type.includes(t));
-        if (cat === "Footwear") return ["shoe", "footwear", "sneaker", "boot", "sandal"].some(t => type.includes(t));
-        if (cat === "Accessories") return ["accessory", "accessories", "bag", "glasses", "watch", "belt", "hat"].some(t => type.includes(t));
-        return false;
-      });
-    }
+    const categoryMatch = selectedCategories.includes("All") || 
+      (product.category ? selectedCategories.includes(product.category) : false);
 
     const priceMatch =
       product.price >= priceRange[0] && product.price <= priceRange[1];
     const genderMatch =
       selectedGender.length === 0 ||
       (product.gender ? selectedGender.includes(product.gender) : false);
+    const brandMatch =
+      selectedBrands.length === 0 ||
+      (product.brand ? selectedBrands.includes(product.brand) : false);
     const sizeMatch =
       selectedSizes.length === 0 ||
       selectedSizes.some((size) => product.sizes.includes(size));
+    const subcategoryMatch =
+      selectedSubcategories.length === 0 ||
+      (product.subcategory ? selectedSubcategories.includes(product.subcategory) : false);
 
-    return categoryMatch && priceMatch && genderMatch && sizeMatch;
+    return categoryMatch && priceMatch && genderMatch && brandMatch && sizeMatch && subcategoryMatch;
   });
 
   // Sort products
@@ -162,7 +170,9 @@ export default function CrocsPage() {
   }, [
     selectedCategories,
     selectedGender,
+    selectedBrands,
     selectedSizes,
+    selectedSubcategories,
     priceRange,
     sortBy,
     productsPerPage,
@@ -246,13 +256,17 @@ export default function CrocsPage() {
                 </h3>
                 <div className="flex items-center gap-2">
                   {(selectedGender.length > 0 ||
+                    selectedBrands.length > 0 ||
                     selectedSizes.length > 0 ||
+                    selectedSubcategories.length > 0 ||
                     !selectedCategories.includes("All")) && (
                     <button
                       onClick={() => {
                         setSelectedCategories(["All"]);
                         setSelectedGender([]);
+                        setSelectedBrands([]);
                         setSelectedSizes([]);
+                        setSelectedSubcategories([]);
                       }}
                       className="text-xs px-2 py-1 rounded text-white transition-all hover:opacity-90 cursor-pointer"
                       style={{ backgroundColor: "#cfa224" }}
@@ -321,6 +335,60 @@ export default function CrocsPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Brand Filter */}
+              {brands.length > 0 && (
+                <div className="mb-6">
+                  <h4
+                    className="font-semibold mb-4 flex items-center"
+                    style={{ color: "#201d1e" }}
+                  >
+                    <span
+                      className="w-1 h-5 rounded-full mr-2"
+                      style={{ backgroundColor: "#cfa224" }}
+                    ></span>
+                    Brand
+                  </h4>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {brands.map((brand) => (
+                      <label
+                        key={brand}
+                        className="flex items-center group cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedBrands.includes(brand)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedBrands([...selectedBrands, brand]);
+                            } else {
+                              setSelectedBrands(
+                                selectedBrands.filter((b) => b !== brand),
+                              );
+                            }
+                          }}
+                          className="mr-3 w-4 h-4 focus:ring-2 border-gray-300 rounded"
+                          style={{ accentColor: "#cfa224" }}
+                        />
+                        <span
+                          className={`text-sm transition-colors ${
+                            selectedBrands.includes(brand)
+                              ? "font-semibold"
+                              : "text-gray-700 group-hover:opacity-70"
+                          }`}
+                          style={
+                            selectedBrands.includes(brand)
+                              ? { color: "#cfa224" }
+                              : {}
+                          }
+                        >
+                          {brand}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Size Filter */}
               <div className="mb-6">
@@ -437,6 +505,65 @@ export default function CrocsPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Subcategories Filter */}
+              {subcategories.length > 0 && (
+                <div className="mb-6">
+                  <h4
+                    className="font-semibold mb-4 flex items-center"
+                    style={{ color: "#201d1e" }}
+                  >
+                    <span
+                      className="w-1 h-5 rounded-full mr-2"
+                      style={{ backgroundColor: "#cfa224" }}
+                    ></span>
+                    Subcategories
+                  </h4>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {subcategories.map((subcategory) => (
+                      <label
+                        key={subcategory}
+                        className="flex items-center group cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedSubcategories.includes(subcategory)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedSubcategories([
+                                ...selectedSubcategories,
+                                subcategory,
+                              ]);
+                            } else {
+                              setSelectedSubcategories(
+                                selectedSubcategories.filter(
+                                  (s) => s !== subcategory,
+                                ),
+                              );
+                            }
+                          }}
+                          className="mr-3 w-4 h-4 focus:ring-2 border-gray-300 rounded"
+                          style={{ accentColor: "#cfa224" }}
+                        />
+                        <span
+                          className={`text-sm transition-colors ${
+                            selectedSubcategories.includes(subcategory)
+                              ? "font-semibold"
+                              : "text-gray-700 group-hover:opacity-70"
+                          }`}
+                          style={
+                            selectedSubcategories.includes(subcategory)
+                              ? { color: "#cfa224" }
+                              : {}
+                          }
+                        >
+                          {subcategory}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Price Range */}
               <div className="mb-6">
