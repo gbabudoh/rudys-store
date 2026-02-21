@@ -316,3 +316,23 @@ CREATE TABLE IF NOT EXISTS contact_messages (
     INDEX idx_status (status),
     INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Clothing Sizes table
+CREATE TABLE IF NOT EXISTS clothing_sizes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    display_order INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Shoe Sizes table
+CREATE TABLE IF NOT EXISTS shoe_sizes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    size VARCHAR(20) NOT NULL,
+    system ENUM('EU', 'UK', 'USA', 'Other') NOT NULL,
+    display_order INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_shoe_size (size, system)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

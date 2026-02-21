@@ -63,12 +63,6 @@ const defaultProduct: Product = {
 };
 
 
-const SIZES = {
-  clothing: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'],
-  shoe: ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'],
-  accessory: ['One Size', 'S', 'M', 'L'],
-};
-
 const COLORS = ['Black', 'White', 'Navy', 'Gray', 'Red', 'Blue', 'Green', 'Brown', 'Beige', 'Pink', 'Purple', 'Orange', 'Yellow', 'Multi'];
 
 interface ColorData {
@@ -88,6 +82,19 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
   const [dbColors, setDbColors] = useState<ColorData[]>([]);
   const [dbProductTypes, setDbProductTypes] = useState<ProductTypeData[]>([]);
   const [dbSubCategories, setDbSubCategories] = useState<SubCategoryData[]>([]);
+  const [dbClothingSizes, setDbClothingSizes] = useState<ClothingSizeData[]>([]);
+  const [dbShoeSizes, setDbShoeSizes] = useState<ShoeSizeData[]>([]);
+
+  interface ClothingSizeData {
+    id: number;
+    name: string;
+  }
+
+  interface ShoeSizeData {
+    id: number;
+    size: string;
+    system: string;
+  }
 
   interface CategoryData {
     id: number;
@@ -115,12 +122,14 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('admin_token');
-        const [catsRes, brandsRes, colorsRes, typesRes, subsRes] = await Promise.all([
+        const [catsRes, brandsRes, colorsRes, typesRes, subsRes, clothingRes, shoeRes] = await Promise.all([
           fetch('/api/admin/categories', { headers: { 'Authorization': `Bearer ${token}` } }),
           fetch('/api/admin/brands', { headers: { 'Authorization': `Bearer ${token}` } }),
           fetch('/api/admin/colors', { headers: { 'Authorization': `Bearer ${token}` } }),
           fetch('/api/admin/product-types', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('/api/admin/sub-categories', { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch('/api/admin/sub-categories', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/admin/clothing-sizes', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/admin/shoe-sizes', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         
         if (catsRes.ok) {
@@ -142,6 +151,14 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
         if (subsRes.ok) {
           const data = await subsRes.json();
           setDbSubCategories(data.subCategories);
+        }
+        if (clothingRes.ok) {
+          const data = await clothingRes.json();
+          setDbClothingSizes(data.sizes.filter((s: {is_active: boolean}) => s.is_active));
+        }
+        if (shoeRes.ok) {
+          const data = await shoeRes.json();
+          setDbShoeSizes(data.sizes.filter((s: {is_active: boolean}) => s.is_active));
         }
       } catch (error) {
         console.error('Error fetching form data:', error);
@@ -179,6 +196,15 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
       sizes: prev.sizes.includes(size)
         ? prev.sizes.filter(s => s !== size)
         : [...prev.sizes, size],
+    }));
+  };
+
+  const handleShoeSizeToggle = (size: string) => {
+    setFormData(prev => ({
+      ...prev,
+      eu_sizes: (prev.eu_sizes || []).includes(size)
+        ? (prev.eu_sizes || []).filter(s => s !== size)
+        : [...(prev.eu_sizes || []), size],
     }));
   };
 
@@ -268,17 +294,6 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
   const filteredSubCategories = dbSubCategories.filter(c => 
     selectedCategoryId && c.parent_category_id === selectedCategoryId
   );
-
-  const getSizeOptions = () => {
-    const type = formData.product_type;
-    // Map dynamic types to size charts if possible, or default to clothing
-    // For now, simple matching
-    if (type.toLowerCase().includes('shoe')) return SIZES.shoe;
-    if (['Bag', 'Glasses', 'Watch', 'Belt', 'Hat', 'Accessory'].some(t => type.includes(t))) return SIZES.accessory;
-    return SIZES.clothing;
-  };
-
-  const sizeOptions = getSizeOptions();
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -483,23 +498,67 @@ export default function ProductFormModal({ isOpen, onClose, onSave, product, sto
 
                   {/* Sizes */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Available Sizes</label>
-                    <div className="flex flex-wrap gap-2">
-                      {sizeOptions.map(size => (
-                        <button
-                          key={size}
-                          type="button"
-                          onClick={() => handleSizeToggle(size)}
-                          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                            formData.sizes.includes(size)
-                              ? 'bg-purple-600 text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
+                    {formData.category.toLowerCase().includes('shoe') || formData.category.toLowerCase().includes('footwear') ? (
+                      <div className="space-y-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Available Shoe Sizes</label>
+                        {(['EU', 'UK', 'USA', 'Other'] as const).map(system => {
+                          const systemSizes = dbShoeSizes.filter(s => s.system === system);
+                          if (systemSizes.length === 0) return null;
+                          return (
+                            <div key={system} className="space-y-2">
+                              <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{system} System</span>
+                              <div className="flex flex-wrap gap-2">
+                                {systemSizes.map(s => {
+                                  const sizeLabel = `${s.size}`;
+                                  const fullLabel = `${s.size} (${s.system})`;
+                                  return (
+                                    <button
+                                      key={s.id}
+                                      type="button"
+                                      onClick={() => handleShoeSizeToggle(fullLabel)}
+                                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                                        (formData.eu_sizes || []).includes(fullLabel)
+                                          ? 'bg-purple-600 text-white'
+                                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                      }`}
+                                    >
+                                      {sizeLabel}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (formData.category.toLowerCase().includes('clothing') || formData.category.toLowerCase().includes('apparel') || formData.category.toLowerCase().includes('shirt') || formData.category.toLowerCase().includes('men') || formData.category.toLowerCase().includes('women') || formData.category.toLowerCase().includes('kids')) && !formData.category.toLowerCase().includes('accessory') && !formData.category.toLowerCase().includes('bag') ? (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Available Clothing Sizes</label>
+                        <div className="flex flex-wrap gap-2">
+                          {dbClothingSizes.map(size => (
+                            <button
+                              key={size.id}
+                              type="button"
+                              onClick={() => handleSizeToggle(size.name)}
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                                formData.sizes.includes(size.name)
+                                  ? 'bg-purple-600 text-white'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              {size.name}
+                            </button>
+                          ))}
+                          {dbClothingSizes.length === 0 && (
+                            <p className="text-xs text-gray-400 italic">No clothing sizes defined. <a href="/admin/clothing-sizes" className="text-purple-600 underline">Manage sizes</a></p>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-gray-50 border border-gray-100 rounded-lg">
+                        <p className="text-xs text-gray-500 italic">No sizing options for this category (Accessories/Bags/Other)</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Colors and Variations */}

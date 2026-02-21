@@ -119,7 +119,7 @@ function ProductContent({ product }: { product: Product }) {
       price: product.price,
       image: cartImage,
       quantity: quantity,
-      size: `${size} ${product.productType === 'shoe' ? `(${sizeSystem.toUpperCase()})` : ''}`,
+      size: `${size} ${product.productType?.toLowerCase().includes('shoe') ? `(${sizeSystem.toUpperCase()})` : ''}`,
       color: selectedColor,
       productType: product.productType
     });
@@ -340,7 +340,7 @@ function ProductContent({ product }: { product: Product }) {
                 <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">
                   Select Size
                 </label>
-                {product.productType === 'shoe' && product.euSizes && (
+                {product.productType?.toLowerCase().includes('shoe') && product.euSizes && product.euSizes.length > 0 && (
                   <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
                     <button
                       onClick={() => setSizeSystem('us')}
@@ -366,7 +366,7 @@ function ProductContent({ product }: { product: Product }) {
                 )}
               </div>
               <div className="grid grid-cols-6 gap-2">
-                {(sizeSystem === 'eu' && product.euSizes ? product.euSizes : product.sizes).map((size: string) => (
+                {(sizeSystem === 'eu' && product.euSizes && product.euSizes.length > 0 ? product.euSizes : (product.sizes && product.sizes.length > 0 ? product.sizes : (product.euSizes || []))).map((size: string) => (
                   <button
                     key={size}
                     onClick={() => {

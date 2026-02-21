@@ -215,11 +215,11 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
               </p>
 
               {/* Sizes */}
-              {product.sizes && product.sizes.length > 0 && (
+              {( (product.sizes && product.sizes.length > 0) || (product.euSizes && product.euSizes.length > 0) ) && (
                 <div className="mb-6">
                   <h4 className="text-sm font-bold text-[#201d1e] uppercase tracking-wider mb-3">Select Size</h4>
                   <div className="flex flex-wrap gap-2">
-                    {product.sizes.map((size) => (
+                    {(product.sizes && product.sizes.length > 0 ? product.sizes : (product.euSizes || [])).map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}

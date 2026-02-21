@@ -29,6 +29,12 @@ const Folder = ({ className, style }: { className?: string; style?: React.CSSPro
   </svg>
 );
 
+const Ruler = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+  </svg>
+);
+
 const Tag = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 011 12V7a4 4 0 014-4z" />
@@ -44,6 +50,12 @@ const Mail = ({ className, style }: { className?: string; style?: React.CSSPrope
 const ShoppingBag = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+  </svg>
+);
+
+const Footprints = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className || "w-4 h-4"} style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2M7 4h10M7 4l-1 4h12l-1-4M6 8v10a2 2 0 002 2h8a2 2 0 002-2V8M6 8h12" />
   </svg>
 );
 
@@ -211,6 +223,8 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Product Types', href: '/admin/product-types', icon: Tag, category: 'Management' },
     { name: 'Brands', href: '/admin/brands', icon: Crown, category: 'Management' },
     { name: 'Colours', href: '/admin/colors', icon: ColorSwatch, category: 'Management' },
+    { name: 'Clothing Sizes', href: '/admin/clothing-sizes', icon: Ruler, category: 'Management' },
+    { name: 'Shoe Sizes', href: '/admin/shoe-sizes', icon: Footprints, category: 'Management' },
     { name: 'Customers', href: '/admin/customers', icon: Users, category: 'Management' },
     { name: 'Admin Users', href: '/admin/users', icon: Users, category: 'Management' },
     { name: 'Settings', href: '/admin/settings', icon: Settings, category: 'Management' },
@@ -237,6 +251,8 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
       'Product Types',
       'Brands',
       'Colours',
+      'Clothing Sizes',
+      'Shoe Sizes',
       'Customers'
     ];
     
