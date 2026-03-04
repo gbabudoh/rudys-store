@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 // Simple icon components to replace lucide-react
 const Search = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,6 +74,52 @@ const statusIcons = {
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  interface APIOrder {
+    id: number;
+    order_number: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    status: string;
+    total: string | number;
+    date: string;
+    shipping_address: string;
+    payment_method: string;
+    items: string | number;
+  }
+
+  const fetchOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/admin/orders');
+      if (response.ok) {
+        const data = await response.json();
+        const mappedOrders = data.map((o: APIOrder) => ({
+          id: o.id.toString(),
+          orderNumber: o.order_number,
+          customerName: `${o.first_name} ${o.last_name}`,
+          customerEmail: o.email,
+          status: o.status as Order['status'],
+          total: typeof o.total === 'string' ? parseFloat(o.total) : o.total,
+          items: typeof o.items === 'string' ? parseInt(o.items) : o.items,
+          date: o.date,
+          shippingAddress: o.shipping_address,
+          paymentMethod: o.payment_method
+        }));
+        setOrders(mappedOrders);
+      }
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -177,56 +223,70 @@ export default function OrdersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{order.orderNumber}</div>
-                        <div className="text-sm text-gray-500">{order.items} items</div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{order.customerName}</div>
-                        <div className="text-sm text-gray-500">{order.customerEmail}</div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium ${statusColors[order.status]}`}>
-                        {getStatusIcon(order.status)}
-                        <span className="ml-1 capitalize">{order.status}</span>
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ₦{order.total.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(order.date).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => handleViewOrder(order)}
-                          className="text-purple-600 hover:text-purple-900 p-1 cursor-pointer"
-                          title="View Order Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleUpdateStatus(order.id, e.target.value as Order['status'])}
-                          className="text-[13px] border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-purple-500 focus:border-transparent cursor-pointer"
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="processing">Processing</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
-                      </div>
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
+                      Loading orders...
                     </td>
                   </tr>
-                ))}
+                ) : filteredOrders.length > 0 ? (
+                  filteredOrders.map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{order.orderNumber}</div>
+                          <div className="text-sm text-gray-500">{order.items} items</div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{order.customerName}</div>
+                          <div className="text-sm text-gray-500">{order.customerEmail}</div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium ${statusColors[order.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
+                          {getStatusIcon(order.status as Order['status'])}
+                          <span className="ml-1 capitalize">{order.status}</span>
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ₦{order.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(order.date).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleViewOrder(order)}
+                            className="text-purple-600 hover:text-purple-900 p-1 cursor-pointer"
+                            title="View Order Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <select
+                            value={order.status}
+                            onChange={(e) => handleUpdateStatus(order.id, e.target.value as Order['status'])}
+                            className="text-[13px] border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-purple-500 focus:border-transparent cursor-pointer"
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
+                      No orders found matching your criteria.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

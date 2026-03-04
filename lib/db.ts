@@ -5,8 +5,8 @@ const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'rudy_store',
-  port: parseInt(process.env.DB_PORT || '3306'),
+  database: process.env.DB_NAME || 'rudystore',
+  port: parseInt(process.env.DB_PORT || '3307'),
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -56,7 +56,6 @@ export async function queryOne<T = any>(sql: string, params?: any[]): Promise<T 
 // Get multiple rows
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function queryMany<T = any>(sql: string, params?: any[]): Promise<T[]> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return await query(sql, params) as T[];
 }
 

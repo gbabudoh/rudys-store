@@ -31,10 +31,13 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    console.log('Verifying transaction reference:', reference);
     const result = await verifyTransaction(reference);
+    console.log('Verification result:', result);
 
     if (result.success && result.data) {
       const { metadata, amount, reference: paystackRef } = result.data;
+      console.log('Order metadata:', metadata);
       const orderMetadata = metadata as unknown as OrderMetadata;
       
       // Store order in database

@@ -86,21 +86,27 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDashboardData = () => {
-      setTimeout(() => {
-        setStats({
-          totalProducts: 0,
-          totalOrders: 0,
-          totalRevenue: 0,
-          totalCustomers: 0,
-          collectionsProducts: 0,
-          luxuryProducts: 0,
-          crocsProducts: 0,
-          recentOrders: [],
-          topProducts: []
-        });
+    const fetchDashboardData = async () => {
+      try {
+        console.log('Fetching dashboard stats...');
+        setIsLoading(true);
+        const response = await fetch('/api/admin/stats');
+        console.log('Stats response status:', response.status);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Stats data received:', data);
+          setStats(data);
+        } else {
+          console.error('Stats fetch failed with status:', response.status);
+          const text = await response.text();
+          console.error('Error response body:', text.substring(0, 200));
+        }
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      } finally {
         setIsLoading(false);
-      }, 1000);
+      }
     };
 
     fetchDashboardData();
@@ -169,26 +175,35 @@ export default function AdminDashboard() {
           { title: 'Rudy Collections', count: stats.collectionsProducts, icon: Package, color: 'purple', lightColor: 'purple' },
           { title: 'Rudy Luxury', count: stats.luxuryProducts, icon: Crown, color: 'amber', lightColor: 'amber' },
           { title: 'Slide & Sole', count: stats.crocsProducts, icon: Footprints, color: 'green', lightColor: 'green' },
-        ].map((cat, i) => (
-          <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-black text-[#201d1e] tracking-tight">{cat.title}</h3>
-              <div className={`p-3 rounded-2xl bg-${cat.lightColor}-50`}>
-                <cat.icon className={`w-6 h-6 text-${cat.color}-600`} />
+        ].map((cat, i) => {
+          const percentage = stats.totalProducts > 0 
+            ? Math.round((cat.count / stats.totalProducts) * 100) 
+            : 0;
+            
+          return (
+            <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-black text-[#201d1e] tracking-tight">{cat.title}</h3>
+                <div className={`p-3 rounded-2xl bg-${cat.lightColor}-50`}>
+                  <cat.icon className={`w-6 h-6 text-${cat.color}-600`} />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-end">
+                  <span className="text-sm font-black text-gray-400 uppercase tracking-widest">Inventory</span>
+                  <span className="text-2xl font-black text-[#201d1e]">{cat.count} <span className="text-xs text-gray-400">Items</span></span>
+                </div>
+                <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
+                  <div 
+                    className={`bg-${cat.color}-600 h-full rounded-full transition-all duration-1000`} 
+                    style={{ width: `${percentage}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs font-bold text-gray-400 tracking-wide">{percentage}% of absolute total stock</p>
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="flex justify-between items-end">
-                <span className="text-sm font-black text-gray-400 uppercase tracking-widest">Inventory</span>
-                <span className="text-2xl font-black text-[#201d1e]">{cat.count} <span className="text-xs text-gray-400">Items</span></span>
-              </div>
-              <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
-                <div className={`bg-${cat.color}-600 h-full rounded-full transition-all duration-1000`} style={{ width: '0%' }}></div>
-              </div>
-              <p className="text-xs font-bold text-gray-400 tracking-wide">0% of absolute total stock</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Recent Orders and Top Products */}

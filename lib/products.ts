@@ -28,6 +28,8 @@ export interface Product {
   gender?: string;
   brand?: string;
   subcategory?: string;
+  storeSection?: string;
+  collection?: string;
 }
 
 export const products: Product[] = [];

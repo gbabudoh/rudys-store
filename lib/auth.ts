@@ -199,15 +199,20 @@ export function canManageAdmin(currentUser: AdminUser, targetUser: AdminUser): b
 export async function verifyAdminAuth(request: NextRequest | Request): Promise<{ success: boolean; user?: AdminUser }> {
   try {
     const authHeader = request.headers.get('authorization');
+    console.log('verifyAdminAuth - authHeader:', authHeader);
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('verifyAdminAuth - No Bearer token found');
       return { success: false };
     }
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    console.log('verifyAdminAuth - token found, verifying...');
     const payload = verifyToken(token);
+    console.log('verifyAdminAuth - payload:', payload);
 
     if (!payload) {
+      console.log('verifyAdminAuth - Invalid payload');
       return { success: false };
     }
 

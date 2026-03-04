@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ProductCard from '../components/ProductCard';
-import { getAllProducts, type Product } from '@/lib/products';
+import { type Product } from '@/lib/products';
 
 // Simple icon components
-
 const Grid = ({ className }: { className?: string }) => (
   <svg className={className || "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -27,58 +26,68 @@ const SlidersHorizontal = ({ className }: { className?: string }) => (
 // Main collections
 const mainCollections = ['All', 'Ruddy Collections', 'Ruddy Luxury', 'Slide & Sole'];
 
+// Mapping store section to display name
+const collectionMap: Record<string, string> = {
+  'collections': 'Ruddy Collections',
+  'luxury': 'Ruddy Luxury',
+  'crocs': 'Slide & Sole'
+};
+
 export default function AllProductsPage() {
   const [selectedCollection, setSelectedCollection] = useState('All');
   const [selectedGender, setSelectedGender] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
   const [sortBy, setSortBy] = useState('featured');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [productsPerPage] = useState(12);
   const [displayedCount, setDisplayedCount] = useState(12);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get all products
-  const allProducts = getAllProducts();
-  
-  // Map products with collection information
-  const productsWithCollection = allProducts.map(product => {
-    let collection = 'Ruddy Collections'; // Default
-    
-    // Determine collection based on product type and category
-    if (product.productType === 'shoe') {
-      collection = 'Slide & Sole';
-    } else if (['Bags', 'Glasses', 'Dresses'].includes(product.category) || product.productType === 'accessory') {
-      collection = 'Rudy Luxury';
-    } else if (product.productType === 'clothing') {
-      collection = 'Ruddy Collections';
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        const mapped = data.products.map((p: Product) => ({
+          ...p,
+          collection: collectionMap[p.storeSection as string] || 'Ruddy Collections',
+          gender: p.gender || 'Unisex',
+          brand: p.brand || "Ruddy's Store",
+          subcategory: p.subcategory || p.category,
+        }));
+        setAllProducts(mapped);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
-    return {
-      ...product,
-      collection: collection,
-      gender: product.gender || 'Unisex',
-      brand: product.brand || "Ruddy's Store",
-      subcategory: product.subcategory || product.category,
-    };
-  });
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   // Extract unique values for filters
-  const genders = Array.from(new Set(productsWithCollection.map(p => p.gender))).filter(Boolean);
-  const brands = Array.from(new Set(productsWithCollection.map(p => p.brand))).filter(Boolean);
-  const allSizes = Array.from(new Set(productsWithCollection.flatMap(p => p.sizes))).filter(Boolean).sort();
-  const subcategories = Array.from(new Set(productsWithCollection.map(p => p.subcategory))).filter(Boolean);
+  const genders = Array.from(new Set(allProducts.map(p => p.gender))).filter((g): g is string => Boolean(g));
+  const brands = Array.from(new Set(allProducts.map(p => p.brand))).filter((brand): brand is string => Boolean(brand) && brand !== 'Rudy Store').sort();
+  const allSizes = Array.from(new Set(allProducts.flatMap(p => p.sizes))).filter((s): s is string => Boolean(s)).sort();
+  const subcategories = Array.from(new Set(allProducts.map(p => p.subcategory))).filter((s): s is string => Boolean(s));
 
   // Filter products
-  const filteredProducts = productsWithCollection.filter(product => {
-    const collectionMatch = selectedCollection === 'All' || product.collection === selectedCollection;
+  const filteredProducts = allProducts.filter(product => {
+    const collectionMatch = selectedCollection === 'All' || product.brand === selectedCollection || product.collection === selectedCollection;
     const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
-    const genderMatch = selectedGender.length === 0 || selectedGender.includes(product.gender);
-    const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
+    const genderMatch = selectedGender.length === 0 || selectedGender.includes(product.gender || '');
+    const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand || '');
     const sizeMatch = selectedSizes.length === 0 || selectedSizes.some(size => product.sizes.includes(size));
-    const subcategoryMatch = selectedSubcategories.length === 0 || selectedSubcategories.includes(product.subcategory);
+    const subcategoryMatch = selectedSubcategories.length === 0 || (product.subcategory ? selectedSubcategories.includes(product.subcategory) : false);
     
     return collectionMatch && priceMatch && genderMatch && brandMatch && sizeMatch && subcategoryMatch;
   });
@@ -93,7 +102,7 @@ export default function AllProductsPage() {
       case 'newest':
         return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
       case 'rating':
-        return b.rating - a.rating;
+        return (b.rating || 0) - (a.rating || 0);
       default:
         return 0;
     }
@@ -109,13 +118,8 @@ export default function AllProductsPage() {
 
   // Reset displayed count when filters change
   useEffect(() => {
-    if (displayedCount !== productsPerPage) {
-      const timer = setTimeout(() => {
-        setDisplayedCount(productsPerPage);
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [selectedCollection, selectedGender, selectedBrands, selectedSizes, selectedSubcategories, priceRange, sortBy, productsPerPage, displayedCount]);
+    setDisplayedCount(productsPerPage);
+  }, [selectedCollection, selectedGender, selectedBrands, selectedSizes, selectedSubcategories, priceRange, sortBy, productsPerPage]);
 
   const handleAddToCart = (product: Product) => {
     console.log('Added to cart:', product);
@@ -130,7 +134,7 @@ export default function AllProductsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#201d1e]/5 to-[#cfa224]/5">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#201d1e]/5 to-[#cfa224]/5" suppressHydrationWarning>
       {/* Hero Section */}
       <div className="relative text-white py-20 overflow-hidden" style={{ backgroundColor: '#201d1e' }}>
         {/* Decorative elements */}
@@ -169,8 +173,9 @@ export default function AllProductsPage() {
                         setSelectedBrands([]);
                         setSelectedSizes([]);
                         setSelectedSubcategories([]);
+                        setPriceRange([0, 1000000]);
                       }}
-                      className="text-xs px-2 py-1 rounded text-white transition-all hover:opacity-90"
+                      className="text-xs px-2 py-1 rounded text-white transition-all hover:opacity-90 cursor-pointer"
                       style={{ backgroundColor: '#cfa224' }}
                     >
                       Clear All
@@ -178,7 +183,7 @@ export default function AllProductsPage() {
                   )}
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="lg:hidden transition-colors hover:opacity-70 text-xl"
+                    className="lg:hidden transition-colors hover:opacity-70 text-xl cursor-pointer"
                     style={{ color: '#cfa224' }}
                   >
                     ×
@@ -247,6 +252,7 @@ export default function AllProductsPage() {
               </div>
 
               {/* Brand Filter */}
+              {brands.length > 0 && (
               <div className="mb-6">
                 <h4 className="font-semibold mb-4 flex items-center" style={{ color: '#201d1e' }}>
                   <span className="w-1 h-5 rounded-full mr-2" style={{ backgroundColor: '#cfa224' }}></span>
@@ -277,6 +283,7 @@ export default function AllProductsPage() {
                   ))}
                 </div>
               </div>
+              )}
 
               {/* Size Filter */}
               <div className="mb-6">
@@ -312,6 +319,7 @@ export default function AllProductsPage() {
               </div>
 
               {/* Subcategories Filter */}
+              {subcategories.length > 0 && (
               <div className="mb-6">
                 <h4 className="font-semibold mb-4 flex items-center" style={{ color: '#201d1e' }}>
                   <span className="w-1 h-5 rounded-full mr-2" style={{ backgroundColor: '#cfa224' }}></span>
@@ -342,6 +350,7 @@ export default function AllProductsPage() {
                   ))}
                 </div>
               </div>
+              )}
 
               {/* Price Range */}
               <div className="mb-6">
@@ -353,18 +362,18 @@ export default function AllProductsPage() {
                   <input
                     type="range"
                     min="0"
-                    max="1000"
+                    max="1000000"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #cfa224 0%, #cfa224 ${(priceRange[1]/1000)*100}%, #e5e5e5 ${(priceRange[1]/1000)*100}%, #e5e5e5 100%)`,
+                      background: `linear-gradient(to right, #cfa224 0%, #cfa224 ${(priceRange[1]/1000000)*100}%, #e5e5e5 ${(priceRange[1]/1000000)*100}%, #e5e5e5 100%)`,
                       accentColor: '#cfa224'
                     }}
                   />
                   <div className="flex justify-between text-sm">
                     <span className="font-semibold" style={{ color: '#cfa224' }}>₦{priceRange[0]}</span>
-                    <span className="font-semibold" style={{ color: '#cfa224' }}>₦{priceRange[1]}</span>
+                    <span className="font-semibold" style={{ color: '#cfa224' }}>₦{priceRange[1].toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -378,7 +387,7 @@ export default function AllProductsPage() {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-all shadow-md hover:opacity-90"
+                  className="lg:hidden flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-all shadow-md hover:opacity-90 cursor-pointer"
                   style={{ backgroundColor: '#cfa224' }}
                 >
                   <SlidersHorizontal className="w-4 h-4" />
@@ -393,7 +402,7 @@ export default function AllProductsPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 border-2 rounded-lg focus:ring-2 bg-white text-gray-700 font-medium transition-all"
+                  className="px-4 py-2 border-2 rounded-lg focus:ring-2 bg-white text-gray-700 font-medium transition-all cursor-pointer"
                   style={{ borderColor: '#cfa224', '--tw-ring-color': '#cfa224' } as React.CSSProperties}
                 >
                   <option value="featured">Featured</option>
@@ -406,7 +415,7 @@ export default function AllProductsPage() {
                 <div className="flex border-2 rounded-lg overflow-hidden" style={{ borderColor: '#cfa224' }}>
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 transition-all ${
+                    className={`p-2 transition-all cursor-pointer ${
                       viewMode === 'grid' 
                         ? 'text-white' 
                         : 'text-gray-600 hover:bg-gray-50'
@@ -417,7 +426,7 @@ export default function AllProductsPage() {
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 transition-all ${
+                    className={`p-2 transition-all cursor-pointer ${
                       viewMode === 'list' 
                         ? 'text-white' 
                         : 'text-gray-600 hover:bg-gray-50'
@@ -431,35 +440,60 @@ export default function AllProductsPage() {
             </div>
 
             {/* Products Grid/List */}
-            <div className={`${
-              viewMode === 'grid' 
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8' 
-                : 'flex flex-col gap-4'
-            }`}>
-              {displayedProducts.length > 0 ? (
-                displayedProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onAddToCart={handleAddToCart}
-                    onAddToWishlist={handleAddToWishlist}
-                    onQuickView={handleQuickView}
-                    viewMode={viewMode}
-                  />
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-gray-500 text-lg">No products found matching your filters.</p>
-                </div>
-              )}
-            </div>
+            {loading ? (
+              <div className="flex justify-center items-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#cfa224]"></div>
+              </div>
+            ) : (
+              <div className={`${
+                viewMode === 'grid' 
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8' 
+                  : 'flex flex-col gap-4'
+              }`}>
+                {displayedProducts.length > 0 ? (
+                  displayedProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      onAddToWishlist={handleAddToWishlist}
+                      onQuickView={handleQuickView}
+                      viewMode={viewMode}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl border border-dashed border-gray-300">
+                    <div className="mb-4 text-gray-400">
+                      <svg className="w-16 h-16 mx-auto opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#201d1e]">No items matched your search</h3>
+                    <p className="text-gray-500 mt-2">Try adjusting your filters to find what you&apos;re looking for</p>
+                    <button
+                      onClick={() => {
+                        setSelectedCollection('All');
+                        setSelectedGender([]);
+                        setSelectedBrands([]);
+                        setSelectedSizes([]);
+                        setSelectedSubcategories([]);
+                        setPriceRange([0, 1000000]);
+                      }}
+                      className="mt-6 text-[#cfa224] font-semibold hover:underline cursor-pointer"
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Load More */}
-            {hasMoreProducts && (
+            {!loading && hasMoreProducts && (
               <div className="text-center mt-12">
                 <button 
                   onClick={handleLoadMore}
-                  className="text-white px-10 py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform"
+                  className="text-white px-10 py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform cursor-pointer"
                   style={{ backgroundColor: '#cfa224' }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = '#b8901f';
@@ -478,4 +512,3 @@ export default function AllProductsPage() {
     </div>
   );
 }
-
