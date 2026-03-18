@@ -53,7 +53,13 @@ async function ensureSettingsTable() {
     ['social_twitter', '', 'social'],
     ['social_tiktok', '', 'social'],
     ['social_whatsapp', '', 'social'],
-    ['store_whatsapp', '', 'store_info']
+    ['store_whatsapp', '', 'store_info'],
+    ['pixel_facebook', '', 'pixel_tracking'],
+    ['pixel_instagram', '', 'pixel_tracking'],
+    ['pixel_tiktok', '', 'pixel_tracking'],
+    ['pixel_x', '', 'pixel_tracking'],
+    ['pixel_linkedin', '', 'pixel_tracking'],
+    ['pixel_snapchat', '', 'pixel_tracking'],
   ];
 
   for (const [key, value, category] of defaultSettings) {

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalLayout from "./components/ConditionalLayout";
 import GoogleAnalytics from "./components/GoogleAnalytics";
+import PixelTracking from "./components/PixelTracking";
 import SWRegistration from "./components/SWRegistration";
 
 const geistSans = Geist({
@@ -62,6 +63,7 @@ export default function RootLayout({
       >
         <SWRegistration />
         <GoogleAnalytics />
+        <PixelTracking />
         <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>

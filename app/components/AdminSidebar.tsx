@@ -218,6 +218,7 @@ export default function AdminSidebar({ adminUser: adminUserProp }: AdminSidebarP
     { name: 'Payments', href: '/admin/payments', icon: CreditCard, category: 'Sales' },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart, category: 'Insights' },
     { name: 'Google Analytics', href: '/admin/google-analytics', icon: BarChart, category: 'Insights' },
+    { name: 'Pixel Tracking', href: '/admin/pixel-tracking', icon: BarChart, category: 'Insights' },
     { name: 'Categories', href: '/admin/categories', icon: Package, category: 'Management' },
     { name: 'Sub-Categories', href: '/admin/sub-categories', icon: Folder, category: 'Management' },
     { name: 'Product Types', href: '/admin/product-types', icon: Tag, category: 'Management' },

@@ -1,27 +1,55 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { queryMany } from '@/lib/db';
+import { verify } from 'jsonwebtoken';
 
-export async function GET() {
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+function checkAuth(request: NextRequest) {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.split(' ')[1];
+  try {
+    return verify(token, JWT_SECRET);
+  } catch {
+    return null;
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const user = checkAuth(request);
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const orders = await queryMany(`
-      SELECT 
-        o.id, 
-        o.order_number, 
-        o.first_name, 
-        o.last_name, 
-        o.email, 
-        o.status, 
-        o.total, 
-        o.created_at as date,
+      SELECT
+        o.id,
+        o.order_number,
+        o.first_name,
+        o.last_name,
+        o.email,
+        o.phone,
+        o.status,
+        o.payment_status,
+        o.total,
+        o.created_at AS date,
         o.shipping_address,
+        o.shipping_city,
+        o.shipping_state,
         o.payment_method,
-        COALESCE(SUM(oi.quantity), 0) as items
+        o.payment_reference,
+        COALESCE(SUM(oi.quantity), 0) AS items
       FROM orders o
       LEFT JOIN order_items oi ON o.id = oi.order_id
-      GROUP BY o.id
+      GROUP BY
+        o.id, o.order_number, o.first_name, o.last_name, o.email, o.phone,
+        o.status, o.payment_status, o.total, o.created_at,
+        o.shipping_address, o.shipping_city, o.shipping_state,
+        o.payment_method, o.payment_reference
       ORDER BY o.created_at DESC
     `);
-    
+
     return NextResponse.json(orders);
   } catch (error) {
     console.error('Error fetching admin orders:', error);
