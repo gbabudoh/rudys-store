@@ -35,23 +35,26 @@ export default function PWAInstallPrompt() {
   };
 
   useEffect(() => {
-    // Check local storage first to see if they've dismissed it
-    const isDismissed = localStorage.getItem('pwa_prompt_dismissed');
-    if (isDismissed) {
+    // 1. Check if they've dismissed it in this session or permanently
+    const checkDismissal = () => {
+      if (typeof window === 'undefined') return true;
+      return localStorage.getItem('pwa_prompt_dismissed') === 'true' || 
+             sessionStorage.getItem('pwa_prompt_dismissed_session') === 'true';
+    };
+
+    if (checkDismissal()) {
       setIsLoading(false);
       return;
     }
 
-    // 1. Check if IP/App is already registered
+    // 2. Check if IP/App is already registered on the backend
     const checkIpStatus = async () => {
       try {
         const res = await fetch('/api/app-status');
         const data = await res.json();
-        // If the backend says it's NOT installed, continue
-        // If it says it IS installed, we'll still show the prompt if localStorage doesn't exist
-        // to be SAFE, but we'll prioritize the App state detection below
+        // If the backend says it's already installed for this IP, hide the prompt
         if (data.isInstalled) {
-          // setIsAppDetected(true); // Don't block purely on IP anymore
+          setIsAppDetected(true);
         }
       } catch (err) {
         console.error('Failed to check IP status:', err);
@@ -62,32 +65,34 @@ export default function PWAInstallPrompt() {
 
     checkIpStatus();
 
-    // Detect platform
+    // Detect platform and standalone status
     const userAgent = window.navigator.userAgent.toLowerCase();
-    
-    // Improved iOS detection including newer iPads
     const isIOS = /iphone|ipad|ipod/.test(userAgent) || 
                  (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
-                 
     const isAndroid = /android/.test(userAgent);
-    
-    // Check if app is already installed/running in standalone
     const isStandalone = (window.navigator as NavigatorWithStandalone).standalone || 
                          window.matchMedia('(display-mode: standalone)').matches;
 
-    // If currently in standalone, make sure we log the IP and hide the prompt
+    // If already in standalone mode, don't show prompt and record status
     if (isStandalone) {
       trackAppStatus();
       setIsAppDetected(true);
       return;
     }
 
+    // Scheduling the prompt display
+    let timer: NodeJS.Timeout;
+
+    const showPromptAfterDelay = () => {
+      if (!checkDismissal()) {
+        setShowPrompt(true);
+      }
+    };
+
     if (!isStandalone) {
       if (isIOS) {
         setPlatform('ios');
-        // Show iOS prompt after a small delay
-        const timer = setTimeout(() => setShowPrompt(true), 3000);
-        return () => clearTimeout(timer);
+        timer = setTimeout(showPromptAfterDelay, 5000); // 5s delay for iOS
       } else if (isAndroid) {
         setPlatform('android');
       }
@@ -96,20 +101,23 @@ export default function PWAInstallPrompt() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      // Show Android prompt after a small delay
-      setTimeout(() => setShowPrompt(true), 3000);
+      // For Android/Chrome-based browsers
+      timer = setTimeout(showPromptAfterDelay, 5000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
 
     return () => {
+      if (timer) clearTimeout(timer);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
     };
   }, []);
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    // Set both permanent and session-based dismissal
     localStorage.setItem('pwa_prompt_dismissed', 'true');
+    sessionStorage.setItem('pwa_prompt_dismissed_session', 'true');
   };
 
   const handleInstallClick = async () => {
@@ -120,7 +128,12 @@ export default function PWAInstallPrompt() {
     
     if (outcome === 'accepted') {
       setShowPrompt(false);
-      trackAppStatus(); // Log the IP now that they've accepted
+      localStorage.setItem('pwa_prompt_dismissed', 'true');
+      trackAppStatus();
+    } else {
+      // Even if they cancel the native prompt, we treat it as a dismissal for the session
+      setShowPrompt(false);
+      sessionStorage.setItem('pwa_prompt_dismissed_session', 'true');
     }
     setDeferredPrompt(null);
   };

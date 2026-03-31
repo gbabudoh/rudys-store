@@ -39,8 +39,28 @@ export async function GET(request: NextRequest) {
 
     if (result.success && result.data) {
       const { metadata, amount, reference: paystackRef } = result.data;
-      console.log('Order metadata:', metadata);
-      const orderMetadata = metadata as unknown as OrderMetadata;
+      console.log('Verifying transaction for reference:', paystackRef);
+      
+      // Robust metadata parsing (Paystack API can be inconsistent)
+      let orderMetadata: OrderMetadata;
+      try {
+        orderMetadata = (typeof metadata === 'string' ? JSON.parse(metadata) : metadata) as unknown as OrderMetadata;
+      } catch (e) {
+        console.error('Failed to parse metadata:', metadata, e);
+        // Fallback to basic info from result.data if metadata is corrupted
+        orderMetadata = {
+          email: result.data.customer.email,
+          firstName: result.data.customer.first_name || 'Customer',
+          lastName: result.data.customer.last_name || '',
+          phone: '',
+          address: 'N/A',
+          city: '',
+          state: '',
+          items: []
+        };
+      }
+
+      console.log('Order metadata processed:', orderMetadata);
 
       // Guard against duplicate orders for the same payment reference
       const existing = await queryOne<{ id: number }>(
@@ -52,55 +72,74 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL(`/checkout/success?reference=${reference}`, request.url));
       }
 
+      // Find user if registrant exists
+      const userResult = await queryOne<{ id: number }>(
+        'SELECT id FROM users WHERE email = ? LIMIT 1',
+        [orderMetadata.email]
+      );
+      const userId = userResult ? userResult.id : null;
+
       // Store order in database
-      await transaction(async (connection) => {
-        const [orderResult] = await connection.execute(
-          `INSERT INTO orders (
-            order_number, email, first_name, last_name, phone,
-            shipping_address, shipping_city, shipping_state,
-            payment_status, payment_method, payment_reference,
-            subtotal, total
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            `ORD-${Date.now()}`,
-            orderMetadata.email,
-            orderMetadata.firstName,
-            orderMetadata.lastName,
-            orderMetadata.phone,
-            orderMetadata.address,
-            orderMetadata.city,
-            orderMetadata.state,
-            'paid',
-            'paystack',
-            paystackRef,
-            amount,
-            amount,
-          ]
-        );
-
-        const orderId = (orderResult as ResultSetHeader).insertId;
-
-        for (const item of orderMetadata.items) {
-          const unitPrice = item.price || amount / orderMetadata.items.length;
-          await connection.execute(
-            `INSERT INTO order_items (
-              order_id, product_id, product_name,
-              variant_info, quantity, unit_price, total_price
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      let orderId: number;
+      try {
+        orderId = await transaction(async (connection) => {
+          const [orderResult] = await connection.execute(
+            `INSERT INTO orders (
+              user_id, order_number, email, first_name, last_name, phone,
+              shipping_address, shipping_city, shipping_state,
+              payment_status, payment_method, payment_reference,
+              subtotal, total
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-              orderId,
-              item.id,
-              item.name,
-              `${item.size || ''} ${item.color || ''}`.trim(),
-              item.quantity,
-              unitPrice,
-              unitPrice * item.quantity,
+              userId,
+              `ORD-${Date.now()}`,
+              orderMetadata.email,
+              orderMetadata.firstName,
+              orderMetadata.lastName,
+              orderMetadata.phone || '',
+              orderMetadata.address,
+              orderMetadata.city || '',
+              orderMetadata.state || '',
+              'paid',
+              'paystack',
+              paystackRef,
+              amount,
+              amount,
             ]
           );
-        }
-      });
 
-      const itemsHtml = orderMetadata.items
+          const newOrderId = (orderResult as ResultSetHeader).insertId;
+
+          if (orderMetadata.items && orderMetadata.items.length > 0) {
+            for (const item of orderMetadata.items) {
+              const unitPrice = item.price || amount / orderMetadata.items.length;
+              await connection.execute(
+                `INSERT INTO order_items (
+                  order_id, product_id, product_name,
+                  variant_info, quantity, unit_price, total_price
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [
+                  newOrderId,
+                  item.id,
+                  item.name,
+                  `${item.size || ''} ${item.color || ''}`.trim(),
+                  item.quantity,
+                  unitPrice,
+                  unitPrice * item.quantity,
+                ]
+              );
+            }
+          }
+          return newOrderId;
+        });
+        console.log('Order created successfully in database. ID:', orderId);
+      } catch (dbError) {
+        console.error('Database transaction failed during order storage:', dbError);
+        // We still want to redirect even if DB fails, but this is a critical error
+        throw dbError; 
+      }
+
+      const itemsHtml = (orderMetadata.items || [])
         .map(
           (item) => `
           <tr>
@@ -118,10 +157,11 @@ export async function GET(request: NextRequest) {
 
       // Customer confirmation email
       try {
+        console.log('Sending customer confirmation email to:', orderMetadata.email);
         await sendEmail({
           to: orderMetadata.email,
-          subject: `Order Confirmed – ${paystackRef}`,
-          from: 'info',
+          subject: `Order Confirmed – ${paystackRef} | Ruddy's Store`,
+          from: 'sales',
           html: `
             <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #eee;border-radius:8px;">
               <h2 style="color:#201d1e;margin-bottom:4px;">Order Confirmed!</h2>
@@ -153,9 +193,10 @@ export async function GET(request: NextRequest) {
 
       // Store owner notification email
       try {
+        console.log('Sending store owner notification email to:', STORE_EMAIL);
         await sendEmail({
           to: STORE_EMAIL,
-          subject: `New Order Received – ${paystackRef}`,
+          subject: `New Order Received – ${paystackRef} | Admin`,
           from: 'info',
           html: `
             <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #eee;border-radius:8px;">
@@ -190,10 +231,12 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.redirect(new URL(`/checkout/success?reference=${reference}`, request.url));
     } else {
+      console.warn('Payment verification failed or returned no data:', result);
       return NextResponse.redirect(new URL(`/checkout?error=payment_failed&reference=${reference}`, request.url));
     }
   } catch (error) {
-    console.error('Payment callback error:', error);
+    console.error('CRITICAL: Payment callback error:', error);
     return NextResponse.redirect(new URL('/checkout?error=internal_error', request.url));
   }
+
 }

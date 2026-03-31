@@ -1,34 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-
-interface DecodedToken {
-  userId: number;
-  email: string;
-}
-
-function getUserFromToken(request: NextRequest): DecodedToken | null {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
-  }
-  
-  const token = authHeader.substring(7);
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
-    return decoded;
-  } catch {
-    return null;
-  }
-}
+import { verifyUserAuth } from '@/lib/auth';
 
 // GET /api/customer/history - Fetch complete purchase history
 export async function GET(request: NextRequest) {
   try {
-    const user = getUserFromToken(request);
-    if (!user) {
+    const { success, user } = await verifyUserAuth(request);
+    if (!success || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -53,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     // Search condition
     let searchCondition = '';
-    const queryParams: (number | string)[] = [user.userId];
+    const queryParams: (number | string)[] = [user.id];
     if (searchQuery) {
       searchCondition = 'AND (o.order_number LIKE ? OR oi.product_name LIKE ?)';
       queryParams.push(`%${searchQuery}%`, `%${searchQuery}%`);
@@ -102,7 +80,7 @@ export async function GET(request: NextRequest) {
         ${dateCondition}
         ${searchCondition ? 'AND (o.order_number LIKE ? OR oi.product_name LIKE ?)' : ''}
     `;
-    const countParams: (number | string)[] = [user.userId];
+    const countParams: (number | string)[] = [user.id];
     if (searchQuery) {
       countParams.push(`%${searchQuery}%`, `%${searchQuery}%`);
     }
@@ -115,7 +93,7 @@ export async function GET(request: NextRequest) {
       FROM orders o
       WHERE o.user_id = ? AND o.payment_status = 'paid'
     `;
-    const spentResult = await query(totalSpentQuery, [user.userId]);
+    const spentResult = await query(totalSpentQuery, [user.id]);
     const stats = (spentResult as { total_spent: number; order_count: number }[])[0];
 
     return NextResponse.json({

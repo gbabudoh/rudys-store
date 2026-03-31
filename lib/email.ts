@@ -45,11 +45,22 @@ export async function sendEmail({ to, subject, text, html, from = 'info' }: Emai
   };
 
   try {
+    console.log(`📧 Attempting to send email to ${to} (Subject: ${subject})...`);
+    console.log(`   Transporter config: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT} (User: ${process.env.SMTP_USER})`);
+    
+    // Test the connection before sending
+    await transporter.verify();
+    console.log('   ✅ SMTP connection verified.');
+
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent: %s', info.messageId);
+    console.log('   ✅ Email sent: %s', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('   ❌ Error sending email:', error);
+    // Log additional information if available for SMTP errors
+    if (error && typeof error === 'object' && 'response' in error) {
+      console.error('   SMTP Response:', (error as { response: string }).response);
+    }
     throw error;
   }
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import DynamicContent from '../components/DynamicContent';
 
 interface PageContent {
   title: string;
@@ -23,29 +24,6 @@ export default function PrivacyPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
-
-  // Convert markdown-like content to HTML
-  const renderContent = (text: string) => {
-    return text
-      .split('\n\n')
-      .map((paragraph, index) => {
-        // Handle headers
-        if (paragraph.startsWith('#### ')) {
-          return <h4 key={index} className="text-lg font-bold text-gray-900 mt-8 mb-4">{paragraph.replace('#### ', '')}</h4>;
-        }
-        if (paragraph.startsWith('### ')) {
-          return <h3 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-4">{paragraph.replace('### ', '')}</h3>;
-        }
-        if (paragraph.startsWith('## ')) {
-          return <h2 key={index} className="text-2xl font-bold text-gray-900 mt-8 mb-4">{paragraph.replace('## ', '')}</h2>;
-        }
-        if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-          return <p key={index} className="font-semibold text-gray-700 mb-2">{paragraph.replace(/\*\*/g, '')}</p>;
-        }
-        // Regular paragraph
-        return <p key={index} className="text-gray-600 mb-4 leading-relaxed">{paragraph}</p>;
-      });
-  };
 
   if (loading) {
     return (
@@ -79,9 +57,7 @@ export default function PrivacyPage() {
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
               {content?.content ? (
-                <div className="prose prose-lg max-w-none">
-                  {renderContent(content.content)}
-                </div>
+                <DynamicContent content={content.content} />
               ) : (
                 <p className="text-gray-600">Content not available. Please check back later.</p>
               )}

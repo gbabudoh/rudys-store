@@ -50,7 +50,13 @@ export async function GET(request: NextRequest) {
       ORDER BY o.created_at DESC
     `);
 
-    return NextResponse.json(orders);
+    // Fix for BigInt serialization issue
+    const serializedOrders = orders.map((order: Record<string, unknown>) => ({
+      ...order,
+      items: typeof order.items === 'bigint' ? Number(order.items) : order.items
+    }));
+
+    return NextResponse.json(serializedOrders);
   } catch (error) {
     console.error('Error fetching admin orders:', error);
     return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });

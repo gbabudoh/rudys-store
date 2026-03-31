@@ -1,35 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-
-interface DecodedToken {
-  userId: number;
-  email: string;
-}
-
-// Helper to verify token and get user ID
-function getUserFromToken(request: NextRequest): DecodedToken | null {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
-  }
-  
-  const token = authHeader.substring(7);
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
-    return decoded;
-  } catch {
-    return null;
-  }
-}
+import { verifyUserAuth } from '@/lib/auth';
 
 // GET /api/customer/orders - Fetch user's orders
 export async function GET(request: NextRequest) {
   try {
-    const user = getUserFromToken(request);
-    if (!user) {
+    const { success, user } = await verifyUserAuth(request);
+    if (!success || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -58,7 +35,7 @@ export async function GET(request: NextRequest) {
       FROM orders o
       WHERE o.user_id = ?
     `;
-    const queryParams: (number | string)[] = [user.userId];
+    const queryParams: (number | string)[] = [user.id];
 
     if (status && status !== 'all') {
       ordersQuery += ' AND o.status = ?';
@@ -72,7 +49,7 @@ export async function GET(request: NextRequest) {
 
     // Get total count for pagination
     let countQuery = 'SELECT COUNT(*) as total FROM orders WHERE user_id = ?';
-    const countParams: (number | string)[] = [user.userId];
+    const countParams: (number | string)[] = [user.id];
     if (status && status !== 'all') {
       countQuery += ' AND status = ?';
       countParams.push(status);

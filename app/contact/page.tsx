@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import DynamicContent from '../components/DynamicContent';
 
 const Mail = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={`${className || "w-5 h-5"} cursor-pointer`} fill="none" stroke="currentColor" style={style} viewBox="0 0 24 24">
@@ -166,6 +167,11 @@ export default function ContactPage() {
               <div className="lg:col-span-4 space-y-6">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+                  {content?.content && (
+                    <div className="mb-8 border-b pb-6">
+                      <DynamicContent content={content.content.split('\n\n').slice(1).join('\n\n')} />
+                    </div>
+                  )}
                   
                   <div className="space-y-6">
                     <div className="flex items-start space-x-4">

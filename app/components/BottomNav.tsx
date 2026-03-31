@@ -97,7 +97,7 @@ export default function BottomNav() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
                 </svg>
               </span>
-              <span>Rudy Collections</span>
+              <span>Ruddy Store (Women)</span>
             </button>
             <button 
               onClick={() => handleNavigate('/luxury')}
@@ -108,7 +108,7 @@ export default function BottomNav() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" />
                 </svg>
               </span>
-              <span>Ruddy Luxury</span>
+              <span>Ruddy Luxury (Men)</span>
             </button>
             <button 
               onClick={() => handleNavigate('/crocs')}
@@ -119,7 +119,7 @@ export default function BottomNav() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
               </span>
-              <span>Slide & Sole</span>
+              <span>Slide & Soles (Everything Comfort Shoes)</span>
             </button>
             <button 
               onClick={() => setIsShopMenuOpen(false)}

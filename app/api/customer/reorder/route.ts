@@ -1,34 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-
-interface DecodedToken {
-  userId: number;
-  email: string;
-}
-
-function getUserFromToken(request: NextRequest): DecodedToken | null {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
-  }
-  
-  const token = authHeader.substring(7);
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
-    return decoded;
-  } catch {
-    return null;
-  }
-}
+import { verifyUserAuth } from '@/lib/auth';
 
 // GET /api/customer/reorder - Get items available for reorder
 export async function GET(request: NextRequest) {
   try {
-    const user = getUserFromToken(request);
-    if (!user) {
+    const { success, user } = await verifyUserAuth(request);
+    if (!success || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -55,7 +33,7 @@ export async function GET(request: NextRequest) {
       GROUP BY p.id, p.name, p.slug, p.price, p.stock_quantity, p.status, pi.image_url
       ORDER BY last_ordered DESC
       LIMIT 50
-    `, [user.userId]);
+    `, [user.id]);
 
     return NextResponse.json({ items: reorderItems });
   } catch (error) {
@@ -67,8 +45,8 @@ export async function GET(request: NextRequest) {
 // POST /api/customer/reorder - Add item(s) to cart
 export async function POST(request: NextRequest) {
   try {
-    const user = getUserFromToken(request);
-    if (!user) {
+    const { success, user } = await verifyUserAuth(request);
+    if (!success || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -102,7 +80,7 @@ export async function POST(request: NextRequest) {
     const existingCart = await query(`
       SELECT id, quantity FROM cart
       WHERE user_id = ? AND product_id = ?
-    `, [user.userId, productId]);
+    `, [user.id, productId]);
 
     const existing = existingCart as { id: number; quantity: number }[];
     
@@ -126,7 +104,7 @@ export async function POST(request: NextRequest) {
       await query(`
         INSERT INTO cart (user_id, product_id, quantity, created_at, updated_at)
         VALUES (?, ?, ?, NOW(), NOW())
-      `, [user.userId, productId, quantity]);
+      `, [user.id, productId, quantity]);
     }
 
     return NextResponse.json({ 

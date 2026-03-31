@@ -307,7 +307,7 @@ export default function Header() {
                 onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}
               >
-                Ruddy&apos;s Store
+                Ruddy Store (Women)
               </Link>
               <Link 
                 href="/luxury" 
@@ -316,7 +316,7 @@ export default function Header() {
                 onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}
               >
-                Ruddy Luxury
+                Ruddy Luxury (Men)
               </Link>
               <Link 
                 href="/crocs" 
@@ -325,7 +325,7 @@ export default function Header() {
                 onMouseEnter={(e) => e.currentTarget.style.color = '#cfa224'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#374151'}
               >
-                Slide & Sole
+                Slide & Soles (Everything Comfort Shoes)
               </Link>
               
               {/* Mobile Search */}
